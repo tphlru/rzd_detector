@@ -155,6 +155,8 @@ dmypy.json
 cython_debug/
 
 voice_module/datasets/*
+face_module/test_vids
+face_module/test_vids/*
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
