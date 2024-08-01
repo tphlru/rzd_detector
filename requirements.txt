@@ -1,0 +1,23 @@
+# requirements.txt
+lmfit
+mediapipe
+plotly
+statsmodels>=0.13.1
+biosppy
+scikit-image
+scikit_posthocs
+autorank
+tensorrt
+protobuf>=4.25.3
+
+tensorflow 
+scikit-learn 
+torch==2.3.0 
+torchaudio 
+onnxruntime 
+# PyAudio 
+jupyterplot 
+# webrtcvad 
+sounddevice 
+transformers 
+accelerate
