@@ -1,4 +1,5 @@
 from fer import FER
+
 emo_detector = FER(mtcnn=True)
 import matplotlib.pyplot as plt
 

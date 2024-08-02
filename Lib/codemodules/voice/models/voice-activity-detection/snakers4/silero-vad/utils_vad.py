@@ -1,8 +1,9 @@
-import torch
-import torchaudio
-from typing import List
-import torch.nn.functional as F
 import warnings
+from typing import List
+
+import torch
+import torch.nn.functional as F
+import torchaudio
 
 languages = ['ru', 'en', 'de', 'es']
 

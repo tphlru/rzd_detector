@@ -1,18 +1,11 @@
 dependencies = ['torch', 'torchaudio']
-import torch
 import json
-from utils_vad import (init_jit_model,
-                       get_speech_timestamps,
-                       get_number_ts,
-                       get_language,
-                       get_language_and_group,
-                       save_audio,
-                       read_audio,
-                       VADIterator,
-                       collect_chunks,
-                       drop_chunks,
-                       Validator,
-                       OnnxWrapper)
+
+import torch
+from utils_vad import (OnnxWrapper, VADIterator, Validator, collect_chunks,
+                       drop_chunks, get_language, get_language_and_group,
+                       get_number_ts, get_speech_timestamps, init_jit_model,
+                       read_audio, save_audio)
 
 
 def versiontuple(v):

@@ -158,6 +158,10 @@ voice_module/datasets/*
 face_module/test_vids
 face_module/test_vids/*
 
+data/datasets
+
+Lib/codemodules/voice/intonation/*.wav
+Lib/codemodules/voice/intonation/**/*.wav
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
