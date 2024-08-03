@@ -30,4 +30,4 @@ build-backend = "setuptools.build_meta"
 dependencies = {file = ["requirements.txt"]}
 
 [tool.setuptools]
-package-dir = {"rzd_detector" = "lib"}
+package-dir = {"rzd_detector" = "src"}
