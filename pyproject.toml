@@ -1,0 +1,30 @@
+[project]
+name = "rzd_detector"
+version = "0.0.1"
+description = """
+    project for the "Transportation Engineers" competition for the qwerty team in the "Human Condition Detector" area.
+"""
+readme = "README.md"
+requires-python = ">=3.8.0"
+dynamic = ["dependencies"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Natural Language :: Russian",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+# authors = [{ name = "Timur Tunkin", email = "ch.houstone@zohomail.com" }]
+# license = { file = "LICENSE" }
+
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
