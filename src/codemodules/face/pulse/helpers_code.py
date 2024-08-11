@@ -100,3 +100,21 @@ vhr_ldmks_list = [
     432,
     436,
 ]
+
+
+def get_largest_serially(source_list: list, n: int):
+    """Получить n наибольших значений в списке в том порядке, в котором они представлены в исходном списке.
+    Пример:
+    get_largest_serially([34, 12, 45, 7, 23, 56, 89, 1, 2, 3, 4, 5, 6, 7, 8, 9], 5) --> [34, 45, 23, 56, 89]
+
+    Args:
+        source_list (list): Исходный список
+        n (int): Количество наибольших значений для получения
+
+    Returns:
+        list: Список, содержащий n наибольших значений в порядке, в исходном порядке.
+    """
+    n += 1
+    indices = dict(zip(source_list, range(len(source_list))))
+    top = sorted(source_list, reverse=True)[:n]
+    return [source_list[i] for i in sorted({indices[i] for i in top})]

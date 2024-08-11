@@ -54,7 +54,6 @@ def _devide_plot_tops(seq: list, dividing_line: list, win_size: int = 2) -> list
     Returns:
         list: Список значений выше средней линии. Длина не определена.
     """
-    assert len(dividing_line) == len(seq)
 
     return [
         [n, v]
