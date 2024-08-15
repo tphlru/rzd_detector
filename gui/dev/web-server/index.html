@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="utf-8">
+		<title>LaboRad - Детектор состояния человека</title>
+		<script src="package/dist/chart.umd.js"></script>
+	</head>
+	<body>
+		<table border="0">
+			<tr>
+				<td><font face="Segoe UI"><center>Скоро тут будет видео с твоей камеры...</center></font></td>
+				<td valign=top>
+					<table border="1">
+						<tr>
+							<th><font face="Segoe UI">Критерии</font></th>
+							<th><font face="Segoe UI">Баллы</font></th>
+						</tr>
+						<tr>
+							<td>
+								<font face="Segoe UI"><b>Эмоции (лицо/голос - среднее)</b>
+								<br>Лицо
+								<br>Голос
+								</font>
+							</td>
+							<td><font face="Segoe UI"><b>8 / 10</b><br>7 / 10<br>9 / 10</font></td>
+						</tr>
+						<tr>
+							<td>
+								<font face="Segoe UI"><b>Физическое состояние</b>
+								<br>Пульс
+								<br>Частота дыхания
+								<br>Частота моргания
+								</font>
+							</td>
+							<td><font face="Segoe UI"><b>6 / 10</b><br>8 / 10<br>4 / 10<br>6  / 10</font></td>
+						</tr>
+						<tr>
+							<td><font face="Segoe UI"><b>Возраст</b></font></td>
+							<td><font face="Segoe UI"><b>8 / 10</b></font></td>
+						</tr>
+					</table>
+				</td>
+				<td><font face="Segoe UI"><center><b>Частота дыхания</b></center></font><canvas id="vzdoh" style="max-width:100%;max-height:100px"></canvas>
+				<font face="Segoe UI"><center><b>Частота моргания</b></center></font><canvas id="morganie" style="max-width:100%;max-height:100px"></canvas></td>
+				<td><font face="Segoe UI"><center><b>Пульс</b></center></font><canvas id="pulse" style="max-width:100%;max-height:700px"></canvas></td>
+			</tr>
+			<tr>
+				<td valign="top"><font face="Segoe UI"><b>Панель управления</b><br>Её тоже нет :( , но это пока что </font></td>
+				<td valign="top" width=400>
+					<font face="Segoe UI"><b><center>Субьективная оценка</center></b>
+					<form>
+						<b>Имел ли этот человек ранее судимость?</b><br>
+						<input type="radio" name="sud">Да<br>
+						<input type="radio" name="sud">Нет<br>
+						<input type="radio" name="sud">Не располагаю данной информацией<br>
+						<br><b>Возникают ли у вас подозрения на счет этого человека?</b><br>
+						<input type="radio" name="podosreniya">Большие<br>
+						<input type="radio" name="podosreniya">Небольшие<br>
+						<input type="radio" name="podosreniya">Нет<br>
+						<br><button title="Завершить ввод субъективной оценки">Подача данных</button><input type="reset" title="Сброс формы">
+					</form>
+					</font>
+				</td>
+				<td width=250><font face="Segoe UI"><center><b>Эмоции</b></center></font><canvas id="emotions" style="max-width:100%;max-height:700px"></canvas></td>
+			</tr>
+		</table>
+		<br><br><br><br><br><br><br><br><br>
+		<!-- Начало консоли -->
+		<font face="Segoe UI"><b>Консоль</b><br>Этот раздел нужен для отладки. После испытаний его удалят. Честно</font><br>
+		<textarea rows=10 cols=100 wrap="soft" align="left">Это консоль. Да-да, это именно она
+rows=10, cols = 25
+На релизе удалю все отсылки)</textarea><br>
+		<!-- Конец консоли -->
+		
+		<font face="Segoe UI">
+			<br><b>Помощь и контактная информация</b>
+			<br>Создано в рамках конкурса "Инженеры транспорта" командой Ярославля LaboRad
+			<br>Наш ВК - <a href="https:\\vk.com\laborad">https:\\vk.com\laborad</a>
+			<br><br><b>Демо-версия</b>
+			<br><br>Пусть эта строка будет отсылкой на Вампуса...
+		</font>
+	</body>
+	
+	<script type="text/javascript">
+		const xValuesEF = ["Спокойствие","Радость","Грусть","Злость"];
+		const yValuesEF = [60,10,8,2];
+		var barColors = ["black", "orange","blue","red","brown"];
+		
+		const xValuesEV = ["Спокойствие","Радость","Грусть","Злость"];
+		const yValuesEV = [50,15,11,1];
+		new Chart("emotions", {
+			type: "pie",
+			data: {
+				labels: xValuesEV,
+				datasets: [{
+					backgroundColor: barColors,
+					data: yValuesEV
+				}]
+			},
+			options: {}
+		});
+		
+		const xValuesVzdoh = [16,14,12,10,8,6,4,2,0];
+		const yValuesVzdoh = [73,75,69,83,85,98,111,115,110];
+		new Chart("vzdoh", {
+			type: "line",
+			data: {
+				labels: xValuesVzdoh,
+				datasets: [{
+					backgroundColor:"rgba(0,255,0,1.0)",
+					borderColor: "rgba(0,255,0,0.1)",
+					data: yValuesVzdoh
+				}]
+			},
+		});
+		
+		const xValuesPulse = [16,14,12,10,8,6,4,2,0];
+		const yValuesPulse = [73,75,69,83,85,98,111,115,110];
+		new Chart("pulse", {
+			type: "line",
+			data: {
+				labels: xValuesPulse,
+				datasets: [{
+					backgroundColor:"rgba(255,0,0,1.0)",
+					borderColor: "rgba(255,0,0,0.1)",
+					data: yValuesPulse
+				}]
+			},
+		});
+		
+		const xValuesMorganie = [16,14,12,10,8,6,4,2,0];
+		const yValuesMorganie = [73,75,69,83,85,98,111,115,110];
+		new Chart("morganie", {
+			type: "line",
+			data: {
+				labels: xValuesMorganie,
+				datasets: [{
+					backgroundColor:"rgba(0,0,255,1.0)",
+					borderColor: "rgba(0,0,255,0.1)",
+					data: yValuesMorganie
+				}]
+			}
+		});
+	</script>
+</html>
