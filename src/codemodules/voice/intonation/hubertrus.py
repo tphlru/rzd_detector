@@ -1,27 +1,11 @@
+# Модель HuBERT для распознования эмоций по интонации голоса, адаптированная под русский язык
+
 import logging
 import os
 
 from transformers import HubertForSequenceClassification, Wav2Vec2FeatureExtractor
 import torchaudio
 import tensorflow as tf
-
-# from tensorflow.keras.models import Sequential, model_from_json, load_model
-# from tensorflow import device as tf_device
-# import tensorflow as tf
-# import pickle
-# import librosa
-
-# import pyaudio
-# import sounddevice as sd
-# import soundfile as sf
-# import webrtcvad
-# import numpy as np
-# import time
-# import queue
-
-# from IPython.display import Audio
-# from jupyterplot import ProgressPlot
-# import timeit
 
 logger = logging.getLogger(__name__)
 
