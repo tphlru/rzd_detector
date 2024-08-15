@@ -1,6 +1,7 @@
 import logging
 import os
 import statistics
+from random import choice
 import matplotlib.pyplot as plt
 
 
@@ -151,9 +152,28 @@ def get_bpm_with_pbv(
 def process_pulse_info(
     bpm: list, base_offset: int = 10, show_plot: bool = True, plot_path: str = None
 ) -> tuple:
+    """Выполнить оценку полученных значений пульса.
 
+    Args:
+        bpm (list): Список исходных значений.
+        base_offset (int, optional): Смещение для значений пульса. Defaults to 10.
+        show_plot (bool, optional): Показывать график или нет. По умолчанию True.
+        plot_path (str, optional): Путь для сохранения графика. По умолчанию None.
+
+    Raises:
+        ValueError: Если список bpm пуст.
+        ValueError: Если base_offset меньшн минимального значения пульса
+        AssertionError: Если base_offset не в диапазоне от -40 до 40
+
+    Returns:
+        tuple: _description_
+    """
     if not bpm.any():
         raise ValueError("bpm list is empty!")
+
+    if len(bpm) < 4:
+        # Random Extrapolation
+        bpm.extend(choice(bpm) for _ in range(5 - len(bpm)))
 
     assert (
         base_offset > -40 and base_offset < 40
@@ -219,31 +239,31 @@ def evaluate_pulse_results(
         int: _description_
     """
     points = 0
-    logger.info("Бальная оценка для пульса:")
+    logger.info("Оценка значений пульса:")
 
     if (high_med - base_mean > 12 and base_mean > 80) or max(midpoints) - min(
         midpoints
     ) > 12:
-        points += 1
-        logger.info("- Пульс не стабилен! (+1 балл)")
+        points -= 1
+        logger.info("- Пульс не стабилен! (-1 балл)")
 
     if high_med > 90:
-        points += 1
-        logger.info("- Высокий фон пульса! (+1 балл)")
+        points -= 1
+        logger.info("- Высокий фон пульса! (-1 балл)")
 
     if max(tops_values) > 102:
-        points += 1
-        logger.info(f"- Найден высокий пик {max(tops_values)}! (+1 балл)")
+        points -= 1
+        logger.info(f"- Найден высокий пик {max(tops_values)}! (-1 балл)")
 
     if trend == 1:
-        points += 1
+        points -= 1
         # Пульс увеличивается - возможно, человек начинает волноваться.
-        logger.info("- Восходящий тренд! (+1 балл)")
+        logger.info("- Восходящий тренд! (-1 балл)")
 
     elif trend == -1:
-        points -= 1
+        points += 1
         # Пульс уменьшается - возможно, человек просто запыхался.
-        logger.info("- Нисходящий тренд! (-1 балл)")
+        logger.info("- Нисходящий тренд! (+1 балл)")
 
     else:
         logger.info("--- Тренд изменений отсутствует. Эта метрика не учитывается. ---")
