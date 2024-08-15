@@ -1,5 +1,6 @@
 # requirements.txt
 lmfit
+numpy==1.23.*
 mediapipe
 plotly
 statsmodels>=0.13.1
@@ -18,7 +19,7 @@ onnxruntime
 nvidia-cudnn-cu12==8.9.*
 # PyAudio 
 jupyterplot 
-# webrtcvad 
+webrtcvad 
 sounddevice 
 transformers 
 accelerate
