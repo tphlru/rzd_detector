@@ -26,4 +26,18 @@ OSError: libtorch_cuda_cpp.so: cannot open shared object file: No such file or d
 conda install pytorch=2.3.1=py3.9_cuda12.*_cudnn8.9.* torchvision torchaudio -c pytorch -c nvidia
 ```
 
+
+TEMP:
+```
+sudo dnf -y install cuda-toolkit-12-5
+conda install -c conda-forge cudatoolkit cudnn
+
+echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CONDA_PREFIX/lib/' > $CONDA_PREFIX/etc/conda/activate.d/env_vars.sh
+
+pip install tensorflow[and-cuda]
+
+# Verify install:
+python3 -c "import os; os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'; import tensorflow as tf; print('Num GPUs Available: ', len(tf.config.list_physical_devices('GPU')))"
+```
+
 Все права защищены. Копирование и частичное использование строго запрещено. Только для образовательных целей. All rights reserved. Copying and partial use is strictly prohibited. For educational purposes only.
