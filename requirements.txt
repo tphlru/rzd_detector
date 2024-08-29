@@ -10,6 +10,7 @@ scikit_posthocs
 autorank
 tensorrt
 protobuf>=4.25.3
+pytest
 
 tensorflow>=2.15.0 # Более старые версии не поддерживают cuDNN 8.9
 scikit-learn 
