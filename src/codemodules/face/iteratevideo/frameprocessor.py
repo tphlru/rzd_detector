@@ -90,12 +90,17 @@ class FrameProcessor:
                 if count % self.do_every_n[func.__name__] == 0:
                     # Получаем список предыдущих результатов вызовов
                     previous_results = self.results[func.__name__]
-
+                    if isinstance(previous_results, list) and len(previous_results) > 0:
+                        last_result = previous_results[-1]
+                    elif not previous_results:
+                        last_result = None
+                    elif not isinstance(previous_results, list):
+                        last_result = previous_results
                     # Выполняем функцию
                     # В зависимости от настройки передаём второй параметр
                     options = {
                         "all_results": previous_results,
-                        "last_result": previous_results[-1],
+                        "last_result": last_result,
                         "all_items": items,
                     }
 
