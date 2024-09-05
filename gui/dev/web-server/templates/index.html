@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    /* Global styles */
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    
+    /* Table styles */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+    
+    th {
+      background-color: #f0f0f0;
+    }
+    
+    /* Form styles */
+    form {
+      margin-bottom: 20px;
+    }
+    
+    input[type="radio"] {
+      margin-right: 10px;
+    }
+    
+    button {
+      background-color: #4CAF50;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    
+    button:hover {
+      background-color: #3e8e41;
+    }
+    
+    /* Canvas styles */
+    canvas {
+      max-width: 100%;
+      max-height: 700px;
+    }
+  </style>
+</head>
+<body>
+  <table>
+    <tr>
+      <td valign="top" width="400">
+        <h2>Панель управления</h2>
+        <p>Её тоже нет :( , но это пока что</p>
+      </td>
+      <td valign="top" width="400">
+        <h2>Субьективная оценка</h2>
+        <form>
+          <label>
+            <input type="radio" name="sud" value="-2">
+            Резко отрицательная (-2)
+          </label>
+          <br>
+          <label>
+            <input type="radio" name="sud" value="-1">
+            Отрицательная (-1)
+          </label>
+          <br>
+          <label>
+            <input type="radio" name="sud" value="0">
+            Нейтральная (0)
+          </label>
+          <br>
+          <label>
+            <input type="radio" name="sud" value="1">
+            Положительная (+1)
+          </label>
+          <br>
+          <button title="Завершить ввод субъективной оценки">Подача данных</button>
+          <input type="reset" title="Сброс формы">
+        </form>
+      </td>
+      <td width="250">
+        <h2>Эмоции</h2>
+        <canvas id="emotions" style="max-width:100%;max-height:700px"></canvas>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        <h2>Консоль</h2>
+        <p>Этот раздел нужен для отладки. После испытаний его удалят. Честно</p>
+        <textarea rows="10" cols="100" wrap="soft" align="left">Это консоль. Да-да, это именно она
+rows=10, cols = 25
+На релизе удалю все отсылки)</textarea>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        <h2>Помощь и контактная информация</h2>
+        <p>Создано в рамках конкурса "Инженеры транспорта" командой Ярославля LaboRad</p>
+        <p>Наш ВК - <a href="https://vk.com/laborad" target="_blank">https://vk.com/laborad</a></p>
+        <p><b>Демо-версия</b></p>
+      </td>
+    </tr>
+  </table>
+  <script src="package/mycharts.js"></script>
+  <script src="package/handler.js"></script>
+</body>
+</html>
