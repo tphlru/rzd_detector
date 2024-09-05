@@ -1,3 +1,7 @@
+[build-system]
+requires = ["flit", "Cython", "cython"]
+build-backend = "flit_core.buildapi"
+
 [project]
 name = "rzd_detector"
 version = "0.0.1"
@@ -6,7 +10,7 @@ description = """
 """
 readme = "README.md"
 requires-python = ">=3.8.0"
-dynamic = ["dependencies"]
+dynamic = []
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -18,16 +22,46 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
+dependencies = [
+    "cython",
+    "lmfit",
+    "numpy==1.23.*",
+    "mediapipe",
+    "plotly",
+    "tqdm",
+    "statsmodels>=0.13.1",
+    "biosppy",
+    "autorank",
+    "tensorrt",
+    "protobuf>=4.25.3",
+    "pytest",
+    "flask",
+    "gunicorn",
+    "imutils",
+    "flask-cors",
+    "aiortc",
+    "tensorflow>=2.15.0",  # Более старые версии не поддерживают cuDNN 8.9
+    "scikit-learn",
+    "scikit-image",
+    "scikit-posthocs",
+    "torch",  #==2.3.0
+    "torchaudio",
+    "torchvision",
+    "opencv-python",
+    "onnxruntime",
+    "nvidia-cudnn-cu12==8.9.*",
+    # "PyAudio", 
+    "jupyterplot",
+    "webrtcvad",
+    "sounddevice",
+    "transformers",
+    "accelerate",
+    "dicttoxml",
+    "xmltodict",
+    "pycocotools @ git+https://github.com/abhi-kumar/cocoapi.git#egg=pycocotools&subdirectory=PythonAPI"
+]
 # authors = [{ name = "Timur Tunkin", email = "ch.houstone@zohomail.com" }]
 # license = { file = "LICENSE" }
 
-
-[build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
-
-[tool.setuptools]
-package-dir = {"rzd_detector" = "src"}
+[tool.flit.module]
+name = "src"
