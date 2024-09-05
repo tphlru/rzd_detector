@@ -1,6 +1,10 @@
 # Детектор состояния человека - репозиторий команды `[laborad]`
 
+```
+pip install flit cython
+flit build
 pip install -e .
+```
 
 ```bash
 pip install -r ../requirements.txt
@@ -26,6 +30,14 @@ OSError: libtorch_cuda_cpp.so: cannot open shared object file: No such file or d
 conda install pytorch=2.3.1=py3.9_cuda12.*_cudnn8.9.* torchvision torchaudio -c pytorch -c nvidia
 ```
 
+fatal error: crypt.h: No such file or directory #include <crypt.h>
+error: command '/home/timur/miniforge3/envs/ti/bin/x86_64-conda-linux-gnu-cc' failed with exit code 1
+
+Нужно установить libxcrypt через conda (https://github.com/stanford-futuredata/ColBERT/issues/309)
+```bash
+conda install --channel=conda-forge libxcrypt
+export CPATH=/opt/conda/include/     
+```
 
 TEMP:
 ```
@@ -39,5 +51,8 @@ pip install tensorflow[and-cuda]
 # Verify install:
 python3 -c "import os; os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'; import tensorflow as tf; print('Num GPUs Available: ', len(tf.config.list_physical_devices('GPU')))"
 ```
+
+Run web server:
+`rzd_detector/gui/dev/web-server$ gunicorn -w 4 'webserver:app' -b 0.0.0.0:46578`
 
 Все права защищены. Копирование и частичное использование строго запрещено. Только для образовательных целей. All rights reserved. Copying and partial use is strictly prohibited. For educational purposes only.
