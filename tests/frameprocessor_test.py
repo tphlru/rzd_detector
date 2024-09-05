@@ -1,4 +1,4 @@
-from rzd_detector.codemodules.face.iteratevideo.frameprocessor import FrameProcessor
+from rzd_detector.codemodules.iterateframes import FrameProcessor
 import inspect
 import pytest
 
