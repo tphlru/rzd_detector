@@ -59,6 +59,7 @@ pycocotools = { git = "https://github.com/abhi-kumar/cocoapi.git", subdirectory 
 # todo add script install for cpools and second one (one with make)
 poethepoet = "*"
 gitpython = "^3.1.43"
+gdown = "^5.2.0"
 
 
 [build-system]
