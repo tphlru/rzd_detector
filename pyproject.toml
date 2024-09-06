@@ -1,67 +1,78 @@
-[build-system]
-requires = ["flit", "Cython", "cython"]
-build-backend = "flit_core.buildapi"
-
-[project]
+[tool.poetry]
 name = "rzd_detector"
 version = "0.0.1"
-description = """
-    project for the "Transportation Engineers" competition for the qwerty team in the "Human Condition Detector" area.
-"""
+description = """project for the Transport Engineers competition for the qwerty team in the Human Detector area"""
 readme = "README.md"
-requires-python = ">=3.8.0"
-dynamic = []
+authors = ["Timur Tunkin <ch.houstone@zohomail.com>"]
+license = "Artistic-2.0"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Natural Language :: Russian",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-dependencies = [
-    "cython",
-    "lmfit",
-    "numpy==1.23.*",
-    "mediapipe",
-    "plotly",
-    "tqdm",
-    "statsmodels>=0.13.1",
-    "biosppy",
-    "autorank",
-    "tensorrt",
-    "protobuf>=4.25.3",
-    "pytest",
-    "flask",
-    "gunicorn",
-    "imutils",
-    "flask-cors",
-    "aiortc",
-    "tensorflow>=2.15.0",  # Более старые версии не поддерживают cuDNN 8.9
-    "scikit-learn",
-    "scikit-image",
-    "scikit-posthocs",
-    "torch",  #==2.3.0
-    "torchaudio",
-    "torchvision",
-    "opencv-python",
-    "onnxruntime",
-    "nvidia-cudnn-cu12==8.9.*",
-    # "PyAudio", 
-    "jupyterplot",
-    "webrtcvad",
-    "sounddevice",
-    "transformers",
-    "accelerate",
-    "dicttoxml",
-    "xmltodict",
-    "pycocotools @ git+https://github.com/abhi-kumar/cocoapi.git#egg=pycocotools&subdirectory=PythonAPI"
-]
-# authors = [{ name = "Timur Tunkin", email = "ch.houstone@zohomail.com" }]
-# license = { file = "LICENSE" }
+keywords = ["detector", "competition", "team", "human"]
+[tool.poetry.dependencies]
+python = ">=3.9.0,<3.11"
+cython = "*"
+lmfit = "*"
+numpy = "1.23.*"
+mediapipe = "*"
+plotly = "*"
+tqdm = "*"
+statsmodels = ">=0.13.1"
+biosppy = "*"
+autorank = "*"
+tensorrt = "*"
+protobuf = ">=4.25.3"
+pytest = "*"
+flask = "*"
+gunicorn = "*"
+imutils = "*"
+flask-cors = "*"
+aiortc = "*"
+tensorflow = ">=2.15.0"  # Более старые версии не поддерживают cuDNN 8.9
+scikit-learn = "*"
+scikit-image = "*"
+scikit-posthocs = "*"
+torch = "*"  # Или конкретную версию, например, ==2.3.0
+torchaudio = "*"
+torchvision = "*"
+opencv-python = "*"
+onnxruntime = "*"
+nvidia-cudnn-cu12 = "8.9.*"
+# PyAudio = "*"  # Раскомментировать, если нужно
+jupyterplot = "*"
+webrtcvad = "*"
+sounddevice = "*"
+transformers = "*"
+accelerate = "*"
+dicttoxml = "*"
+xmltodict = "*"
+pycocotools = { git = "https://github.com/abhi-kumar/cocoapi.git", subdirectory = "PythonAPI" }
+# cpools = { git = "https://github.com/tphlru/cornernet.git", subdirectory = "core/models/py_utils/_cpools" }
+# "cpools @ git+https://github.com/tphlru/cornernet.git#egg=cpools&subdirectory=core/models/py_utils/_cpools"
+# todo add script install for cpools and second one (one with make)
+poethepoet = "*"
+gitpython = "^3.1.43"
 
-[tool.flit.module]
-name = "src"
+
+[build-system]
+requires = ["poetry-core", "cython", "Cython", "torch"]
+build-backend = "poetry.core.masonry.api"
+
+# post build hook
+[tool.poe.poetry_hooks]
+pre_install = "preinstall"
+post_install = "postinstall"
+
+
+[tool.poe.tasks.postinstall]
+script = "Scripts.install_scripts.postinstall:run_postinstall"
+
+[tool.poe.tasks.preinstall]
+script = "Scripts.install_scripts.preinstall:run_preinstall"

@@ -1,7 +1,7 @@
 # Детектор состояния человека - репозиторий команды `[laborad]`
 
 ```
-pip install flit cython
+pip install poetry cython
 flit build
 pip install -e .
 ```
@@ -54,5 +54,7 @@ python3 -c "import os; os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'; import tensorfl
 
 Run web server:
 `rzd_detector/gui/dev/web-server$ gunicorn -w 4 'webserver:app' -b 0.0.0.0:46578`
+
+Также мы используем poetry и https://poethepoet.natn.io/poetry_plugin.html#hooking-into-poetry-commands
 
 Все права защищены. Копирование и частичное использование строго запрещено. Только для образовательных целей. All rights reserved. Copying and partial use is strictly prohibited. For educational purposes only.
