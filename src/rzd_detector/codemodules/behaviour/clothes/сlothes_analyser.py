@@ -202,6 +202,3 @@ def get_season(month):
         return "summer"
     elif month in [9, 10, 11]:
         return "autumn"
-
-
-# TODO: Add docstring

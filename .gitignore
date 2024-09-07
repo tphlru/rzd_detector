@@ -169,3 +169,4 @@ Lib/codemodules/voice/intonation/**/*.wav
 .idea/
 src/rzd_detector/codemodules/behaviour/clothes/cornernetlib/models/
 src/rzd_detector/codemodules/behaviour/clothes/cornernetlib/models/*
+Scripts/test_files/pulse/dubl1.mp4
