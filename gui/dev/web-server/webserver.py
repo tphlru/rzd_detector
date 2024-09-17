@@ -15,6 +15,11 @@ def dog():
     return render_template("index.html")
 
 
+@app.route("/mobile")
+def mob():
+    return render_template("ind2.html")
+
+
 # Route to serve static files from the 'package' directory
 @app.route("/package/<path:filename>")
 def serve_package_files(filename):

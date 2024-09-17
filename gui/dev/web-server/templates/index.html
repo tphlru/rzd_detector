@@ -1,120 +1,184 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <style>
-    /* Global styles */
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    
-    /* Table styles */
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-    
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: left;
-    }
-    
-    th {
-      background-color: #f0f0f0;
-    }
-    
-    /* Form styles */
-    form {
-      margin-bottom: 20px;
-    }
-    
-    input[type="radio"] {
-      margin-right: 10px;
-    }
-    
-    button {
-      background-color: #4CAF50;
-      color: #fff;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    
-    button:hover {
-      background-color: #3e8e41;
-    }
-    
-    /* Canvas styles */
-    canvas {
-      max-width: 100%;
-      max-height: 700px;
-    }
-  </style>
-</head>
-<body>
-  <table>
-    <tr>
-      <td valign="top" width="400">
-        <h2>Панель управления</h2>
-        <p>Её тоже нет :( , но это пока что</p>
-      </td>
-      <td valign="top" width="400">
-        <h2>Субьективная оценка</h2>
-        <form>
-          <label>
-            <input type="radio" name="sud" value="-2">
-            Резко отрицательная (-2)
-          </label>
-          <br>
-          <label>
-            <input type="radio" name="sud" value="-1">
-            Отрицательная (-1)
-          </label>
-          <br>
-          <label>
-            <input type="radio" name="sud" value="0">
-            Нейтральная (0)
-          </label>
-          <br>
-          <label>
-            <input type="radio" name="sud" value="1">
-            Положительная (+1)
-          </label>
-          <br>
-          <button title="Завершить ввод субъективной оценки">Подача данных</button>
-          <input type="reset" title="Сброс формы">
-        </form>
-      </td>
-      <td width="250">
-        <h2>Эмоции</h2>
-        <canvas id="emotions" style="max-width:100%;max-height:700px"></canvas>
-      </td>
-    </tr>
-    <tr>
-      <td colspan="3">
-        <h2>Консоль</h2>
-        <p>Этот раздел нужен для отладки. После испытаний его удалят. Честно</p>
-        <textarea rows="10" cols="100" wrap="soft" align="left">Это консоль. Да-да, это именно она
-rows=10, cols = 25
-На релизе удалю все отсылки)</textarea>
-      </td>
-    </tr>
-    <tr>
-      <td colspan="3">
-        <h2>Помощь и контактная информация</h2>
-        <p>Создано в рамках конкурса "Инженеры транспорта" командой Ярославля LaboRad</p>
-        <p>Наш ВК - <a href="https://vk.com/laborad" target="_blank">https://vk.com/laborad</a></p>
-        <p><b>Демо-версия</b></p>
-      </td>
-    </tr>
-  </table>
-  <script src="package/mycharts.js"></script>
+<!--
+
+IDs
+Следущий - next
+Начать заново - reset
+Остановить - stop
+Показать/скрыть подробную информацию - info
+
+Пол человека - gender
+Возраст - age
+Пункт отправления - there
+Пункт прибывания - here
+
+Консоль - console
+Выбор камеры - camera
+Видео - video
+Микрофон - micro
+Устройство - device
+-->
+<html lang="ru">
+	<head>
+		<meta charset="utf-8">
+		<title>LaboRad - Детектор состояния человека</title>
+		<script src="package/dist/chart.umd.js"></script>    
+	</head>
+	<body>
+		<button title="Начать проверку следующего человека" color="yellow" id="next">Следующий</button>
+		<button title="Начать проверку заново" color="yellow" id="reset">Начать заново</button>
+		<button title="Остановить действующую проверку" color="yellow" id="stop">Остановить</button>
+		<button title="Показать/скрыть подробную информацию на видео" color="yellow" id="info">Показать подробную информацию</button>
+		<table border="0">
+			<tr>
+				<td valign=top>
+					<embed src="package/video.mp4" height=170 start="true" title="Вывод с камеры" id="video">
+					<font face="Segoe UI">
+					<br><b>Пол&nbsp&nbsp</b>
+					<select name="device" id="gender" size="1" title="Пол человека">
+					<option value="standard" selected>Выберите...
+					<option value="one">Мужской
+					<option value="two">Женский</select>
+					<br><b>Возраст&nbsp&nbsp</b><input type="text" id="age"></input>
+					<br><b>Место отправления/прибывания</b>
+					<br><input type="text" size=15 id="there"></input>&nbsp/&nbsp<input type="text" size=15 id="here"></input>
+					</font>
+				</td>
+				<td valign=top>
+					<table border="1" title="Основные критерии человека">
+						<tr>
+							<th colspan=2><font face="Segoe UI">Критерии</font></th>
+							<th><font face="Segoe UI">Баллы</font></th>
+						</tr>
+						<tr>
+							<td rowspan=2>
+								<font face="Segoe UI"><b>Эмоциональное состояние</b>
+								</font>
+							</td>
+							<td>
+								<font face="Segoe UI">
+								Лицо
+								</font>
+							</td>
+							<td bgcolor="FFE500"><font face="Segoe UI">7 / 10</font></td>
+						</tr>
+						<tr>
+							<td>
+								<font face="Segoe UI">
+								Голос
+								</font>
+							</td>
+							<td bgcolor="00FF"><font face="Segoe UI">9 / 10</font></td>
+						</tr>
+						<tr>
+							<td rowspan=3>
+								<font face="Segoe UI"><b>Физическое состояние</b>
+								</font>
+							</td>
+							<td>
+								<font face="Segoe UI">
+								Пульс
+								</font>
+							</td>
+							<td bgcolor="FFE500"><font face="Segoe UI">7 / 10</font></td>
+						</tr>
+						<tr>
+							<td>
+								<font face="Segoe UI">
+								Частота дыхания
+								</font>
+							</td>
+							<td bgcolor="00FF"><font face="Segoe UI">9 / 10</font></td>
+						</tr>
+						<tr>
+							<td>
+								<font face="Segoe UI">
+								Частота моргания
+								</font>
+							</td>
+							<td bgcolor="00FF"><font face="Segoe UI">9 / 10</font></td>
+						</tr>
+						<tr>
+							<td colspan=2><font face="Segoe UI"><b>Возраст</b></font></td>
+							<td bgcolor="orange"><font face="Segoe UI">8 / 10</font></td>
+						</tr>
+						<tr>
+							<td colspan=2><font face="Segoe UI"><b>Одежда</b></font></td>
+							<td bgcolor="orange"><font face="Segoe UI">8 / 10</font></td>
+						</tr>
+						<tr>
+							<td colspan=2><font face="Segoe UI"><b>Общая оценка</b></font></td>
+							<td bgcolor="FFE500"><font face="Segoe UI">7 / 10</font></td>
+						</tr>
+					</table>
+				</td>
+				<td><font face="Segoe UI" size=4><center><b>Частота дыхания</b></center></font><canvas id="vzdoh" style="max-width:100%;max-height:100px"></canvas>
+				<font face="Segoe UI" size=4><center><b>Частота моргания</b></center></font><canvas id="morganie" style="max-width:100%;max-height:100px"></canvas></td>
+				<td><font face="Segoe UI" size=4><center><b>Пульс</b><br><img src="package/back.jpg" width="250px"></center></center></font><canvas id="pulse" style="max-width:100%;max-height:700px"></canvas></td>
+			</tr>
+			<tr>
+				<td valign="top"><font face="Segoe UI" size=4><b>Панель управления</b><br></font>
+					<font face="Segoe UI"><b>Устройство</b></font>
+					<form>
+					<select name="device" id="device" size="1" title="Выбор устройства">
+					<option value="standard" selected>Устройство 1
+					<option value="one">Устройство 2
+					<option value="two">Неизвестное устройство
+					</select>&nbsp<button title="Применить новое устройство" color="yellow">Применить</button></form>
+					
+					<font face="Segoe UI"><b>Камера</b></font>
+					<form>
+					<select name="camera" size="1" title="Выбор камеры">
+					<option value="standard" selected>Стандартная камера
+					<option value="one">Встроенная камера
+					<option value="two">Неизвестное устройство
+					</select>&nbsp<button title="Применить новую камеру" color="yellow">Применить</button></form>
+					
+					<font face="Segoe UI"><b>Микрофон</b></font>
+					<form>
+					<select name="microphone" id="micro" size="1" title="Выбор микрофона">
+					<option value="standard" selected>2- High Definition Audio Device
+					<option value="one">Microfone
+					<option value="two">Неизвестное устройство
+					</select>&nbsp<button title="Применить новый микрофон" color="yellow">Применить</button></form>
+				</td>
+				<td valign="top" width=400>
+					<font face="Segoe UI" size=4><b><center>Субьективная оценка</center></b>
+					<form>
+						<b>Общая оценка</b><br>
+						<input type="radio" name="sud">-2
+						<input type="radio" name="sud">-1
+						<input type="radio" name="sud">0
+						<input type="radio" name="sud">+1<br>
+						
+						<br><b>1-ый вопрос</b><br><input type="text" id="first"></input>
+						<br><br><b>2-ой вопрос</b><br>
+						<input type="checkbox" name="sud">1
+						<input type="checkbox" name="sud">2
+						<input type="checkbox" name="sud">3
+						<input type="checkbox" name="sud">4<br>
+					</form>
+					</font>
+				</td>
+				<td width=300><font face="Segoe UI" size=4><center><b>Эмоции</b></center></font><canvas id="emotions" style="max-width:100%;max-height:700px"></canvas></td>
+			</tr>
+		</table>
+		<br><br><br><br><br><br><br><br><br>
+		<!-- Начало консоли -->
+		<font face="Segoe UI"><b>Консоль</b><br>Этот раздел нужен для отладки. После испытаний его удалят. Честно</font><br>
+		<textarea rows=10 cols=100 wrap="soft" align="left" id="console">Это консоль. Да-да, это именно она
+rows=10, cols = 25</textarea><br>
+		<!-- Конец консоли -->
+		
+		<font face="Segoe UI">
+			<br><b>Помощь и контактная информация</b>
+			<br>Создано в рамках конкурса "Инженеры транспорта" командой Ярославля LaboRad
+			<br>Наш ВК - <a href="https:\\vk.com\laborad" target="_blank">https:\\vk.com\laborad</a>
+			<br><br><b>Демо-версия.&nbsp</b>alpha4
+		</font>
+	</body>
+	
+	<script src="package/mycharts.js"></script>
   <script src="package/handler.js"></script>
-</body>
 </html>
+
