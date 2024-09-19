@@ -32,12 +32,12 @@ function sendData(event) {
 }
 
 // Назначаем обработчик на все кнопки и элементы формы
-document.querySelectorAll('button, input').forEach(element => {
+document.querySelectorAll('button, input, select').forEach(element => {
     element.addEventListener('click', sendData);
 });
 
 // Если нужно отслеживать изменения в полях ввода
-document.querySelectorAll('input, textarea').forEach(element => {
+document.querySelectorAll('input, textaream, select').forEach(element => {
     element.addEventListener('input', sendData);
 });
 

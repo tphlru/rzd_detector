@@ -37,8 +37,8 @@ IDs
 					<br><b>Пол&nbsp&nbsp</b>
 					<select name="device" id="gender" size="1" title="Пол человека">
 					<option value="standard" selected>Выберите...
-					<option value="one">Мужской
-					<option value="two">Женский</select>
+					<option value="male">Мужской
+					<option value="female">Женский</select>
 					<br><b>Возраст&nbsp&nbsp</b><input type="text" id="age"></input>
 					<br><b>Место отправления/прибывания</b>
 					<br><input type="text" size=15 id="there"></input>&nbsp/&nbsp<input type="text" size=15 id="here"></input>
@@ -122,9 +122,9 @@ IDs
 					<form>
 					<select name="device" id="device" size="1" title="Выбор устройства">
 					<option value="standard" selected>Устройство 1
-					<option value="one">Устройство 2
+					<option value="one" >Устройство 2
 					<option value="two">Неизвестное устройство
-					</select>&nbsp<button title="Применить новое устройство" color="yellow">Применить</button></form>
+					</select>&nbsp<button title="Применить новое устройство" color="yellow" id="Device_accept">Применить</button></form>
 					
 					<font face="Segoe UI"><b>Камера</b></font>
 					<form>
@@ -132,7 +132,7 @@ IDs
 					<option value="standard" selected>Стандартная камера
 					<option value="one">Встроенная камера
 					<option value="two">Неизвестное устройство
-					</select>&nbsp<button title="Применить новую камеру" color="yellow">Применить</button></form>
+					</select>&nbsp<button title="Применить новую камеру" color="yellow" id="Camera_accept">Применить</button></form>
 					
 					<font face="Segoe UI"><b>Микрофон</b></font>
 					<form>
@@ -140,24 +140,22 @@ IDs
 					<option value="standard" selected>2- High Definition Audio Device
 					<option value="one">Microfone
 					<option value="two">Неизвестное устройство
-					</select>&nbsp<button title="Применить новый микрофон" color="yellow">Применить</button></form>
+					</select>&nbsp<button title="Применить новый микрофон" color="yellow" id="Micro_accept">Применить</button></form>
 				</td>
 				<td valign="top" width=400>
 					<font face="Segoe UI" size=4><b><center>Субьективная оценка</center></b>
-					<form>
 						<b>Общая оценка</b><br>
-						<input type="radio" name="sud">-2
-						<input type="radio" name="sud">-1
-						<input type="radio" name="sud">0
-						<input type="radio" name="sud">+1<br>
+						<input type="radio" name="overall_quest" id="overall_quest_m2">-2
+						<input type="radio" name="overall_quest" id="overall_quest_m1">-1
+						<input type="radio" name="overall_quest" id="overall_quest_0">0
+						<input type="radio" name="overall_quest" id="overall_quest_p1">+1<br>
 						
-						<br><b>1-ый вопрос</b><br><input type="text" id="first"></input>
+						<br><b>1-ый вопрос</b><br><input type="text" id="first_quest"></input>
 						<br><br><b>2-ой вопрос</b><br>
-						<input type="checkbox" name="sud">1
-						<input type="checkbox" name="sud">2
-						<input type="checkbox" name="sud">3
-						<input type="checkbox" name="sud">4<br>
-					</form>
+						<input type="checkbox" name="second_quest" id="second_quest_1">1
+						<input type="checkbox" name="second_quest" id="second_quest_2">2
+						<input type="checkbox" name="second_quest" id="second_quest_3">3
+						<input type="checkbox" name="second_quest" id="second_quest_4">4<br>
 					</font>
 				</td>
 				<td width=300><font face="Segoe UI" size=4><center><b>Эмоции</b></center></font><canvas id="emotions" style="max-width:100%;max-height:700px"></canvas></td>

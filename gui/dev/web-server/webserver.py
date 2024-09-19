@@ -2,6 +2,8 @@ from flask import Flask, send_from_directory, render_template
 from flask import request, jsonify
 from flask_cors import CORS
 
+import gui_controller
+
 # import cv2
 # import base64
 # from PIL import Image
@@ -31,6 +33,33 @@ def submit():
     data = request.get_json()
     if not data.get("value").isascii():
         data["value"] = data["value"].encode().decode()
+    ids = {
+        "next": gui_controller.next_client,
+        "reset": gui_controller.reset,
+        "stop": gui_controller.stop,
+        "info": gui_controller.info,
+        "Device_accept": gui_controller.Device_accept,
+        "Camera_accept": gui_controller.Camera_accept,
+        "Micro_accept": gui_controller.Micro_accept,
+        "overall_quest_m2": gui_controller.overall_quest_m2,
+        "overall_quest_m1": gui_controller.overall_quest_m1,
+        "overall_quest_0": gui_controller.overall_quest_0,
+        "overall_quest_p1": gui_controller.overall_quest_p1,
+        "second_quest_1": gui_controller.second_quest_1,
+        "second_quest_2": gui_controller.second_quest_2,
+        "second_quest_3": gui_controller.second_quest_3,
+        "second_quest_4": gui_controller.second_quest_4,
+        "first_quest": gui_controller.first_quest,
+        "there": gui_controller.there,
+        "here": gui_controller.here,
+        "age": gui_controller.age,
+        "gender": gui_controller.gender
+    }
+    changed_ids =["here", "age", "gender", "there", "here", "Device_accept", "Camera_accept", "Micro_accept", "first_quest"]
+    if data.get("id") != None and data.get("id") in changed_ids:
+        ids[data.get("id")](data.get("value"))
+    elif data.get("id") != None and data.get("id") not in changed_ids:
+        ids[data.get("id")]()
     print(data)
     return jsonify(data)
 
