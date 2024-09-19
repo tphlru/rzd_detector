@@ -1,15 +1,23 @@
 # Детектор состояния человека - репозиторий команды `[LaboRad]`
+Требуется python = ">=3.9.0,<3.11"
 
 ```
 pip install poetry cython
-flit build
-pip install -e .
+poetry lock
+poetry install
 ```
 
 ```bash
 pip install -r ../requirements.txt
 conda install compilers libstdcxx-ng=12
 conda install webrtcvad
+```
+
+Для публикации:
+```
+poetry lock
+poetry install
+poetry publish --build
 ```
 
 ### Known Errors Fixes
