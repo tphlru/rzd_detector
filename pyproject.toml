@@ -39,7 +39,7 @@ tensorflow = ">=2.15.0"  # Более старые версии не подде�
 scikit-learn = "*"
 scikit-image = "*"
 scikit-posthocs = "*"
-torch = "*"  # Или конкретную версию, например, ==2.3.0
+torch = "*"  # Или  ==2.3.0
 torchaudio = "*"
 torchvision = "*"
 opencv-python = "*"
