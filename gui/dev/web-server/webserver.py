@@ -1,8 +1,9 @@
-from flask import Flask, send_from_directory, render_template
+from flask import Flask, send_from_directory, render_template, Response
 from flask import request, jsonify
 from flask_cors import CORS
 
 import gui_controller
+import requests
 
 # import cv2
 # import base64
@@ -11,6 +12,19 @@ import gui_controller
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Разрешаем CORS для всех маршрутов
 
+@app.route('/video_feed')
+def video_feed():
+    # Открываем поток с локального сервера (localhost:8000)
+    stream_url = 'http://192.168.1.68:8000/stream.mjpg'
+    stream = requests.get(stream_url, stream=True)
+    
+    def generate():
+        for chunk in stream.iter_content(chunk_size=1024):
+            if chunk:
+                yield chunk
+
+    # Передаем клиентам видео-поток
+    return Response(generate(), content_type='multipart/x-mixed-replace; boundary=frame')
 
 @app.route("/")
 def dog():
