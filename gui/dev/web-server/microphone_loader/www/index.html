@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ввод - микрофон</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+      }
+
+      h1, h2 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+      }
+
+      h1 {
+        font-size: 36px;
+      }
+
+      h2 {
+        font-size: 24px;
+        margin-top: 40px;
+      }
+
+      form {
+        margin-bottom: 20px;
+      }
+
+      input[type="checkbox"] {
+        margin-right: 10px;
+      }
+
+      button {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #2980b9;
+      }
+
+      input[type="file"] {
+        margin-bottom: 10px;
+      }
+
+      input[type="submit"] {
+        background-color: #2ecc71;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      input[type="submit"]:hover {
+        background-color: #27ae60;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Ввод аудио (микрофон) в режиме реального времени</h1>
+    <button onclick="toggleRecord()" id="record">Начать</button>
+
+    <h2>Загрузить аудио-файл (виртуальный микрофон)</h2>
+    <form enctype="multipart/form-data" action="/upload" method="post">
+      <label for="file1">Выбрать файл:</label>
+      <input type="file" name="file1" id="file1" />
+      <br /><br />
+      <input type="submit" value="Загрузить" />
+    </form>
+
+    <script src="libopus.js"></script>
+    <script src="opus.js"></script>
+    <script src="handler.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>

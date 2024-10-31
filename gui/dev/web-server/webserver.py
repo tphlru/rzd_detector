@@ -1,35 +1,35 @@
 from flask import Flask, send_from_directory, render_template, Response
-from flask import request, jsonify
+from flask import request, jsonify, redirect
 from flask_cors import CORS
 
 import gui_controller
 import requests
 
-# import cv2
+import cv2
+import numpy as np
+import subprocess
+import time
+
 # import base64
 # from PIL import Image
 
+
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Разрешаем CORS для всех маршрутов
-
-@app.route('/video_feed')
-def video_feed():
-    # Открываем поток с локального сервера (localhost:8000)
-    stream_url = 'http://192.168.1.68:8000/stream.mjpg'
-    stream = requests.get(stream_url, stream=True)
-    
-    def generate():
-        for chunk in stream.iter_content(chunk_size=1024):
-            if chunk:
-                yield chunk
-
-    # Передаем клиентам видео-поток
-    return Response(generate(), content_type='multipart/x-mixed-replace; boundary=frame')
 
 @app.route("/")
 def dog():
     return render_template("index.html")
 
+@app.route("/audio-input")
+def mic():
+    # start listener
+    try:
+        # subprocess.Popen(["/home/stimur/miniforge3/envs/ti/bin/python", "/home/timur/Projects/rzd_detector/gui/dev/web-server/microphone_loader/server.py"])
+        time.sleep(0.5)
+    except OSError:
+        print("Microphone listener already started")
+    return redirect("http://localhost:8888", code=302) 
 
 @app.route("/mobile")
 def mob():
@@ -69,14 +69,19 @@ def submit():
         "age": gui_controller.age,
         "gender": gui_controller.gender
     }
-    changed_ids =["here", "age", "gender", "there", "here", "Device_accept", "Camera_accept", "Micro_accept", "first_quest"]
-    if data.get("id") != None and data.get("id") in changed_ids:
-        ids[data.get("id")](data.get("value"))
-    elif data.get("id") != None and data.get("id") not in changed_ids:
-        ids[data.get("id")]()
+    if data.get("id") != None:
+        changed_ids =["here", "age", "gender", "there", "here", "Device_accept", "Camera_accept", "Micro_accept", "first_quest"]
+        if data.get("id") in changed_ids:
+            ids[data.get("id")](data.get("value"))
+        elif data.get("id") not in changed_ids:
+            ids[data.get("id")]()
     print(data)
     return jsonify(data)
 
 
-if __name__ == "__main__":
+
+def run():
     app.run(host="0.0.0.0", port=46578)
+
+if __name__ == "__main__":
+    run()
