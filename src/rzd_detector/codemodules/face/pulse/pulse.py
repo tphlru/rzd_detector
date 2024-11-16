@@ -4,7 +4,6 @@ import statistics
 from random import choice
 import matplotlib.pyplot as plt
 
-
 from pyVHR.BPM.BPM import BPM_clustering
 from pyVHR.BVP.BVP import RGB_sig_to_BVP
 from pyVHR.BVP.filters import BPfilter, apply_filter
@@ -26,6 +25,7 @@ from rzd_detector.common.utils import (
 
 logger = logging.getLogger(__name__)
 
+
 # cpu_ICA vs cpu_PBV = cpu_PBV
 # cpu_PBV vs cpu_CHROM = cpu_PBV
 # cpu_PBV vs cpu_OMIT = cpu_PBV
@@ -33,9 +33,9 @@ logger = logging.getLogger(__name__)
 
 
 def get_bpm_with_pbv(
-    videoFileName: str,
-    cuda: bool = True,
-    winsize: int = 4,
+        videoFileName: str,
+        cuda: bool = True,
+        winsize: int = 4,
 ) -> tuple:
     """
     Извлекает пульс объёма крови (BVP) из видеофайла и оценивает количество ударов в минуту (BPM).
@@ -150,7 +150,7 @@ def get_bpm_with_pbv(
 
 
 def process_pulse_info(
-    bpm: list, base_offset: int = 10, show_plot: bool = True, plot_path: str = None
+        bpm: list, base_offset: int = 10, show_plot: bool = True, plot_path: str = None
 ) -> tuple:
     """Выполнить оценку полученных значений пульса.
 
@@ -176,7 +176,7 @@ def process_pulse_info(
         bpm.extend(choice(bpm) for _ in range(5 - len(bpm)))
 
     assert (
-        base_offset > -40 and base_offset < 40
+            base_offset > -40 and base_offset < 40
     ), "base_offset must be between -40 and 40"
 
     bpm = add_offset_to_values(bpm, base_offset)  # Добавляем смещение
@@ -224,7 +224,7 @@ def process_pulse_info(
 
 
 def evaluate_pulse_results(
-    base_mean: float, trend: int, high_med: float, midpoints: list, tops_values: list
+        base_mean: float, trend: int, high_med: float, midpoints: list, tops_values: list
 ) -> int:
     """Выполнить оценку по шкале баллов на основе полученных данных о значениях и изменениях пульса
 
@@ -242,7 +242,7 @@ def evaluate_pulse_results(
     logger.info("Оценка значений пульса:")
 
     if (high_med - base_mean > 12 and base_mean > 80) or max(midpoints) - min(
-        midpoints
+            midpoints
     ) > 12:
         points -= 1
         logger.info("- Пульс не стабилен! (-1 балл)")
