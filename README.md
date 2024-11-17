@@ -2,7 +2,7 @@
 
 Основной графический интерфейс находиться в gui/laborad_detector
 
-Для работы требуется python = ">=3.9.0,<3.11"
+Для работы требуется Python = ">=3.9.0,<3.11"
 
 ### Установка библиотек
 
@@ -68,7 +68,7 @@ python3 -c "import os; os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'; import tensorfl
 Run web server:
 `cd gui/dev/web-server/ && gunicorn -w 4 'webserver:app' -b 0.0.0.0:46578`
 
-Также мы используем poetry - https://poethepoet.natn.io/poetry_plugin.html#hooking-into-poetry-commands
+Также мы используем poetry и https://poethepoet.natn.io/poetry_plugin.html#hooking-into-poetry-commands
 
 Все права защищены. Копирование и частичное использование строго запрещено. Только для образовательных целей.
 All rights reserved. Copying and partial use is strictly prohibited. For educational purposes only.
