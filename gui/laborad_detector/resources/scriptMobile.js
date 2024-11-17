@@ -34,19 +34,15 @@ window.addEventListener('click', function() {
 });
 
 // липкое меню
-document.addEventListener("DOMContentLoaded", function() {
-    if (window.matchMedia("(pointer: coarse)").matches) {
-        const menu = document.createElement("nav");
-        menu.id = "nav-fixed";
-        menu.align = "center";
-        menu.innerHTML = `
-        <form action="index.html#videoPanel"><button id="ne" class="bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto">Видео</button></form>
-        <form action="index.html#data"><button id="ne" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto">Данные</button></form>
-        <form action="index.html#criteriaTable"><button id="ne" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto">Таблица</button></form>
-        <form action="index.html#grafics"><button id="ne" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto">Графики</button></form>`;
-        document.body.appendChild(menu);
-    }
-});
+const menu = document.createElement("nav");
+menu.id = "nav-fixed";
+menu.align = "center";
+menu.innerHTML = `
+<form action="index.html#videoPanel"><button id="ne" class="bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto">Видео</button></form>
+<form action="index.html#data"><button id="ne" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto">Данные</button></form>
+<form action="index.html#criteriaTable"><button id="ne" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto">Таблица</button></form>
+<form action="index.html#grafics"><button id="ne" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto">Графики</button></form>`;
+document.body.appendChild(menu);
 
 
 // таблица
@@ -147,8 +143,6 @@ function init() {
 }
 // Run initialization when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', init);
-const xValuesEF = ["Спокойствие", "Радость", "Грусть", "Злость"];
-const yValuesEF = [60, 10, 8, 2];
 var barColors = ["black", "orange", "blue", "red", "brown"];
 const xValuesEV = ["Спокойствие", "Радость", "Грусть", "Злость"];
 const yValuesEV = [50, 15, 11, 1];
