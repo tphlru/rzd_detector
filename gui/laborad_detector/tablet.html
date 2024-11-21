@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
     <head>
         <meta charset="utf-8">
             <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -19,38 +19,236 @@
         </meta>
     </head>
     <body>
-        <div id="e__123">
-            <div id="e__13">
-                <div id="e__12">
-                </div>
-                <div id="e__15">
-                </div>
-                <div id="e__14">
-                </div>
-                <div id="e__16">
-                </div>
-                <div id="e__18">
-                </div>
-                <div id="e__110">
-                </div>
-                <div id="e__112">
-                </div>
-                <div id="e__114">
-                    Следующий
-                </div>
-                <div id="e__115">
-                    Начать заново
-                </div>
-                <div id="e__117">
-                    Остановить
-                </div>
-                <div id="e__121">
-                    Показать запись
-                </div>
-                <div id="e__119">
-                    Показать подробную информацию
-                </div>
-            </div>
-        </div>
+        <table bgcolor="grey">
+            <tr>
+                <td bgcolor="grey" id="ii">
+                    <div class="bg-white rounded-lg shadow-md p-6" id="mainPanel">
+                        <h1 class="text-2xl font-bold text-center text-gray-800">
+                            Панель управления
+                        </h1>
+                        <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="next">
+                            Следующий
+                        </button>
+                        <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="restart">
+                            Начать заново
+                        </button>
+                        <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="stop">
+                            Остановить
+                        </button>
+                        <button class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="more">
+                            Показать подробную информацию
+                        </button>
+                        <button class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="videoBtn" onclick="showPopupVideo()">
+                            Показать запись
+                        </button>
+                        <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="infobtn">
+                            О нас
+                        </button>
+                    </div>
+                </td>
+                <td colspan="2">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8" id="data">
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h2 class="text-xl font-semibold mb-4">
+                                Данные
+                            </h2>
+                            <!-- First Nested Panel (No Title) -->
+                            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">
+                                            Пол
+                                        </label>
+                                        <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="genderSelect">
+                                            <option disabled="" selected="">
+                                                Выберите...
+                                            </option>
+                                            <option>
+                                                Мужской
+                                            </option>
+                                            <option>
+                                                Женский
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">
+                                            Возраст
+                                        </label>
+                                        <input class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="ageInput" type="number">
+                                        </input>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">
+                                            Место посадки/высадки
+                                        </label>
+                                        <div class="flex mt-1">
+                                            <input class="block w-full rounded-l-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="departureInput" type="text">
+                                                <label class="block text-sm font-medium text-gray-700">
+                                                    /
+                                                </label>
+                                                <input class="block w-full rounded-r-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="arrivalInput" type="text">
+                                                </input>
+                                            </input>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Second Nested Panel (With Title) -->
+                            <div class="bg-white rounded-lg shadow-md p-6">
+                                <h3 class="text-lg font-semibold mb-4">
+                                    Социальное взаимодействие
+                                </h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">
+                                            Субъективная оценка
+                                        </label>
+                                        <div class="mt-2 flex items-center space-x-4">
+                                            <label class="inline-flex items-center">
+                                                <input class="form-radio" name="rating" type="radio" value="-2">
+                                                    <span class="ml-2">
+                                                        -2
+                                                    </span>
+                                                </input>
+                                            </label>
+                                            <label class="inline-flex items-center">
+                                                <input class="form-radio" name="rating" type="radio" value="-1">
+                                                    <span class="ml-2">
+                                                        -1
+                                                    </span>
+                                                </input>
+                                            </label>
+                                            <label class="inline-flex items-center">
+                                                <input class="form-radio" name="rating" type="radio" value="0">
+                                                    <span class="ml-2">
+                                                        0
+                                                    </span>
+                                                </input>
+                                            </label>
+                                            <label class="inline-flex items-center">
+                                                <input class="form-radio" name="rating" type="radio" value="1">
+                                                    <span class="ml-2">
+                                                        +1
+                                                    </span>
+                                                </input>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">
+                                            Первый вопрос
+                                        </label>
+                                        <input class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="question1" type="text">
+                                        </input>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">
+                                            Второй вопрос
+                                        </label>
+                                        <div class="mt-2 flex items-center space-x-4">
+                                            <label class="inline-flex items-center">
+                                                <input class="form-checkbox" name="question2" type="checkbox" value="1">
+                                                    <span class="ml-2">
+                                                        1
+                                                    </span>
+                                                </input>
+                                            </label>
+                                            <label class="inline-flex items-center">
+                                                <input class="form-checkbox" name="question2" type="checkbox" value="2">
+                                                    <span class="ml-2">
+                                                        2
+                                                    </span>
+                                                </input>
+                                            </label>
+                                            <label class="inline-flex items-center">
+                                                <input class="form-checkbox" name="question2" type="checkbox" value="3">
+                                                    <span class="ml-2">
+                                                        3
+                                                    </span>
+                                                </input>
+                                            </label>
+                                            <label class="inline-flex items-center">
+                                                <input class="form-checkbox" name="question2" type="checkbox" value="4">
+                                                    <span class="ml-2">
+                                                        4
+                                                    </span>
+                                                </input>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-md p-6" id="criteriaTable">
+                            <h2 class="text-xl font-semibold mb-4">
+                                Критерии
+                            </h2>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Критерии
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Подуровни
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Баллы
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Общий балл
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200" id="criteriaTableBody">
+                                        <!-- Table rows will be dynamically populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6 mt-8" id="grafics">
+                        <h2 class="text-xl font-semibold mb-4">
+                            Графики
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-8">
+                            <div class="bg-white rounded-lg shadow-md p-6">
+                                <h3 class="text-lg font-semibold mb-4">
+                                    Пульс
+                                </h3>
+                                <canvas id="pulseChart">
+                                </canvas>
+                            </div>
+                            <div class="bg-white rounded-lg shadow-md p-6">
+                                <h3 class="text-lg font-semibold mb-4">
+                                    Частота дыхания
+                                </h3>
+                                <canvas id="breathingChart">
+                                </canvas>
+                            </div>
+                            <div class="bg-white rounded-lg shadow-md p-6">
+                                <h3 class="text-lg font-semibold mb-4">
+                                    Частота моргания
+                                </h3>
+                                <canvas id="blinkingChart">
+                                </canvas>
+                            </div>
+                            <div class="bg-white rounded-lg shadow-md p-6">
+                                <h3 class="text-lg font-semibold mb-4">
+                                    Эмоции
+                                </h3>
+                                <canvas id="emotionsChart">
+                                </canvas>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        
+        <script defer="" src="resources/scriptTablet.js">
+        </script>
     </body>
 </html>
