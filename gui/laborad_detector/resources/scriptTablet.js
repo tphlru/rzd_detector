@@ -1,4 +1,5 @@
 // popup
+
 const popupOverlay = document.getElementById("popup-overlay");
 const popup = document.getElementById("popup");
 
