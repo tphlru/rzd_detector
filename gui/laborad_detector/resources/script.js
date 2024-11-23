@@ -34,11 +34,11 @@ window.addEventListener('click', function() {
 });
 
 
-document.addEventListener("DOMContentLoaded", function() { 
-    if (window.matchMedia("(pointer: coarse)").matches && max(window.innerWidth,window.innerHeight)/min(window.innerWidth,window.innerHeight)>2) {
+document.addEventListener("DOMContentLoaded", function() {
+    if (window.matchMedia("(pointer: coarse)").matches && Math.max(window.innerWidth, window.innerHeight) / Math.min(window.innerWidth, window.innerHeight) > 2) {
         window.location.replace("mobile.html");
-    } else if ((window.matchMedia("(pointer: coarse)").matches && window.innerWidth<window.innerHeight)) {
-        window.location.replace("table.html");
+    } else if ((window.matchMedia("(pointer: coarse)").matches && window.innerWidth < window.innerHeight)) {
+        window.location.replace("tablet.html");
     }
 });
 
@@ -211,5 +211,19 @@ new Chart("blinkingChart", {
         plugins: {
             legend: false,
         }
+    }
+});
+
+document.addEventListener('keydown', function(event) {
+    if (event.key == "v") {
+        window.location.replace("index.html#videoPanel");
+    } else if (event.key == "d") {
+        window.location.replace("index.html#dataPanel");
+    } else if (event.key == "p" || event.key == "m") {
+        window.location.replace("index.html#managementConsole");
+    } else if (event.key == "t") {
+        window.location.replace("index.html#criteriaTable");
+    } else if (event.key == "g") {
+        window.location.replace("index.html#grafics");
     }
 });

@@ -2,23 +2,32 @@
 
 Версия - 2024.11.22b
 
+### Hotkeys
+```
+V - Видео
+D - Данные
+P | M - Панель управления
+T - Таблица
+G - Графики 
+```
+
 ### ID
 ```
-видео - video
-следующий - next
-заново - restart
-остановить - stop
-показать подр информацию - more
+Видео - video
+Следующий - next
+Заново - restart
+Остановить - stop
+Показать подробную информацию - more
 
-выбор устройства - deviceSelect
+Выбор устройства - deviceSelect
 
-пол - genderSelect
-возраст - ageInput
-пункт отправки/прибытия - departureInput/arrivalInput
-вопрос1 - question1
-субъективная оценка и второй вопрос - в классах
+Пол - genderSelect
+Возраст - ageInput
+Пункт отправки/прибытия - departureInput/arrivalInput
+Вопрос1 - question1
+Субъективная оценка и второй вопрос содержатся в классах
 
-таблица - criteriaTable
+Таблица - criteriaTable
 pulseChart
 breathingChart
 blinkingChart

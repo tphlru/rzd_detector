@@ -61,27 +61,26 @@
     /* добавляет пространство вокруг чекбокса */
 }
 table {
-	width: 100%;
-	padding-bottom: 0%;
+    width: 100%;
+    padding-bottom: 0%;
 }
 #ii {
-	width: 300px;
+    width: 300px;
 }
 #mainPanel {
-	height: 100%;
-	margin: 10px,10px,10px,10px;
+    height: 100%;
+    margin: 10px, 10px, 10px, 10px;
 }
 body, html, table {
-	height: 90%;
+    height: 90%;
 }
-
 #next, #restart, #stop, #more, #videoBtn {
-	width:  250px;
-	margin-top: 5px;
+    width: 250px;
+    margin-top: 5px;
 }
 #infobtn {
-	width:  250px;
-	margin-top: 20px;
+    width: 250px;
+    margin-top: 20px;
 }
 .criteria-low {
     background-color: #FFCCCB;
