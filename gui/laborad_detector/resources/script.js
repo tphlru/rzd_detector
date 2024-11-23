@@ -1,4 +1,4 @@
-// popup
+// popups
 const popupOverlay = document.getElementById("popup-overlay");
 const popup = document.getElementById("popup");
 
@@ -34,9 +34,11 @@ window.addEventListener('click', function() {
 });
 
 
-document.addEventListener("DOMContentLoaded", function() {
-    if (window.matchMedia("(pointer: coarse)").matches && window.screen.width < window.screen.height) {
+document.addEventListener("DOMContentLoaded", function() { 
+    if (window.matchMedia("(pointer: coarse)").matches && max(window.innerWidth,window.innerHeight)/min(window.innerWidth,window.innerHeight)>2) {
         window.location.replace("mobile.html");
+    } else if ((window.matchMedia("(pointer: coarse)").matches && window.innerWidth<window.innerHeight)) {
+        window.location.replace("table.html");
     }
 });
 
