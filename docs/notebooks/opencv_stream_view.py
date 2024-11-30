@@ -2,7 +2,7 @@ import cv2
 import requests
 import numpy as np
 
-url = 'http://tphl.duckdns.org/video_feed'
+url = 'http://raspberrypi.local:8000/stream.mjpg'
 
 stream = requests.get(url, stream=True)
 
@@ -15,12 +15,12 @@ for chunk in stream.iter_content(chunk_size=1024):
 
     # Поиск начала и конца кадра (JPEG изображения)
     start_index = byte_buffer.find(b'\xff\xd8')  # Начало JPEG
-    end_index = byte_buffer.find(b'\xff\xd9')    # Конец JPEG
+    end_index = byte_buffer.find(b'\xff\xd9')  # Конец JPEG
 
     # Если нашли полный JPEG кадр
     if start_index != -1 and end_index != -1:
-        jpg_frame = byte_buffer[start_index:end_index+2]
-        byte_buffer = byte_buffer[end_index+2:]
+        jpg_frame = byte_buffer[start_index:end_index + 2]
+        byte_buffer = byte_buffer[end_index + 2:]
 
         # Преобразование байтов в изображение
         image = cv2.imdecode(np.frombuffer(jpg_frame, dtype=np.uint8), cv2.IMREAD_COLOR)
