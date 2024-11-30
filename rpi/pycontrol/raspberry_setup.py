@@ -1,7 +1,7 @@
 # raspberry_setup.py
 """
 Скрипт начальной настройки Raspberry Pi.
-Запуск: pyinfra --user timpy1 --password "rs2D><hHwH" inventory.py raspberry_setup.py
+Запуск: pyinfra --user username --password "pass" inventory.py raspberry_setup.py
 """
 
 from pyinfra.operations import apt, server, files
@@ -50,7 +50,7 @@ server.shell(
 
 check_if_installed = host.get_fact(FindFiles, "~/.pyenv/bin/pyenv", quote_path=True)
 
-if "pye3nv" not in check_if_installed:
+if "pyenv" not in check_if_installed:
     # Проверка и удаление старой установки pyenv
     server.shell(
         name='Удаление ~/.pyenv при наличии',
