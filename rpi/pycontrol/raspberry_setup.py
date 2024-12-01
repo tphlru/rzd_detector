@@ -7,6 +7,7 @@
 from pyinfra.operations import apt, server, files
 from pyinfra.facts.files import FindFiles
 from pyinfra import host
+from deploy import deploy
 
 username = 'timpy1'
 pyenv = f"/home/{username}/.pyenv/bin/pyenv"
@@ -50,50 +51,52 @@ server.shell(
 
 check_if_installed = host.get_fact(FindFiles, "~/.pyenv/bin/pyenv", quote_path=True)
 
-if "pyenv" not in check_if_installed:
-    # Проверка и удаление старой установки pyenv
-    server.shell(
-        name='Удаление ~/.pyenv при наличии',
-        commands=[f'rm -rf /home/{username}/.pyenv']
-    )
-
-    # Установка pyenv 
-    server.shell(
-        name='Установка pyenv',
-        commands=[
-            'curl https://pyenv.run | bash'
-        ]
-    )
-
-    # Конфигурация .bashrc
-    lines = [
-        f'export PYENV_ROOT="/home/{username}/.pyenv"',
-        'export PATH="$PYENV_ROOT/bin:$PATH"',
-        'eval "$(pyenv init --path)"'
+# Проверка и удаление старой установки pyenv
+server.shell(
+    name='Удаление ~/.pyenv при наличии',
+    commands=[f'rm -rf /home/{username}/.pyenv']
+)
+# Установка pyenv 
+server.shell(
+    name='Установка pyenv',
+    commands=[
+        'curl https://pyenv.run | bash'
     ]
-    lines = '\n'.join(lines)
-    files.line(
-        name='Добавление pyenv в .bashrc',
-        path=f'/home/{username}/.bashrc',
-        line=lines
-    )
+)
+# Конфигурация .bashrc
+lines = [
+    f'export PYENV_ROOT="/home/{username}/.pyenv"',
+    'export PATH="$PYENV_ROOT/bin:$PATH"',
+    'eval "$(pyenv init --path)"',
+    'eval "$(pyenv virtualenv-init -)"'
+]
+lines = '\n'.join(lines)
+files.line(
+    name='Добавление pyenv в .bashrc',
+    path=f'/home/{username}/.bashrc',
+    line=lines
+)
+# Python установка
+server.shell(
+    commands=[
+        f'. /home/{username}/.bashrc',
+    ]
+)
+server.shell(
+    name='Обновление pyenv и установка Python 3.10',
+    commands=[
+        f'{pyenv} update',
+        f'{pyenv} install 3.10.12 -s',
+        f'{pyenv} global 3.10.12'
+    ]
+)
 
-    # Python установка
-    server.shell(
-        commands=[
-            f'. /home/{username}/.bashrc',
-        ]
-    )
-
-    server.shell(
-        name='Обновление pyenv и установка Python 3.10',
-        commands=[
-            f'{pyenv} update',
-            f'{pyenv} install 3.10'
-        ]
-    )
-else:
-    print("pyenv уже установлен")
+server.shell(
+    name='Создание виртуального окружения pyenv',
+    commands=[
+        f'{pyenv} virtualenv 3.10.12 piworkerenv'
+    ]
+)
 
 
-
+# deploy(pyenv)
