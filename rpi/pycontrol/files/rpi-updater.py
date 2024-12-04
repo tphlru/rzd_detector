@@ -1,3 +1,5 @@
+# НЕ ИЗМЕНЯТЬ ЭТОТ ФАЙЛ, вносите изменения в ветке rpi
+
 import time
 import subprocess
 import sys
@@ -9,6 +11,7 @@ import pwd
 import zipfile
 
 from piworker import get_current_device
+from pre_start import pre_start
 
 logging.basicConfig(
 	level=logging.INFO,
@@ -85,6 +88,7 @@ class GitUpdater:
 	def reapply_services(self, origin):
 		logger.info("Обнаружены изменения: обновление репозитория")
 		origin.pull()
+		pre_start()
 		logger.info("Перезапуск сервисов...")
 		subprocess.run(['sudo', 'systemctl', 'daemon-reload'])
 		subprocess.run(['sudo', 'systemctl', 'restart', 'piworker.service'])
@@ -125,3 +129,5 @@ if __name__ == "__main__":
 		update_interval=180,
 	)
 	updater.run()
+
+# НЕ ИЗМЕНЯТЬ ЭТОТ ФАЙЛ, вносите изменения в ветке rpi

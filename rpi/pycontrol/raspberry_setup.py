@@ -133,6 +133,12 @@ files.put(
     _sudo=True
 )
 
+files.put(
+    name="Добавление модуля pre_start",
+    src="files/pre_start.py",
+    dest=f"/home/{username}/rpi/pre_start.py",
+    _sudo=True
+)
 
 sudoers_content = f'''
 %{username} ALL= NOPASSWD: /bin/systemctl daemon-reload
