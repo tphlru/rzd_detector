@@ -74,9 +74,11 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.send_error(404)
             self.end_headers()
 
+
 class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
     allow_reuse_address = True
     daemon_threads = True
+
 
 picam2 = Picamera2()
 picam2.configure(picam2.create_video_configuration(main={"size": (640, 480)}, lores={}))
@@ -96,9 +98,6 @@ finally:
     mjpeg_abort = True
     mjpeg_thread.join()
 
+
 def post_start():
-	pass
-	# print(">>> post_start script is running")
-	# while True:
-	# 	time.sleep(5)
-	# 	print("Hello Pi!")
+    pass
