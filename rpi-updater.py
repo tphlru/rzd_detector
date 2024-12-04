@@ -93,6 +93,8 @@ class GitUpdater:
 
 	def check_and_update(self):
 		try:
+			logger.info(self.repo.__dict__)
+			logger.info(self.repo.active_branch)
 			origin = self.repo.remotes.origin
 			origin.fetch()
 
