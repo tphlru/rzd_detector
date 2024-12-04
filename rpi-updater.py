@@ -126,6 +126,6 @@ if __name__ == "__main__":
 		repo_url=REPO_PATH,
 		local_path=f"/home/{username}/rpi",
 		branch="rpi",
-		update_interval=180,
+		update_interval=30,
 	)
 	updater.run()
