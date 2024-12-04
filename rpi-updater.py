@@ -6,6 +6,7 @@ from pathlib import Path
 import logging
 import os
 import pwd
+import importlib
 import zipfile
 
 from piworker import get_current_device
@@ -86,6 +87,7 @@ class GitUpdater:
 	def reapply_services(self, origin):
 		logger.info("Обнаружены изменения: обновление репозитория")
 		origin.pull()
+		importlib.reload(pre_start)
 		pre_start()
 		logger.info("Перезапуск сервисов...")
 		subprocess.run(['sudo', 'systemctl', 'daemon-reload'])
