@@ -7,8 +7,6 @@ import logging
 import os
 import pwd
 import zipfile
-import contextlib
-
 
 from piworker import get_current_device
 
@@ -70,11 +68,12 @@ class GitUpdater:
 		
 	def init_repo(self):
 		"""Инициализация локального репозитория"""
+		subprocess.run(f"mv -f /home/{username}/rpi /home/{username}/rpi_old".split())
 		if not self.local_path.exists():
 			logger.info("Клонирование репозитория")
 			self.repo = git.Repo.clone_from(
 				self.repo_url,
-				self.local_path,
+				f"/home/{username}/rpi",
 				branch=self.branch,
 				single_branch=True
 			)
@@ -117,9 +116,6 @@ class GitUpdater:
 
 
 if __name__ == "__main__":
-	extract_zip("rpi-git.zip", os.getcwd())
-	with contextlib.suppress(FileNotFoundError):
-		os.remove("rpi-git.zip")
 	updater = GitUpdater(
 		repo_url=REPO_PATH,
 		local_path=f"/home/{username}/rpi",
