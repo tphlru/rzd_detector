@@ -25,3 +25,5 @@ def get_current_device(devices_toml="devices.toml"):
 
 if __name__ == "__main__":
 	print("Текущее устройство:", get_current_device())
+	while True:
+		print("Hello")

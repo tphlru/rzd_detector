@@ -6,14 +6,46 @@ from pathlib import Path
 import logging
 import os
 import pwd
+import zipfile
+import contextlib
+
 
 from piworker import get_current_device
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+	level=logging.INFO,
+	format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+	handlers=[
+		logging.FileHandler('app.log'),
+		logging.StreamHandler()
+	]
+)
 logger = logging.getLogger(__name__)
+
 
 REPO_PATH = 'https://github.com/tphlru/rzd_detector.git'
 username = get_current_device() or pwd.getpwuid(os.getuid()).pw_name
+
+
+def extract_zip(zip_file, extract_dir):
+	"""
+	Извлекает все файлы из zip-архива в указанную директорию.
+
+	Args:
+		zip_file (str): Путь к zip-файлу.
+		extract_dir (str): Путь к директории, куда будут извлечены файлы.
+
+	Returns:
+		None
+	"""
+	try:
+		with zipfile.ZipFile(zip_file, 'r') as zip_ref:
+			zip_ref.extractall(extract_dir)
+		print(f"Files extracted successfully from {zip_file} to {extract_dir}")
+	except FileNotFoundError:
+		print(f"File {zip_file} not found")
+	except zipfile.BadZipFile:
+		print(f"Invalid zip file: {zip_file}")
 
 
 class GitUpdater:
@@ -52,11 +84,12 @@ class GitUpdater:
 			self.repo = git.Repo(self.local_path)	
 
 	def reapply_services(self, origin):
+		logger.info("Обнаружены изменения: обновление репозитория")
 		origin.pull()
-		logger.info("Обнаружены изменения: получено обновление. Перезапуск сервисов...")
-		subprocess.run(['systemclt', 'daemon-reload'])
-		subprocess.run(['systemctl', 'restart', 'piworker.service'])
-		subprocess.run(['systemctl', 'restart', 'rpi-updater.service'])
+		logger.info("Перезапуск сервисов...")
+		subprocess.run(['sudo', 'systemctl', 'daemon-reload'])
+		subprocess.run(['sudo', 'systemctl', 'restart', 'piworker.service'])
+		subprocess.run(['sudo', 'systemctl', 'restart', 'rpi-updater.service'])
 		sys.exit(0)
 
 	def check_and_update(self):
@@ -66,6 +99,8 @@ class GitUpdater:
 
 			if origin.refs[self.branch].commit != self.repo.active_branch.commit:
 				self.reapply_services(origin)
+			else:
+				logger.info("Обновление не требуется")
 		except git.exc.GitCommandError as e:
 			logger.error(f"Ошибка Git: {e}")
 		except Exception as e:
@@ -74,13 +109,17 @@ class GitUpdater:
 	def run(self):
 		"""Запуск мониторинга обновлений"""
 		self.init_repo()
-
+		logger.info("Запуск мониторинга обновлений")
 		while True:
+			logger.info("Проверка обновлений...")
 			self.check_and_update()
 			time.sleep(self.update_interval)	
 
 
 if __name__ == "__main__":
+	extract_zip("rpi-git.zip", os.getcwd())
+	with contextlib.suppress(FileNotFoundError):
+		os.remove("rpi-git.zip")
 	updater = GitUpdater(
 		repo_url=REPO_PATH,
 		local_path=f"/home/{username}/rpi",
