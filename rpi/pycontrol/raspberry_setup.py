@@ -193,3 +193,19 @@ systemd.service(
     daemon_reload=False,
     _sudo=True
 )
+
+systemd.service(
+    'rpi-updater', 
+    name="Перезапуск rpi-updater после обновления",
+    running=True,
+    restarted=True,
+    enabled=True,
+)
+
+systemd.service(
+    'piworker', 
+    name="Перезапуск PiWorker после обновления",
+    running=True,
+    restarted=True,
+    enabled=True,
+)
