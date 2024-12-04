@@ -1,1 +1,4 @@
 gitpython
+flask
+numpy
+opencv-python
