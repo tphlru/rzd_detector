@@ -1,0 +1,12 @@
+[Unit]
+Description=GitHub Updater
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/{{ homeusername }}/rpi/
+ExecStart=/usr/bin/python3 /home/{{ homeusername }}/rpi/rpi-updater.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

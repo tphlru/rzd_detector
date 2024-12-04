@@ -4,14 +4,39 @@
 Запуск: pyinfra --user username --password "pass" inventory.py raspberry_setup.py
 """
 
-from pyinfra.operations import apt, server, files
-from pyinfra.facts.files import FindFiles
+from pyinfra.operations import apt, systemd, files
+from pyinfra.facts.server import User
 from pyinfra import host
-from deploy import deploy
+from pyinfra.api import FactBase
+import toml
 
-username = 'timpy1'
+
+class Uuid(FactBase):
+    def command(self):
+        return """
+        python3 -c 'import uuid; print("".join(["{:02x}".format((uuid.getnode() >> i) & 0xff) 
+        for i in range(0, 48, 8)][::-1]))'"""
+
+    def process(self, output):
+        return '\n'.join(output)
+
+
+username = host.get_fact(User)
+print(f"Имя пользователя: {username}")
 pyenv = f"/home/{username}/.pyenv/bin/pyenv"
 
+device_id = host.get_fact(Uuid)
+print(f"Уникальный идентификатор устройства: {device_id}")
+
+with open('devices.toml', 'r') as f:
+    devices = toml.load(f)
+    print(devices)
+
+devices = devices or {}
+devices[device_id] = username
+
+with open('devices.toml', 'w') as f:
+    toml.dump(devices, f)
 
 # Обновление системы
 apt.update(
@@ -34,69 +59,76 @@ apt.packages(
 apt.packages(
     name='Установка системных компонентов',
     packages=[
-        'libssl-dev', 'zlib1g-dev', 'libbz2-dev', 'libreadline-dev',
-        'libsqlite3-dev', 'llvm', 'libncurses5-dev', 'libncursesw5-dev',
-        'xz-utils', 'tk-dev', 'libgdbm-dev', 'lzma', 'lzma-dev', 'tcl-dev',
-        'libxml2-dev', 'libxmlsec1-dev', 'libffi-dev', 'liblzma-dev',
-        'wget', 'curl', 'make', 'build-essential', 'openssl'
+        'build-essential',    # компиляция
+        'libssl-dev',         # безопасность
+        'zlib1g-dev',         # сжатие
+        'libffi-dev',         # расширения Python
+        'make',               # сборка
+        'libreadline-dev',    # интерактивная оболочка
+        'libsqlite3-dev',     # поддержка SQLite
+        'wget',               # загрузка пакетов
+        'curl',               # загрузка пакетов
+        'python3-picamera2',  # новая версия API камеры
+        'libcamera-dev',      # libcamera
+        'libcamera-tools',    # утилиты libcamera
     ],
     _sudo=True
 )
 
-# Создание .bashrc если не существует
-server.shell(
-    name='Создание .bashrc',
-    commands=[f'touch /home/{username}/.bashrc'],
+# Создадим рабочую директорию
+files.directory(
+    name="Создание рабочей директории",
+    path=f"/home/{username}/rpi/",
+    present=True,
+    force=False,
+    force_backup=False
 )
 
-check_if_installed = host.get_fact(FindFiles, "~/.pyenv/bin/pyenv", quote_path=True)
+# Положить файлы скриптов и сервисов. В сервисах шаблон.
 
-# Проверка и удаление старой установки pyenv
-server.shell(
-    name='Удаление ~/.pyenv при наличии',
-    commands=[f'rm -rf /home/{username}/.pyenv']
-)
-# Установка pyenv 
-server.shell(
-    name='Установка pyenv',
-    commands=[
-        'curl https://pyenv.run | bash'
-    ]
-)
-# Конфигурация .bashrc
-lines = [
-    f'export PYENV_ROOT="/home/{username}/.pyenv"',
-    'export PATH="$PYENV_ROOT/bin:$PATH"',
-    'eval "$(pyenv init --path)"',
-    'eval "$(pyenv virtualenv-init -)"'
-]
-lines = '\n'.join(lines)
-files.line(
-    name='Добавление pyenv в .bashrc',
-    path=f'/home/{username}/.bashrc',
-    line=lines
-)
-# Python установка
-server.shell(
-    commands=[
-        f'. /home/{username}/.bashrc',
-    ]
-)
-server.shell(
-    name='Обновление pyenv и установка Python 3.10',
-    commands=[
-        f'{pyenv} update',
-        f'{pyenv} install 3.10.12 -s',
-        f'{pyenv} global 3.10.12'
-    ]
+files.template(
+    name="Создание файла сервиса rpi-updater",
+    src="files/templates/rpi-updater.service.j2",
+    dest="/etc/systemd/system/rpi-updater.service",
+    homeusername=username,
+    _sudo=True
 )
 
-server.shell(
-    name='Создание виртуального окружения pyenv',
-    commands=[
-        f'{pyenv} virtualenv 3.10.12 piworkerenv'
-    ]
+files.template(
+    name="Создание файла скрипта PiWorker",
+    src="files/templates/piworker.service.j2",
+    dest="/etc/systemd/system/piworker.service",
+    homeusername=username,
+    _sudo=True
 )
 
+files.put(
+    name="Создание файла скрипта rpi-updater",
+    src="files/rpi-updater.py",
+    dest=f"/home/{username}/rpi/rpi-updater.py",
+    _sudo=True
+)
 
-# deploy(pyenv)
+files.put(
+    name="Создание файла скрипта PiWorker",
+    src="files/piworker.py",
+    dest=f"/home/{username}/rpi/piworker.py",
+    _sudo=True
+)
+
+# Создание сервисов
+systemd.service(
+    'rpi-updater', 
+    running=True, 
+    enabled=True,
+    daemon_reload=False,
+    _sudo=True
+)
+
+systemd.service(
+    'piworker', 
+    running=True, 
+    enabled=True,
+    daemon_reload=False,
+    _sudo=True
+)

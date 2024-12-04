@@ -1,0 +1,12 @@
+[Unit]
+Description=PiWorker
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/{{ homeusername }}/rpi/
+ExecStart=/usr/bin/python3 /home/{{ homeusername }}/rpi/piworker.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

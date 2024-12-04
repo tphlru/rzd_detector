@@ -172,3 +172,4 @@ src/rzd_detector/codemodules/behaviour/clothes/cornernetlib/models/*
 Scripts/test_files/pulse/dubl1.mp4
 docs/notebooks/faceemotions
 docs/notebooks/training_log.txt
+.aider*
