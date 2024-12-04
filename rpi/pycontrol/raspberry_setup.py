@@ -73,6 +73,8 @@ apt.packages(
         'python3-picamera2',  # новая версия API камеры
         'libcamera-dev',      # libcamera
         'libcamera-tools',    # утилиты libcamera
+        'libatlas-base-dev',  # утилиты libcamera
+        'ffmpeg',             # ffmpeg
     ],
     _sudo=True
 )
