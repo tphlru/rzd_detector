@@ -3,6 +3,7 @@
 
 import uuid
 import toml
+import time
 
 
 # Функция для определения текущего устройства
@@ -26,4 +27,5 @@ def get_current_device(devices_toml="devices.toml"):
 if __name__ == "__main__":
 	print("Текущее устройство:", get_current_device())
 	while True:
+		time.sleep(1)
 		print("Hello")

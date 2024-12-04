@@ -133,15 +133,6 @@ files.put(
     _sudo=True
 )
 
-files.put(
-    name="Отправка начальных файлов репозитория .git",
-    src="files/rpi-git.zip",
-    dest=f"/home/{username}/rpi/rpi-git.zip",
-    _sudo=True
-)
-
-#  TODO: Проблема в том, что папка rpi уже создана и git не может в неё записать. 
-#  Думаю, лучшее решение - отправлять туда готовую .git папку также
 
 sudoers_content = f'''
 %{username} ALL= NOPASSWD: /bin/systemctl daemon-reload

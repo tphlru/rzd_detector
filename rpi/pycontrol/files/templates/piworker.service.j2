@@ -1,6 +1,8 @@
 [Unit]
 Description=PiWorker
 After=network.target
+StartLimitIntervalSec=0
+
 
 [Service]
 Type=simple
@@ -8,6 +10,9 @@ WorkingDirectory=/home/{{ homeusername }}/rpi/
 ExecStart=/usr/bin/python3 /home/{{ homeusername }}/rpi/piworker.py
 Restart=always
 StartLimitInterval=15
+RestartSec=1
+StartLimitBurst=5
+User={{ homeusername }}
 
 [Install]
 WantedBy=multi-user.target
