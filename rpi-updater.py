@@ -9,6 +9,7 @@ import pwd
 import zipfile
 
 from piworker import get_current_device
+from pre_start import pre_start
 
 logging.basicConfig(
 	level=logging.INFO,
@@ -85,6 +86,7 @@ class GitUpdater:
 	def reapply_services(self, origin):
 		logger.info("Обнаружены изменения: обновление репозитория")
 		origin.pull()
+		pre_start()
 		logger.info("Перезапуск сервисов...")
 		subprocess.run(['sudo', 'systemctl', 'daemon-reload'])
 		subprocess.run(['sudo', 'systemctl', 'restart', 'piworker.service'])
