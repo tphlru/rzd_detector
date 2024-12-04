@@ -86,7 +86,6 @@ class GitUpdater:
 	def reapply_services(self, origin):
 		logger.info("Обнаружены изменения: обновление репозитория")
 		origin.pull()
-		importlib.reload(pre_start)
 		pre_start()
 		logger.info("Перезапуск сервисов...")
 		subprocess.run(['sudo', 'systemctl', 'daemon-reload'])
