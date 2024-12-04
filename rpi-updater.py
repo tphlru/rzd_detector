@@ -54,9 +54,9 @@ class GitUpdater:
 	def reapply_services(self, origin):
 		origin.pull()
 		logger.info("Обнаружены изменения: получено обновление. Перезапуск сервисов...")
-		subprocess.run(['systemclt', 'daemon-reload'])
-		subprocess.run(['systemctl', 'restart', 'piworker.service'])
-		subprocess.run(['systemctl', 'restart', 'rpi-updater.service'])
+		subprocess.run(['sudo', 'systemclt', 'daemon-reload'])
+		subprocess.run(['sudo', 'systemctl', 'restart', 'piworker.service'])
+		subprocess.run(['sudo', 'systemctl', 'restart', 'rpi-updater.service'])
 		sys.exit(0)
 
 	def check_and_update(self):
