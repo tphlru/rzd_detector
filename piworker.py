@@ -1,6 +1,3 @@
-# Просто файл-заглушка
-# Настоящая версия будет получена rpi-updater.py через git
-
 import uuid
 import toml
 
