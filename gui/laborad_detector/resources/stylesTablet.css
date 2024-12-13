@@ -62,17 +62,18 @@
 }
 table {
     width: 100%;
-    padding-bottom: 0%;
 }
 #ii {
     width: 300px;
 }
 #mainPanel {
-    height: 100%;
+    margin: 5px, 10px, 10px, 10px;
+}
+#grafics {
     margin: 10px, 10px, 10px, 10px;
 }
 body, html, table {
-    height: 90%;
+    background-color: #D6D6D6;
 }
 #next, #restart, #stop, #more, #videoBtn {
     width: 250px;

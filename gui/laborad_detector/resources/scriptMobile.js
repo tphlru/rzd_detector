@@ -143,9 +143,9 @@ function init() {
 }
 // Run initialization when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', init);
-var barColors = ["black", "orange", "blue", "red", "brown"];
-const xValuesEV = ["Спокойствие", "Радость", "Грусть", "Злость"];
-const yValuesEV = [50, 15, 11, 1];
+const barColors = ["green", "orange", "blue", "red", "brown", "purple", "black", "yellow"];
+const xValuesEV = ["Нейтраль", "Радость", "Грусть", "Гнев", "Отвращение", "Страх", "Удивление"];
+var yValuesEV = [50, 15, 11, 1, 2, 5, 10];
 new Chart("emotionsChart", {
     type: "pie",
     data: {
@@ -157,8 +157,8 @@ new Chart("emotionsChart", {
     },
 });
 
-const xValuesVzdoh = [16, 14, 12, 10, 8, 6, 4, 2, 0];
-const yValuesVzdoh = [73, 75, 69, 83, 85, 98, 111, 115, 110];
+var xValuesVzdoh = [16, 14, 12, 10, 8, 6, 4, 2, 0];
+var yValuesVzdoh = [73, 75, 69, 83, 85, 98, 111, 115, 110];
 new Chart("breathingChart", {
     type: "line",
     data: {
@@ -177,8 +177,8 @@ new Chart("breathingChart", {
 });
 
 const xValuesPulse = ["Сейчас", "Максимум", "Минимум"];
-const yValuesPulse = [73, 105, 69];
-var barColorsPulse = ["red", "green", "blue"];
+var yValuesPulse = [73, 105, 69];
+const barColorsPulse = ["red", "green", "blue"];
 new Chart("pulseChart", {
     type: "bar",
     data: {
@@ -196,7 +196,7 @@ new Chart("pulseChart", {
 });
 
 const xValuesMorganie = [16, 14, 12, 10, 8, 6, 4, 2, 0];
-const yValuesMorganie = [73, 75, 69, 83, 85, 98, 111, 115, 110];
+var yValuesMorganie = [73, 75, 69, 83, 85, 98, 111, 115, 110];
 new Chart("blinkingChart", {
     type: "line",
     data: {
