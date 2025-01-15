@@ -1,1 +1,1 @@
-raspberry = ['pi3b.local']
+raspberry = ["192.168.1.90"]

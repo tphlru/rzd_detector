@@ -17,9 +17,11 @@ import time
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Разрешаем CORS для всех маршрутов
 
+
 @app.route("/")
 def dog():
     return render_template("index.html")
+
 
 @app.route("/audio-input")
 def mic():
@@ -29,7 +31,8 @@ def mic():
         time.sleep(0.5)
     except OSError:
         print("Microphone listener already started")
-    return redirect("http://localhost:8888", code=302) 
+    return redirect("http://localhost:8888", code=302)
+
 
 @app.route("/mobile")
 def mob():
@@ -67,10 +70,20 @@ def submit():
         "there": gui_controller.there,
         "here": gui_controller.here,
         "age": gui_controller.age,
-        "gender": gui_controller.gender
+        "gender": gui_controller.gender,
     }
-    if data.get("id") != None:
-        changed_ids =["here", "age", "gender", "there", "here", "Device_accept", "Camera_accept", "Micro_accept", "first_quest"]
+    if data.get("id") is not None:
+        changed_ids = [
+            "here",
+            "age",
+            "gender",
+            "there",
+            "here",
+            "Device_accept",
+            "Camera_accept",
+            "Micro_accept",
+            "first_quest",
+        ]
         if data.get("id") in changed_ids:
             ids[data.get("id")](data.get("value"))
         elif data.get("id") not in changed_ids:
@@ -79,9 +92,9 @@ def submit():
     return jsonify(data)
 
 
-
 def run():
     app.run(host="0.0.0.0", port=46578)
+
 
 if __name__ == "__main__":
     run()

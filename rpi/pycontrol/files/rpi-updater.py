@@ -10,7 +10,6 @@ import os
 import pwd
 import zipfile
 
-from piworker import get_current_device
 from pre_start import pre_start
 
 logging.basicConfig(
@@ -25,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 REPO_PATH = 'https://github.com/tphlru/rzd_detector.git'
-username = get_current_device() or pwd.getpwuid(os.getuid()).pw_name
+username = pwd.getpwuid(os.getuid()).pw_name
 
 
 def extract_zip(zip_file, extract_dir):
