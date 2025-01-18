@@ -1,4 +1,15 @@
-from flask import Flask, render_template, request, jsonify
+try: 
+    from flask import Flask, render_template, request, jsonify
+except ModuleNotFoundError:
+    import subprocess
+
+    subprocess.run("pip install flask")
+    # or 
+    # subprocess.run("python3 -m pip install flask")
+    # or 
+    # subprocess.run("python -m pip install flask")
+    print()
+    from flask import Flask, render_template, request, jsonify
 import logging
 
 app = Flask(__name__)
