@@ -51,7 +51,7 @@ def to_coco(standart_path, file=1):
         json_name = standart_path + annos_path + str(num).zfill(6)+'.json'
         image_name = standart_path + images_path + str(num).zfill(6)+'.jpg'
 
-        if (num>=0 and num<10):
+        if (num>=0):
             imag = Image.open(image_name)
             width, height = imag.size
             with open(json_name, 'r') as f:
@@ -85,7 +85,6 @@ def to_coco(standart_path, file=1):
                         })
 
 to_coco(r'c:/Users/Georges/Projects/datasets/DeepFashion2')
-print(dataset)
 json_name = r'c:/Users/Georges/Projects/datasets/DeepFashion2/train/train.json'
 with open(json_name, 'w') as f:
     json.dump(dataset, f)
