@@ -1,6 +1,5 @@
 import json
-from PIL import Image
-import numpy as np
+import cv2
 from glob import glob
 from tqdm import tqdm
 
@@ -10,13 +9,38 @@ dataset = {
         'version': 1.0,
         'year': 2025,
         'contribytor': 'LABORAD',
-        'date_created': "2025/01/"
+        'date_created': "2025/01/18"
     },
     "licenses": [],
     "images": [],
     "annotations": [],
     "categories": []
 }
+
+'''
+----Data structure----
+standart_path
+        |     
+        |--train
+        |   |
+        |   |--annos
+        |   |
+        |   |--image
+        |
+        |--validation
+        |   |
+        |   |--annos
+        |   |
+        |   |--image
+        |
+        |--test
+        |   |
+        |   |--annos
+        |   |
+        |   |--image
+        |
+        
+'''
 
 down_clothes = {9: 'skirt', 8: 'trousers', 7: 'shorts', }
 up_clothes = {13: 'sling_dress', 12: 'vest_dress', 11: 'long_sleeved_dress', 10: 'short_sleeved_dress', 6: 'sling', 5: 'vest', 4: 'long_sleeved_outwear', 3: 'short_sleeved_outwear', 2: 'long_sleeved_shirt', 1: 'short_sleeved_shirt'}
@@ -45,18 +69,18 @@ def to_coco(standart_path, file=1):
     elif file == 3:
         annos_path = '/test/annos/'
         images_path = '/test/image/'
-    print(standart_path + images_path + '*.*')
     num_images = len(glob(pathname=('*.*'), root_dir=standart_path + images_path))
     for num in tqdm(range(1, num_images+1)):
         json_name = standart_path + annos_path + str(num).zfill(6)+'.json'
         image_name = standart_path + images_path + str(num).zfill(6)+'.jpg'
 
         if (num>=0):
-            imag = Image.open(image_name)
-            width, height = imag.size
+            imag = cv2.imread(image_name)
+            cv2.resize(imag, (640, 640))
+            width = 640
+            height = 640
             with open(json_name, 'r') as f:
                 temp = json.loads(f.read())
-
                 dataset['images'].append({
                     'coco_url': '',
                     'date_captured': '',
@@ -72,7 +96,10 @@ def to_coco(standart_path, file=1):
                         continue
                     else:
                         sub_index = sub_index + 1
-                        cat = temp[i]['category_id']
+                        if temp[i]['category_id'] in down_clothes:
+                            cat = 1
+                        else:
+                            cat = 2
                         seg = temp[i]['segmentation']
 
                         dataset['annotations'].append({
@@ -83,36 +110,5 @@ def to_coco(standart_path, file=1):
                             'iscrowd': 0,
                             'segmentation': seg,
                         })
-
-to_coco(r'c:/Users/Georges/Projects/datasets/DeepFashion2')
-json_name = r'c:/Users/Georges/Projects/datasets/DeepFashion2/train/train.json'
-with open(json_name, 'w') as f:
-    json.dump(dataset, f)
-
-
-'''
-----Data structure----
-standart_path
-        |     
-        |--train
-        |   |
-        |   |--annos
-        |   |
-        |   |--image
-        |
-        |--validation
-        |   |
-        |   |--annos
-        |   |
-        |   |--image
-        |
-        |--test
-        |   |
-        |   |--annos
-        |   |
-        |   |--image
-        |
-        
-'''
 
 
