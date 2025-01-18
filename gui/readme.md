@@ -1,3 +1,7 @@
+Связанный интерфейс - revised_2025
+Для работы выполните
+pip install flask
+
 Лендинг / Главная страница - main_page
 
 Интерфейс программы - laborad_detector
