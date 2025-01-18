@@ -81,13 +81,13 @@
                                 Устройство
                             </label>
                             <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="deviceSelect">
-                                <option %}="" %}selected{%="" data.deviceselect="Устройство 1" endif="" if="" {%="">
+                                <option {% if data.deviceSelect == 'Устройство 1' %}selected{% endif %}>
                                     Устройство 1
                                 </option>
-                                <option %}="" %}selected{%="" data.deviceselect="Устройство 2" endif="" if="" {%="">
+                                <option {% if data.deviceSelect == 'Устройство 2' %}selected{% endif %}>
                                     Устройство 2
                                 </option>
-                                <option %}="" %}selected{%="" data.deviceselect="Неизвестное устройство" endif="" if="" {%="">
+                                <option {% if data.deviceSelect == 'Неизвестное устройство' %}selected{% endif %}>
                                     Неизвестное устройство
                                 </option>
                             </select>
@@ -102,35 +102,35 @@
                             </span>
                             <ul class="mt-2 space-y-2">
                                 <li>
-                                    <input %}="" %}checked{%="" data.emotional="" endif="" id="emotional" if="" type="checkbox" {%="">
+                                    <input type="checkbox" id="emotional" {% if data.emotional %}checked{% endif %}>
                                         <label class="ml-2 text-gray-700" for="emotional">
                                             Эмоциональное состояние
                                         </label>
                                     </input>
                                 </li>
                                 <li>
-                                    <input %}="" %}checked{%="" data.physical="" endif="" id="physical" if="" type="checkbox" {%="">
+                                    <input type="checkbox" id="physical" {% if data.physical %}checked{% endif %}>
                                         <label class="ml-2 text-gray-700" for="physical">
                                             Физическое состояние
                                         </label>
                                     </input>
                                 </li>
                                 <li>
-                                    <input %}="" %}checked{%="" data.seasonal="" endif="" id="seasonal" if="" type="checkbox" {%="">
+                                    <input type="checkbox" id="seasonal" {% if data.seasonal %}checked{% endif %}>
                                         <label class="ml-2 text-gray-700" for="seasonal">
                                             Сезонность одежды
                                         </label>
                                     </input>
                                 </li>
                                 <li>
-                                    <input %}="" %}checked{%="" data.subjective="" endif="" id="subjective" if="" type="checkbox" {%="">
+                                    <input type="checkbox" id="subjective" {% if data.subjective %}checked{% endif %}>
                                         <label class="ml-2 text-gray-700" for="subjective">
                                             Субъективная оценка
                                         </label>
                                     </input>
                                 </li>
                                 <li>
-                                    <input %}="" %}checked{%="" data.statistical="" endif="" id="statistical" if="" type="checkbox" {%="">
+                                    <input type="checkbox" id="statistical" {% if data.statistical %}checked{% endif %}>
                                         <label class="ml-2 text-gray-700" for="statistical">
                                             Статистическая оценка
                                         </label>
@@ -159,13 +159,13 @@
                                 Пол
                             </label>
                             <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="genderSelect">
-                                <option %}="" %}selected{%="" data.gender="" disabled="" endif="" if="" not="" {%="">
+                                <option disabled {% if not data.gender %}selected{% endif %}>
                                     Выберите...
                                 </option>
-                                <option %}="" %}selected{%="" data.gender="Мужской" endif="" if="" {%="">
+                                <option {% if data.gender == 'Мужской' %}selected{% endif %}>
                                     Мужской
                                 </option>
-                                <option %}="" %}selected{%="" data.gender="Женский" endif="" if="" {%="">
+                                <option {% if data.gender == 'Женский' %}selected{% endif %}>
                                     Женский
                                 </option>
                             </select>
@@ -203,28 +203,28 @@
                                     </label>
                                     <div class="mt-2 flex items-center space-x-4">
                                         <label class="inline-flex items-center">
-                                            <input %}="" %}checked{%="" class="form-radio" data.subjective_rating="-2" endif="" if="" name="subjective_rating" type="radio" value="-2" {%="">
+                                            <input class="form-radio" type="radio" name="subjective_rating" value="-2" {% if data.subjective_rating == -2 %}checked{% endif %}>
                                                 <span class="ml-2">
                                                     -2
                                                 </span>
                                             </input>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input %}="" %}checked{%="" class="form-radio" data.subjective_rating="-1" endif="" if="" name="subjective_rating" type="radio" value="-1" {%="">
+                                            <input class="form-radio" type="radio" name="subjective_rating" value="-1" {% if data.subjective_rating == -1 %}checked{% endif %}>
                                                 <span class="ml-2">
                                                     -1
                                                 </span>
                                             </input>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input %}="" %}checked{%="" class="form-radio" data.subjective_rating="0" endif="" if="" name="subjective_rating" type="radio" value="0" {%="">
+                                            <input class="form-radio" type="radio" name="subjective_rating" value="0" {% if data.subjective_rating == 0 %}checked{% endif %}>
                                                 <span class="ml-2">
                                                     0
                                                 </span>
                                             </input>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input %}="" %}checked{%="" class="form-radio" data.subjective_rating="1" endif="" if="" name="subjective_rating" type="radio" value="1" {%="">
+                                            <input class="form-radio" type="radio" name="subjective_rating" value="1" {% if data.subjective_rating == 1 %}checked{% endif %}>
                                                 <span class="ml-2">
                                                     +1
                                                 </span>
@@ -247,28 +247,28 @@
                                     </label>
                                     <div class="mt-2 flex items-center space-x-4">
                                         <label class="inline-flex items-center">
-                                            <input %}="" %}checked{%="" '1'="" data.question2="" endif="" if="" in="" name="question2" type="checkbox" value="1" {%="">
+                                            <input type="checkbox" name="question2" value="1" {% if '1' in data.question2 %}checked{% endif %}>
                                                 <span class="ml-2">
                                                     1
                                                 </span>
                                             </input>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input %}="" %}checked{%="" '2'="" data.question2="" endif="" if="" in="" name="question2" type="checkbox" value="2" {%="">
+                                            <input type="checkbox" name="question2" value="2" {% if '2' in data.question2 %}checked{% endif %}>
                                                 <span class="ml-2">
                                                     2
                                                 </span>
                                             </input>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input %}="" %}checked{%="" '3'="" data.question2="" endif="" if="" in="" name="question2" type="checkbox" value="3" {%="">
+                                            <input type="checkbox" name="question2" value="3" {% if '3' in data.question2 %}checked{% endif %}>
                                                 <span class="ml-2">
                                                     3
                                                 </span>
                                             </input>
                                         </label>
                                         <label class="inline-flex items-center">
-                                            <input %}="" %}checked{%="" '4'="" data.question2="" endif="" if="" in="" name="question2" type="checkbox" value="4" {%="">
+                                            <input type="checkbox" name="question2" value="4" {% if '4' in data.question2 %}checked{% endif %}>
                                                 <span class="ml-2">
                                                     4
                                                 </span>
