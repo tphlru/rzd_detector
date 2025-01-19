@@ -31,18 +31,20 @@ Copyright © All rights Reserved
 /* GLOBAL
 ----------------------*/
 
+
+
 body {
     font-family: 'Rubik', sans-serif;
     position: relative;
 }
 
 a {
-    color: #e38cb7;
+    color: rgb(25,25,25);
 }
 
 a:hover,
 a:focus {
-    color: #d6619c;
+    color: rgb(0,0,0);
 }
 
 h1 {

@@ -1,14 +1,3 @@
-/*
-
-Style   : MobApp Script JS
-Version : 1.0
-Author  : Surjith S M
-URI     : https://surjithctly.in/
-
-Copyright © All rights Reserved 
-
-*/
-
 $(function() {
     "use strict";
 
