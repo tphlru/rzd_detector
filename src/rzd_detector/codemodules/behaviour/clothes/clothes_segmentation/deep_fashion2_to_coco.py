@@ -2,6 +2,7 @@ import json
 import cv2
 from glob import glob
 from tqdm import tqdm
+import os.path
 
 dataset = {
     "info": {
@@ -74,9 +75,10 @@ def to_coco(standart_path, file=1):
         json_name = standart_path + annos_path + str(num).zfill(6)+'.json'
         image_name = standart_path + images_path + str(num).zfill(6)+'.jpg'
 
-        if (num>=0):
+        if (num>=0 and os.path.isfile(image_name)):
             imag = cv2.imread(image_name)
-            cv2.resize(imag, (640, 640))
+            imag = cv2.resize(imag, (640, 640))
+            cv2.imwrite(image_name, imag)
             width = 640
             height = 640
             with open(json_name, 'r') as f:

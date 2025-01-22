@@ -38,7 +38,11 @@ print(f"Count  -  Train: {len(training)} Validation: {len(validation)} Test: {le
 print(f"Images  -  Train: {training_images[0]} Validation: {validation_images[0]} Test: {test_images[0]}")
 print(f"Annotations  -  Train: {training_annos[0]} Validation: {validation_annos[0]} Test: {test_annos[0]}")
 
-for i in test_paths:
-    print(i)
-    shutil.move(i, test_path + "image\\")
-    shutil.move(i.replace(".jpg", ".json").replace("image", "annos"), test_path + "annos\\")
+for img in test_paths:
+    annos = img.replace(".jpg", ".json").replace("image", "annos")
+    test_images_path = test_path + 'image\\'
+    test_annos_path = test_path + 'annos\\'
+    print(f"Move {img} to {test_images_path}")
+    print(f"Move {annos} to {test_annos_path}")
+    shutil.move(img, test_images_path)
+    shutil.move(annos, test_annos_path)
