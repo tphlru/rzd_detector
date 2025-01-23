@@ -126,7 +126,7 @@ def to_coco(file=1):
                         cat = 1
                     seg = temp[i]['segmentation']
                     if len(seg) == 1:
-                        items = [cat, seg]
+                        items = [[cat, seg]]
                     else:
                         for obj_seg in seg:
                             items.append([cat, obj_seg])
@@ -134,7 +134,6 @@ def to_coco(file=1):
             for i in items:
                 i[1] = list(map(str, i[1]))
                 f.write(str(i[0]) + " " + " ".join(i[1]) + "\n")
-        print("Done")
 to_coco()
 to_coco(2)
 to_coco(3)
