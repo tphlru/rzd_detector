@@ -1,4 +1,4 @@
-import deep_fashion2_to_coco as deep_fashion2_to_coco
+import rzd_detector.codemodules.behaviour.clothes.clothes_segmentation.convertations.to_coco.deep_fashion2_to_coco as deep_fashion2_to_coco
 import json
 
 standart_path = r"C:\Users\Georges\Projects\datasets\DeepFashion2_standart"

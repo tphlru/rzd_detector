@@ -3,6 +3,7 @@ from typing import TypeVar, Iterable, Union
 import shutil
 import os
 import git
+import cv2
 
 T = TypeVar("T", bound=Iterable)
 
@@ -151,3 +152,30 @@ def get_plot_tops_adaptive(
             break
 
     return mids, tnums, tvals
+
+
+def cur_resize_image(input_img_path: str, output_img_path: str, needed_size: int):
+    '''
+    Преобразует любое изображение в квадратное изображение со стороной needed_size,
+    добавляя сверху и снизу чёрные рамки для сохранения соотношения сторон исходного
+    изображения.
+
+    Args:
+       input_img_path(str): путь к исходному изображению
+       output_img_path(str): путь для сохранения нормализованного изображения
+       needed_size(int): сторона изображениях в пикселях
+    
+    Returns:
+        tuple[int, int, int]: высота исходного изображения, ширина исходного изображения, высота нормализованного изображения
+    '''
+    img = cv2.imread(input_img_path)
+    h, l, _ = img.shape
+    attitude = h/l
+    cur_y = int(needed_size/attitude)
+    missing_y = needed_size - cur_y
+    cur_img = cv2.resize(img, (needed_size, cur_y))
+    black = np.zeros((int(missing_y // 2), needed_size, 3), dtype='uint8')
+    cur_img = np.vstack((black, cur_img))
+    cur_img = np.vstack((cur_img, black))
+    cv2.imwrite(output_img_path, cur_img)
+    return (h, l, cur_y)
