@@ -209,7 +209,7 @@ p.lead {
     .navbar-expand-lg .navbar-nav .nav-link {
         padding-right: 1rem;
         padding-left: 1rem;
-        font-size: 14px;
+        font-size: 18px;
     }
     .navbar-nav>.nav-item>.nav-link.active:after {
         content: "";
@@ -251,7 +251,7 @@ header {
 .tagline {
     font-size: 23px;
     font-weight: 300;
-    color: #ffb8f6;
+    color: #ffff;
     max-width: 800px;
     margin: 0 auto;
 }
@@ -436,8 +436,8 @@ header {
 .nav-tabs .nav-link.active {
     background: #FFF;
     border-top-width: 3px;
-    border-color: #ce75b4 #faf6fb #FFF;
-    color: #633991;
+    border-color: #00FF00 #faf6fb #FFF;
+    color: #000;
 }
 
 
@@ -599,7 +599,7 @@ header {
 .call-to-action .tagline {
     font-size: 16px;
     font-weight: 300;
-    color: #ffb8f6;
+    color: #ffffff;
     max-width: 650px;
     margin: 0 auto;
 }
