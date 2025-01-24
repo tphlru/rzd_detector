@@ -88,12 +88,12 @@ def to_coco(standart_dir, output_dir, file=1):
         cat, seg = get_categories_and_segmentation(json_name=json_name)
         img_h, img_l, normalized_y = nd.cur_resize_image(image_path, image_output_path, 460)
         normalized_seg = nd.cur_resize_segmentation(h=img_h, l=img_l,normalized_x=460, normalized_y=normalized_y, seg=seg)
+        print(normalized_seg)
         if len(seg) == 1:
             items = [[cat, normalized_seg]]
         else:
             for obj_seg in normalized_seg:
                 items.append([cat, obj_seg])
-
         with open(txt_output_path, "w") as f:
             for i in items:
                 i[1] = list(map(str, i[1]))
