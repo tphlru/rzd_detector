@@ -4,7 +4,8 @@ from tqdm import tqdm
 import os.path
 import yaml
 import normalized_data as nd
-
+count0 = 0
+count1 = 0
 
 def create_yolo_structure(standart_dir: str):
     if not os.path.isdir(standart_dir + '/images'):
@@ -43,6 +44,7 @@ def get_categories_and_segmentation(json_name: str):
     #3: 'short_sleeved_outwear', 2: 'long_sleeved_shirt', 1: 'short_sleeved_shirt'} 
     #мб пригодится?
     with open(json_name, 'r') as f:
+            global count0, count1
             temp = json.loads(f.read())
             for i in temp:
                 if i == 'source' or i=='pair_id':
@@ -50,8 +52,10 @@ def get_categories_and_segmentation(json_name: str):
                 else:
                     if temp[i]['category_id'] in down_clothes:
                         cat = 0
+                        count0 += 1
                     else:
                         cat = 1
+                        count1 += 1
                     seg = temp[i]['segmentation']
     return (cat, seg)
 
@@ -86,9 +90,9 @@ def to_coco(standart_dir, output_dir, file=1):
         txt_output_path = output_dir + output_annos_dir + num + '.txt'
 
         cat, seg = get_categories_and_segmentation(json_name=json_name)
-        img_h, img_l, normalized_y = nd.cur_resize_image(image_path, image_output_path, 460)
-        normalized_seg = nd.cur_resize_segmentation(h=img_h, l=img_l,normalized_x=460, normalized_y=normalized_y, seg=seg)
-        print(normalized_seg)
+        img_h, img_l, normalized_x, normalized_y  = nd.cur_resize_image(image_path, image_output_path, 640, 640)
+        normalized_seg = nd.cur_resize_segmentation(h=img_h, l=img_l,normalized_x=normalized_x, normalized_y=normalized_y, seg=seg, normalized_size=640)
+        normalized_seg = normalized_seg if len(normalized_seg) > 1 else normalized_seg[0]
         if len(seg) == 1:
             items = [[cat, normalized_seg]]
         else:
@@ -105,8 +109,17 @@ deepfashion_dir = "C:/Users/Georges/Projects/datasets/DeepFashion2_standart"
 yolo_dir = "C:/Users/Georges/Projects/datasets/DeepFashion2_YOLO"
 create_yolo_structure(yolo_dir)
 to_coco(standart_dir = deepfashion_dir, output_dir = yolo_dir)
+print(f"count0: {count0}, count1: {count1}")
+count1 = 0
+count0 = 0
 to_coco(standart_dir = deepfashion_dir, output_dir = yolo_dir, file=2)
+print(f"count0: {count0}, count1: {count1}")
+count1 = 0
+count0 = 0
 to_coco(standart_dir = deepfashion_dir, output_dir = yolo_dir, file=3)
+print(f"count0: {count0}, count1: {count1}")
+count1 = 0
+count0 = 0
 
 '''
 ----Input data structure----

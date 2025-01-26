@@ -1,46 +1,37 @@
-import cv2
-import numpy as np
+from PIL import Image, ImageOps
+import sys
+def cur_resize_image(input_img_path, output_path, h=640, w=640):
+    image = Image.open(input_img_path)
+
+    width, height = image.size
+    scale = min(w / width, h / height)
+    resized_image = image.resize((int(width * scale), int(height * scale)), Image.Resampling.LANCZOS)
+    new_size = resized_image.size
+    delta_w = w - new_size[0]
+    delta_h = h - new_size[1]
+    border = (delta_w // 2, delta_h // 2, delta_w - delta_w // 2, delta_h - delta_h // 2)
+    ImageOps.expand(resized_image, border=border, fill="black").save(output_path)
+    return (height, width, new_size[0], new_size[1])
 
 
-def cur_resize_image(input_img_path: str, output_img_path: str, needed_size: int):
-    img = cv2.imread(input_img_path)
-    cv2.imshow("lol", img)
-    cv2.waitKey(0)
-    h, l, _ = img.shape
-    if l > h:
-        attitude = h/l
-        cur_y = int(needed_size/attitude)
-        missing_y = needed_size - cur_y
-        cur_img = cv2.resize(img, (needed_size, cur_y))
-        black = np.zeros((int(missing_y // 2), needed_size, 3), dtype='uint8')
-        cur_img = np.vstack((black, cur_img))
-        cur_img = np.vstack((cur_img, black))
-        cv2.imwrite(output_img_path, cur_img)
-        cv2.imshow("lol", cur_img)
-        cv2.waitKey(0)
-        return (h, l, cur_y)
-    else:
-        attitude = l/h
-        cur_x = int(needed_size*attitude)
-        missing_x = needed_size - cur_x
-        cur_img = cv2.resize(img, (cur_x, needed_size))
-        black = np.zeros((needed_size, int(missing_x // 2), 3), dtype='uint8')
-        cur_img = np.hstack((black, cur_img))
-        cur_img = np.hstack((cur_img, black))
-        cv2.imwrite(output_img_path, cur_img)
-        cv2.imshow("lol", cur_img)
-        cv2.waitKey(0)
-        return (h, l, cur_x)
-
-
-def cur_resize_segmentation(h: int, l: int, normalized_y: int, normalized_x: int,  seg: list):
+def cur_resize_segmentation(h: int, l: int, normalized_y: int, normalized_x: int,  seg: list, normalized_size: int):
     normalized_seg = copy_shape(seg)
     for i in range(0, len(seg)):
         for x in range(0, len(seg[i]), 2):
-            cur_x = (normalized_x*seg[i][x])/l
+            cur_x = seg[i][x]*(normalized_x/l)
+            if l < h:
+                cur_x += (normalized_y - normalized_x)/2
+                if cur_x < 0:
+                    input()
+            cur_x /= normalized_size
             normalized_seg[i][x] = cur_x
-        for y in range(0, len(seg[i]), 2):
-            cur_y = (normalized_y*seg[i][y])/h + (normalized_x - normalized_y)/2
+        for y in range(1, len(seg[i]), 2):
+            cur_y = (normalized_y*seg[i][y])/h
+            if l > h:
+                cur_y += (normalized_x - normalized_y)/2
+                if cur_y < 0:
+                    input()
+            cur_y /= normalized_size
             normalized_seg[i][y] = cur_y
     return normalized_seg
 
