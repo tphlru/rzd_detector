@@ -1,5 +1,4 @@
 from PIL import Image, ImageOps
-import sys
 def cur_resize_image(input_img_path, output_path, h=640, w=640):
     image = Image.open(input_img_path)
 
