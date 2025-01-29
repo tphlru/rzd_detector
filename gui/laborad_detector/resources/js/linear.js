@@ -1,6 +1,22 @@
-const changer = document.getElementById("cameraChanger");
-alert("1");
-changer.addEventListener('cameraChanger', changer1);
+document.getElementById("video1").style.display = "block";
+document.getElementById("video2").style.display = "none";
+document.getElementById("video3").style.display = "none";
+
+function changeCamera(value) {
+    // alert("Выбрана камера - " + value);
+    // document.getElementById('videoParent').appendChild(document.getElementById(value));
+    document.getElementById(value).style.display = "block";
+    if (value=="video1") {
+        document.getElementById("video2").style.display = "none";
+        document.getElementById("video3").style.display = "none";
+    } else if (value=="video2") {
+        document.getElementById("video1").style.display = "none";
+        document.getElementById("video3").style.display = "none";
+    } else if (value=="video3") {
+        document.getElementById("video1").style.display = "none";
+        document.getElementById("video2").style.display = "none";
+    }
+}
 
 
 // popup
@@ -39,15 +55,15 @@ window.addEventListener('click', function() {
     document.querySelector('.dropdown ul').style.display = 'none';
 });
 
-// Редирект для мобильных устройств
-document.addEventListener("DOMContentLoaded", function() {
-    if (window.matchMedia("(pointer: coarse)").matches &&
-        Math.max(window.innerWidth, window.innerHeight) / Math.min(window.innerWidth, window.innerHeight) > 2) {
-        window.location.replace("mobile.html");
-    } else if (window.matchMedia("(pointer: coarse)").matches && window.innerWidth < window.innerHeight) {
-        window.location.replace("tablet.html");
-    }
-});
+// Редирект для мобильных устройств ! в линейном режиме не требуется
+// document.addEventListener("DOMContentLoaded", function() {
+//     if (window.matchMedia("(pointer: coarse)").matches &&
+//         Math.max(window.innerWidth, window.innerHeight) / Math.min(window.innerWidth, window.innerHeight) > 2) {
+//         window.location.replace("mobile.html");
+//     } else if (window.matchMedia("(pointer: coarse)").matches && window.innerWidth < window.innerHeight) {
+//         window.location.replace("tablet.html");
+//     }
+// });
 
 // таблица
 // Criteria data
@@ -217,4 +233,3 @@ const criteriaData = [{
 //         }
 //     }
 // });
-

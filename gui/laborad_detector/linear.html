@@ -36,9 +36,27 @@
                     <h2 class="text-xl font-semibold mb-4">
                         Видео
                     </h2>
-                    <div class="aspect-w-16 aspect-h-9">
-                        <video class="rounded-lg w-full" controls="">
-                            <source id="video" src="resources/video.mp4" type="video/mp4">
+                    <div class="aspect-w-16 aspect-h-9" id="videoParent">
+                        <video class="rounded-lg w-full" controls="" id="video1">
+                            <source src="resources/video1.mp4" type="video/mp4">
+                                Возникла ошибка при загрузке видео, попробуйте перезагрузить страницу и убедитесь что Ваше устройство поддерживает видео. Если вам нужна помощь, напишите нам >
+                                <a class="text-blue-500 hover:text-blue-600" href="https://vk.com/laborad" target="_blank">
+                                    https://vk.com/laborad
+                                </a>
+                                .
+                            </source>
+                        </video>
+                        <video class="rounded-lg w-full" controls="" id="video2">
+                            <source src="resources/video2.mp4" type="video/mp4">
+                                Возникла ошибка при загрузке видео, попробуйте перезагрузить страницу и убедитесь что Ваше устройство поддерживает видео. Если вам нужна помощь, напишите нам >
+                                <a class="text-blue-500 hover:text-blue-600" href="https://vk.com/laborad" target="_blank">
+                                    https://vk.com/laborad
+                                </a>
+                                .
+                            </source>
+                        </video>
+                        <video class="rounded-lg w-full" controls="" id="video3">
+                            <source src="resources/video3.mp4" type="video/mp4">
                                 Возникла ошибка при загрузке видео, попробуйте перезагрузить страницу и убедитесь что Ваше устройство поддерживает видео. Если вам нужна помощь, напишите нам >
                                 <a class="text-blue-500 hover:text-blue-600" href="https://vk.com/laborad" target="_blank">
                                     https://vk.com/laborad
@@ -51,14 +69,14 @@
                         Выбор камеры
                     </label>
 
-                    <select id="cameraChanger" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                        <option value="camera1">
+                    <select onchange="changeCamera(this.value)" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        <option value="video1">
                             Камера 1
                         </option>
-                        <option>
+                        <option value="video2">
                             Камера 2
                         </option>
-                        <option>
+                        <option value="video3">
                             Неизвестная камера
                         </option>
                     </select>
@@ -428,7 +446,7 @@
                     </a>
                 </p>
                 <p>
-                    Версия приложения - 2025.1.28a
+                    Версия приложения - 2025.01.29a
                 </p>
             </footer>
         </div>
