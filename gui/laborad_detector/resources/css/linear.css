@@ -1,9 +1,5 @@
 /* Custom styles */
 
-.linear {
-    display: block;
-}
-
 #popup-overlay {
     position: fixed;
     top: 0;
