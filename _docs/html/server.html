@@ -1,0 +1,160 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Развертывание на собственном сервере &mdash; документация Human State Detection preview 1.2.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=bc2f3c57"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=5b699b7f"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="prev" title="Основная документация" href="main.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Human State Detection
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="main.html">Основная документация</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Развертывание на собственном сервере</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">Установка библиотек</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">Настройка значений интерфейса по умолчанию</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">Запуск</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">Публикация</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Human State Detection</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Развертывание на собственном сервере</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/server.rst.txt" rel="nofollow"> Просмотреть исходный код страницы</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>Развертывание на собственном сервере<a class="headerlink" href="#id1" title="Ссылка на этот заголовок"></a></h1>
+<p>Для начала нам потребуется Python с версией «&gt;=3.9.0,&lt;3.11»</p>
+<section id="id2">
+<h2>Установка библиотек<a class="headerlink" href="#id2" title="Ссылка на этот заголовок"></a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>poetry<span class="w"> </span>cython
+poetry<span class="w"> </span>lock
+poetry<span class="w"> </span>install
+</pre></div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>../requirements.txt
+conda<span class="w"> </span>install<span class="w"> </span>compilers<span class="w"> </span>libstdcxx-ng<span class="o">=</span><span class="m">12</span>
+conda<span class="w"> </span>install<span class="w"> </span>webrtcvad
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2>Настройка значений интерфейса по умолчанию<a class="headerlink" href="#id3" title="Ссылка на этот заголовок"></a></h2>
+<p>Для того, чтобы настроить значения по умолчанию в интерфейсе под себя, нам необходим файл <a class="reference external" href="https://github.com/tphlru/rzd_detector/gui/revised_2025/server.py">server.py</a>. Открываем любым текстовым редактором, находим в начале список «data». Его мы корректируем под собственные нужды. Все значения переменных в этом списке перечислены ниже.</p>
+<p><strong>gender</strong> - пол</p>
+<p><strong>age</strong> - возраст</p>
+<p><strong>departure</strong> - пункт отправления</p>
+<p><strong>arrival</strong> - пункт прибытия</p>
+<p><strong>subjective_rating</strong> - субъективная оценка</p>
+<p><strong>question1</strong> - вопрос 1</p>
+<p><strong>question2</strong> - вопрос 2</p>
+<p><strong>criteria</strong> - управление разделом <strong>Критерии</strong></p>
+<p><strong>pulse_status</strong> - статус пульса (нормально/участившийся/замедлившийся)</p>
+<p><strong>breathing_status</strong> - статус частоты дыхания</p>
+<p><strong>blinking_value</strong> - частота моргания в минуту</p>
+<p><strong>emotions</strong> - эмоции</p>
+<p><strong>physical</strong> - физическое состояние</p>
+<p><strong>seasonal</strong> - сезонность одежды (где True - в норме, False - не по сезону)</p>
+<p><strong>subjective</strong> - субъективная оценка</p>
+<p><strong>statistical</strong> - статистическая оценка</p>
+</section>
+<section id="id4">
+<h2>Запуск<a class="headerlink" href="#id4" title="Ссылка на этот заголовок"></a></h2>
+<p>Основной интерфейс находится в <a class="reference external" href="https://github.com/tphlru/rzd_detector/tree/main/gui/laborad_detector">этой папке</a>, связанный интерфейс находится <a class="reference external" href="https://github.com/tphlru/rzd_detector/tree/main/gui/laborad_detector">тут</a>.</p>
+</section>
+<section id="id7">
+<h2>Публикация<a class="headerlink" href="#id7" title="Ссылка на этот заголовок"></a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>lock
+poetry<span class="w"> </span>install
+poetry<span class="w"> </span>publish<span class="w"> </span>--build
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="main.html" class="btn btn-neutral float-left" title="Основная документация" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2025, LaboRad. </p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

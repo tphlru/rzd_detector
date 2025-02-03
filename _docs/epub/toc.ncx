@@ -2,7 +2,7 @@
 <ncx version="2005-1" xmlns="http://www.daisy.org/z3986/2005/ncx/">
   <head>
     <meta name="dtb:uid" content="unknown"/>
-    <meta name="dtb:depth" content="1"/>
+    <meta name="dtb:depth" content="3"/>
     <meta name="dtb:totalPageCount" content="0"/>
     <meta name="dtb:maxPageNumber" content="0"/>
   </head>
@@ -15,6 +15,126 @@
         <text>Документация LaboRad HSD</text>
       </navLabel>
       <content src="index.xhtml" />  
+    </navPoint>
+    <navPoint id="navPoint2" playOrder="2">
+      <navLabel>
+        <text>Основная документация</text>
+      </navLabel>
+      <content src="main.xhtml" />  
+      <navPoint id="navPoint3" playOrder="2">
+        <navLabel>
+          <text>Основная документация</text>
+        </navLabel>
+        <content src="main.xhtml" />  
+      </navPoint>
+      <navPoint id="navPoint4" playOrder="3">
+        <navLabel>
+          <text>Доступ</text>
+        </navLabel>
+        <content src="main.xhtml#id3" />  
+      </navPoint>
+      <navPoint id="navPoint5" playOrder="4">
+        <navLabel>
+          <text>Начало работы</text>
+        </navLabel>
+        <content src="main.xhtml#id4" />  
+      </navPoint>
+      <navPoint id="navPoint6" playOrder="5">
+        <navLabel>
+          <text>Интерфейс</text>
+        </navLabel>
+        <content src="main.xhtml#id5" />  
+        <navPoint id="navPoint7" playOrder="5">
+          <navLabel>
+            <text>Интерфейс</text>
+          </navLabel>
+          <content src="main.xhtml#id5" />  
+        </navPoint>
+        <navPoint id="navPoint8" playOrder="6">
+          <navLabel>
+            <text>Видео</text>
+          </navLabel>
+          <content src="main.xhtml#id6" />  
+        </navPoint>
+        <navPoint id="navPoint9" playOrder="7">
+          <navLabel>
+            <text>Панель управления</text>
+          </navLabel>
+          <content src="main.xhtml#id7" />  
+        </navPoint>
+        <navPoint id="navPoint10" playOrder="8">
+          <navLabel>
+            <text>Данные</text>
+          </navLabel>
+          <content src="main.xhtml#id8" />  
+        </navPoint>
+        <navPoint id="navPoint11" playOrder="9">
+          <navLabel>
+            <text>Критерии</text>
+          </navLabel>
+          <content src="main.xhtml#id9" />  
+        </navPoint>
+        <navPoint id="navPoint12" playOrder="10">
+          <navLabel>
+            <text>Графики</text>
+          </navLabel>
+          <content src="main.xhtml#id11" />  
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint13" playOrder="11">
+        <navLabel>
+          <text>HSD Camera</text>
+        </navLabel>
+        <content src="main.xhtml#hsd-camera" />  
+        <navPoint id="navPoint14" playOrder="11">
+          <navLabel>
+            <text>HSD Camera</text>
+          </navLabel>
+          <content src="main.xhtml#hsd-camera" />  
+        </navPoint>
+        <navPoint id="navPoint15" playOrder="12">
+          <navLabel>
+            <text>Замена аккамулятора</text>
+          </navLabel>
+          <content src="main.xhtml#id12" />  
+        </navPoint>
+      </navPoint>
+    </navPoint>
+    <navPoint id="navPoint16" playOrder="13">
+      <navLabel>
+        <text>Развертывание на собственном сервере</text>
+      </navLabel>
+      <content src="server.xhtml" />  
+      <navPoint id="navPoint17" playOrder="13">
+        <navLabel>
+          <text>Развертывание на собственном сервере</text>
+        </navLabel>
+        <content src="server.xhtml" />  
+      </navPoint>
+      <navPoint id="navPoint18" playOrder="14">
+        <navLabel>
+          <text>Установка библиотек</text>
+        </navLabel>
+        <content src="server.xhtml#id2" />  
+      </navPoint>
+      <navPoint id="navPoint19" playOrder="15">
+        <navLabel>
+          <text>Настройка значений интерфейса по умолчанию</text>
+        </navLabel>
+        <content src="server.xhtml#id3" />  
+      </navPoint>
+      <navPoint id="navPoint20" playOrder="16">
+        <navLabel>
+          <text>Запуск</text>
+        </navLabel>
+        <content src="server.xhtml#id4" />  
+      </navPoint>
+      <navPoint id="navPoint21" playOrder="17">
+        <navLabel>
+          <text>Публикация</text>
+        </navLabel>
+        <content src="server.xhtml#id7" />  
+      </navPoint>
     </navPoint>
   </navMap>
 </ncx>

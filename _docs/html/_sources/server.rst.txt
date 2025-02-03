@@ -1,0 +1,75 @@
+Развертывание на собственном сервере
+====================================
+
+Для начала нам потребуется Python с версией ">=3.9.0,<3.11"
+
+Установка библиотек
+~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: shell
+
+   pip install poetry cython
+   poetry lock
+   poetry install
+
+.. code-block:: shell
+
+   pip install -r ../requirements.txt
+   conda install compilers libstdcxx-ng=12
+   conda install webrtcvad
+
+Настройка значений интерфейса по умолчанию
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Для того, чтобы настроить значения по умолчанию в интерфейсе под себя, нам необходим файл `server.py`_. Открываем любым текстовым редактором, находим в начале список "data". Его мы корректируем под собственные нужды. Все значения переменных в этом списке перечислены ниже.
+
+**gender** - пол
+
+**age** - возраст
+
+**departure** - пункт отправления
+
+**arrival** - пункт прибытия
+
+**subjective_rating** - субъективная оценка
+
+**question1** - вопрос 1
+
+**question2** - вопрос 2
+
+**criteria** - управление разделом **Критерии**
+
+**pulse_status** - статус пульса (нормально/участившийся/замедлившийся)
+
+**breathing_status** - статус частоты дыхания
+
+**blinking_value** - частота моргания в минуту
+
+**emotions** - эмоции 
+
+**physical** - физическое состояние
+
+**seasonal** - сезонность одежды (где True - в норме, False - не по сезону)
+
+**subjective** - субъективная оценка
+
+**statistical** - статистическая оценка
+
+.. _`server.py`: https://github.com/tphlru/rzd_detector/gui/revised_2025/server.py
+
+Запуск
+~~~~~~
+
+Основной интерфейс находится в `этой папке`_, связанный интерфейс находится тут_.
+
+.. _`этой папке`: https://github.com/tphlru/rzd_detector/tree/main/gui/laborad_detector
+.. _тут: https://github.com/tphlru/rzd_detector/tree/main/gui/laborad_detector
+
+Публикация
+~~~~~~~~~~
+
+.. code-block:: shell
+
+   poetry lock
+   poetry install
+   poetry publish --build
