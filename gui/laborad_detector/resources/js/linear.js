@@ -1,25 +1,53 @@
-document.getElementById("video1").style.display = "block";
-document.getElementById("video2").style.display = "none";
-document.getElementById("video3").style.display = "none";
+// document.getElementById("video1").style.display = "block";
+// document.getElementById("video2").style.display = "none";
+// document.getElementById("video3").style.display = "none";
 
-function changeCamera(value) {
-    // alert("Выбрана камера - " + value);
-    // document.getElementById('videoParent').appendChild(document.getElementById(value));
-    document.getElementById(value).style.display = "block";
-    if (value=="video1") {
-        document.getElementById("video2").style.display = "none";
-        document.getElementById("video3").style.display = "none";
-    } else if (value=="video2") {
-        document.getElementById("video1").style.display = "none";
-        document.getElementById("video3").style.display = "none";
-    } else if (value=="video3") {
-        document.getElementById("video1").style.display = "none";
-        document.getElementById("video2").style.display = "none";
-    }
-}
+// function changeCamera(value) {
+//     // alert("Выбрана камера - " + value);
+//     // document.getElementById('videoParent').appendChild(document.getElementById(value));
+//     document.getElementById(value).style.display = "block";
+//     if (value=="video1") {
+//         document.getElementById("video2").style.display = "none";
+//         document.getElementById("video3").style.display = "none";
+//     } else if (value=="video2") {
+//         document.getElementById("video1").style.display = "none";
+//         document.getElementById("video3").style.display = "none";
+//     } else if (value=="video3") {
+//         document.getElementById("video1").style.display = "none";
+//         document.getElementById("video2").style.display = "none";
+//     }
+// }
 
 
 // popup
+const popupOverlay1 = document.getElementById("popup-overlay-videos");
+const popup1 = document.getElementById("popup-videos");
+
+function showPopupVideos() {
+    popupOverlay1.style.display = "block";
+}
+
+function hidePopupVideos() {
+    popupOverlay1.style.display = "none";
+}
+
+popupOverlay1.addEventListener("click", hidePopupVideos);
+
+
+const popupOverlayInfo = document.getElementById("popup-overlay-info");
+const popupInfo = document.getElementById("popup-info");
+
+function showPopupInfo() {
+    popupOverlayInfo.style.display = "block";
+}
+
+function hidePopupInfo() {
+    popupOverlayInfo.style.display = "none";
+}
+
+popupOverlayInfo.addEventListener("click", hidePopupInfo);
+
+
 
 const popupOverlay = document.getElementById("popup-overlay");
 const popup = document.getElementById("popup");
@@ -33,6 +61,9 @@ function hidePopup() {
 }
 
 popupOverlay.addEventListener("click", hidePopup);
+
+
+
 const popupOverlay2 = document.getElementById("popup-overlay-video");
 const popup2 = document.getElementById("popup-video");
 
