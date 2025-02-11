@@ -174,3 +174,7 @@ Scripts/test_files/pulse/dubl1.mp4
 docs/notebooks/faceemotions
 docs/notebooks/training_log.txt
 .aider*
+annotations.csv
+hotkeys_config.json
+last_directory.txt
+skipped.txt

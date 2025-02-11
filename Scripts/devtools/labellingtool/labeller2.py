@@ -39,7 +39,7 @@ def check_and_install_dependencies():
 
 
 check_and_install_dependencies()
-5
+
 from PyQt6.QtWidgets import (  # noqa: E402
     QApplication,
     QWidget,
@@ -451,3 +451,5 @@ if __name__ == "__main__":
     window = ImageLabelingApp()
     window.show()
     sys.exit(app.exec())
+
+# FIXME: Global hotkeys don't work
