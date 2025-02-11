@@ -19,6 +19,7 @@
                     <link href="{{ url_for('static', filename='icon.png') }}" rel="shortcut icon" type="image/png">
                     </link>
                 </link>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
             </meta>
         </meta>
     </head>
@@ -282,48 +283,43 @@
                 </div>
                 <!-- Criteria Table -->
                 <div class="bg-white rounded-lg shadow-md p-6" id="criteriaTable">
-                    <h2 class="text-xl font-semibold mb-4">
-                        Критерии
-                    </h2>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Критерии
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Подуровни
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Баллы
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Общий балл
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200" id="criteriaTableBody">
-                                {% for criterion in data.criteria %}
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        {{ criterion.name }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        {{ criterion.sublevel }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        {{ criterion.points }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        {{ criterion.total }}
+                    <h2 class="text-xl font-semibold mb-4">Критерии</h2>
+                    <table class="criteria-table">
+                        <thead>
+                            <tr>
+                                <th>Критерий</th>
+                                <th>Баллы</th>
+                            </tr>
+                        </thead>
+                        <tbody id="criteriaTableBody">
+                            {% for category, info in data.criteria.items() %}
+                            <tr class="criteria-row {% if not info.enabled %}disabled-row{% endif %}" data-category="{{ category }}">
+                                <td>{{ info.name }}</td>
+                                <td class="score-cell">
+                                    <div class="score-indicator" 
+                                         data-score="{{ info.score }}" 
+                                         data-max="{{ info.max_score }}">
+                                        {{ info.score }}/{{ info.max_score }}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% if info.sublevels %}
+                                {% for sublevel, sub_info in info.sublevels.items() %}
+                                <tr class="sublevel-row {% if not info.enabled %}disabled-row{% endif %}" data-category="{{ category }}" data-sublevel="{{ sublevel }}">
+                                    <td style="padding-left: 30px">- {{ sublevel }}</td>
+                                    <td class="score-cell">
+                                        <div class="score-indicator" 
+                                             data-score="{{ sub_info.score }}" 
+                                             data-max="{{ sub_info.max_score }}">
+                                            {{ sub_info.score }}/{{ sub_info.max_score }}
+                                        </div>
                                     </td>
                                 </tr>
                                 {% endfor %}
-                                <!-- Дополнительные строки можно добавить динамически через JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <!-- Graphs -->

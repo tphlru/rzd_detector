@@ -127,3 +127,48 @@ document.addEventListener('DOMContentLoaded', () => {
         sendData('reportButton', 'clicked');
     });
 });
+
+const socket = io();
+                
+function updateScoreColors() {
+    document.querySelectorAll('.score-indicator').forEach(indicator => {
+        const score = parseInt(indicator.dataset.score);
+        const maxScore = parseInt(indicator.dataset.max);
+        const percentage = (score / maxScore) * 100;
+        
+        indicator.classList.remove('score-low', 'score-medium', 'score-high');
+        if (percentage < 33) {
+            indicator.classList.add('score-low');
+        } else if (percentage < 66) {
+            indicator.classList.add('score-medium');
+        } else {
+            indicator.classList.add('score-high');
+        }
+    });
+}
+        
+socket.on('criteria_updated', function(criteriaData) {
+    for (const [category, info] of Object.entries(criteriaData)) {
+        // Update main category score
+        const categoryRow = document.querySelector(`tr[data-category="${category}"]`);
+        if (categoryRow) {
+            const scoreDiv = categoryRow.querySelector('.score-indicator');
+            scoreDiv.textContent = `${info.score}/${info.max_score}`;
+            scoreDiv.dataset.score = info.score;
+        }
+
+        if (info.sublevels) {
+            for (const [sublevel, subInfo] of Object.entries(info.sublevels)) {
+                const sublevelRow = document.querySelector(`tr[data-category="${category}"][data-sublevel="${sublevel}"]`);
+                if (sublevelRow) {
+                    const scoreDiv = sublevelRow.querySelector('.score-indicator');
+                    scoreDiv.textContent = `${subInfo.score}/${subInfo.max_score}`;
+                    scoreDiv.dataset.score = subInfo.score;
+                }
+            }
+        }
+        }
+    updateScoreColors();
+});
+
+document.addEventListener('DOMContentLoaded', updateScoreColors);
