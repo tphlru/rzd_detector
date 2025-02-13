@@ -153,5 +153,18 @@
 from rzd_detector.codemodules.face.emotions.landmarks import process_landmarks
 
 i = process_landmarks(
-    "/home/timur/Download/test4.jpg", hide_eyes=False, curve_crop=False, verbose=True
+    "/home/timur/Download/test4.jpg",
+    hide_eyes=True,
+    curve_crop=False,
+    verbose=True,
+    mouth_k=0,
 )
+i = process_landmarks(
+    "/home/timur/Download/test4.jpg",
+    hide_eyes=True,
+    curve_crop=False,
+    verbose=True,
+    mouth_k=2,
+)
+# print(i)
+# print(type(i))

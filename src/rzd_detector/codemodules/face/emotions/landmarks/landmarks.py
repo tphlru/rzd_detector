@@ -1,6 +1,9 @@
 import cv2
 import mediapipe as mp
 import numpy as np
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def _load_image(image_input):
@@ -63,7 +66,7 @@ def process_image(
 
 
 def curved_crop_and_mask(
-    image, landmarks, hide_eyes=True, hide_mouth=True, curve_crop=True
+    image, landmarks, hide_eyes=True, hide_mouth=True, curve_crop=True, mouth_k=0.5
 ):
     """Выполняет кривую обрезку и маскирование для рта или глаз.
 
@@ -78,7 +81,9 @@ def curved_crop_and_mask(
         numpy.ndarray: Изображение с примененной маской и обрезкой.
     """
     face_crop, local_landmarks = crop_face(image, landmarks)
-    mask = create_mask(local_landmarks, hide_eyes, hide_mouth, face_crop)
+    mask = create_mask(
+        local_landmarks, hide_eyes, hide_mouth, face_crop, mouth_k=mouth_k
+    )
     return apply_mask_and_crop(face_crop, local_landmarks, mask, curve_crop)
 
 
@@ -106,7 +111,7 @@ def crop_face(image, landmarks):
     return face_crop, local_landmarks
 
 
-def create_mask(local_landmarks, hide_eyes, hide_mouth, face_crop):
+def create_mask(local_landmarks, hide_eyes, hide_mouth, face_crop, mouth_k=0.5):
     """Создает маску для скрытия глаз и/или рта.
 
     Args:
@@ -114,15 +119,15 @@ def create_mask(local_landmarks, hide_eyes, hide_mouth, face_crop):
         hide_eyes (bool): Скрыть ли глаза.
         hide_mouth (bool): Скрыть ли рот.
         face_crop (numpy.ndarray): Обрезанное изображение лица.
+        mouth_k (float): Коэффициент для расширения маски рта.
 
     Returns:
-        numpy.ndarray: Маска для скрытия глаз и/или рта.
+        numpy.ndarray: Маска для скрытия областей.
     """
     mask = np.zeros(face_crop.shape[:2], dtype=np.uint8)
 
-    parts_to_hide = []
     if hide_eyes:
-        left_eye_ids = [
+        left_eye_indices = [
             33,
             7,
             163,
@@ -140,7 +145,7 @@ def create_mask(local_landmarks, hide_eyes, hide_mouth, face_crop):
             161,
             246,
         ]
-        right_eye_ids = [
+        right_eye_indices = [
             263,
             249,
             390,
@@ -158,9 +163,24 @@ def create_mask(local_landmarks, hide_eyes, hide_mouth, face_crop):
             388,
             466,
         ]
-        parts_to_hide.extend((left_eye_ids, right_eye_ids))
+        left_eye_poly = np.array(
+            [
+                [int(local_landmarks[i][0]), int(local_landmarks[i][1])]
+                for i in left_eye_indices
+            ],
+            np.int32,
+        )
+        right_eye_poly = np.array(
+            [
+                [int(local_landmarks[i][0]), int(local_landmarks[i][1])]
+                for i in right_eye_indices
+            ],
+            np.int32,
+        )
+        cv2.fillPoly(mask, [left_eye_poly, right_eye_poly], 255)
+
     if hide_mouth:
-        mouth_ids = [
+        mouth_indices = [
             78,
             95,
             88,
@@ -179,14 +199,28 @@ def create_mask(local_landmarks, hide_eyes, hide_mouth, face_crop):
             13,
             82,
         ]
-        parts_to_hide.append(mouth_ids)
-
-    for part in parts_to_hide:
-        poly = np.array(
-            [[int(local_landmarks[i][0]), int(local_landmarks[i][1])] for i in part],
+        mouth_poly = np.array(
+            [
+                [int(local_landmarks[i][0]), int(local_landmarks[i][1])]
+                for i in mouth_indices
+            ],
             np.int32,
         )
-        cv2.fillPoly(mask, [poly], 255)
+        # Создаем отдельную маску для области рта
+        mouth_mask = np.zeros(face_crop.shape[:2], dtype=np.uint8)
+        cv2.fillPoly(mouth_mask, [mouth_poly], 255)
+
+        # Определяем размер ядра на основе mouth_k
+        kernel_size = max(1, int(mouth_k * 5))
+        if kernel_size % 2 == 0:
+            kernel_size += 1
+        kernel = cv2.getStructuringElement(
+            cv2.MORPH_ELLIPSE, (kernel_size, kernel_size)
+        )
+        mouth_mask = cv2.dilate(mouth_mask, kernel, iterations=1)
+
+        # Объединяем маску рта с основной маской
+        mask = cv2.bitwise_or(mask, mouth_mask)
 
     return mask
 
@@ -224,8 +258,10 @@ def process_landmarks(
     save_path=None,
     hide_eyes=True,
     hide_mouth=True,
+    mouth_k=0.5,
     curve_crop=True,
     return_image=False,
+    return_raw=False,
     verbose=False,
 ):
     """Обрабатывает лицевые маркеры и выполняет модификации лица.
@@ -238,14 +274,17 @@ def process_landmarks(
         save_path (Optional[str]): Путь для сохранения обработанного изображения
         hide_eyes (bool): Скрывать ли области глаз
         hide_mouth (bool): Скрывать ли область рта
+        mouth_k (float): Коэффициент для закрытия губ (0-1 и больше)
         curve_crop (bool): Применять ли криволинейную обрезку лица
         return_image (bool): Возвращать ли обработанное изображение вместе с маркерами
+        return_raw (bool): Возвращать ли landmarks в необработанном виде
+            (<class 'google._upb._message.RepeatedCompositeContainer'>)
         verbose (bool): Показывать ли результирующее изображение
 
     Returns:
         Union[Tuple[list, numpy.ndarray], list, None]:
             - Если return_image=True: Кортеж (маркеры, обработанное_изображение)
-            - Если return_image=False: Список маркеров
+            - Если return_image=False: Список маркеров (numpy.ndarray x, y, z)
             - None, если лицо не обнаружено
 
     Raises:
@@ -262,6 +301,7 @@ def process_landmarks(
         hide_eyes=hide_eyes,
         hide_mouth=hide_mouth,
         curve_crop=curve_crop,
+        mouth_k=mouth_k,
     )
 
     if verbose:
@@ -271,5 +311,8 @@ def process_landmarks(
 
     if save_path:
         cv2.imwrite(save_path, result_image)
+
+    if return_raw is False:
+        landmarks = np.array([(lm.x, lm.y, lm.z) for lm in landmarks])
 
     return (landmarks, result_image) if return_image else landmarks
