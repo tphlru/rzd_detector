@@ -1,23 +1,62 @@
-try: 
-    from flask import Flask, render_template, request, jsonify
-except ModuleNotFoundError:
-    import subprocess
-
-    subprocess.run("pip install flask")
-    # or 
-    # subprocess.run("python3 -m pip install flask")
-    # or 
-    # subprocess.run("python -m pip install flask")
-    print()
-    from flask import Flask, render_template, request, jsonify
+import contextlib
 import logging
+from flask import Flask, render_template, request, jsonify
+from flask_socketio import SocketIO
+
+mode = "dev"  # "dev" or "prod"
 
 app = Flask(__name__)
+socketio = SocketIO(app)
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
 
-# Статические данные (замените рыбой по необходимости)
+criteria_data = {
+    "emotional": {
+        "name": "Эмоциональное состояние",
+        "enabled": True,
+        "score": 0,
+        "max_score": 10,
+        "sublevels": {
+            "happiness": {"score": 0, "max_score": 2},
+            "stress": {"score": 0, "max_score": 3},
+            "anxiety": {"score": 0, "max_score": 5},
+        },
+    },
+    "physical": {
+        "name": "Физическое состояние",
+        "enabled": True,
+        "score": 0,
+        "max_score": 10,
+        "sublevels": {
+            "pulse": {"score": 0, "max_score": 4},
+            "breathing": {"score": 0, "max_score": 3},
+            "blinking": {"score": 0, "max_score": 3},
+        },
+    },
+    "seasonal": {
+        "name": "Сезонность одежды",
+        "enabled": True,
+        "score": 0,
+        "max_score": 5,
+        "sublevels": {},
+    },
+    "subjective": {
+        "name": "Субъективная оценка",
+        "enabled": True,
+        "score": 0,
+        "max_score": 5,
+        "sublevels": {},
+    },
+    "statistical": {
+        "name": "Статистическая оценка",
+        "enabled": False,
+        "score": 0,
+        "max_score": 5,
+        "sublevels": {},
+    },
+}
+
 data = {
     "gender": "Мужской",
     "age": 25,
@@ -25,25 +64,20 @@ data = {
     "arrival": "Санкт-Петербург",
     "subjective_rating": 0,
     "question1": "Как вы себя чувствуете?",
-    "question2": ["1", "3"],  # Пример выбранных значений
-    "criteria": [
-        {"name": "Статистическая оценка", "sublevel": 1, "points": 5, "total": 5},
-    ],
+    "question2": ["1", "3"],  # Пример
+    "criteria": criteria_data,
     "pulse_status": "Нормально",
     "breathing_status": "Средняя частота",
     "blinking_value": 15,
     "emotions": {"Счастье": 50, "Грусть": 20, "Гнев": 10, "Удивление": 20},
     "voice_emotions": {"Спокойствие": 60, "Стресс": 40},
-    "emotional": True,
-    "physical": True,
-    "seasonal": True,
-    "subjective": True,
-    "statistical": True,
 }
+
 
 @app.route("/")
 def index():
     return render_template("index.html", data=data)
+
 
 @app.route("/submit", methods=["POST"])
 def submit():
@@ -51,43 +85,67 @@ def submit():
     element = user_data.get("element")
     value = user_data.get("value")
 
-    # Логируем изменения
     logging.info(f"Изменен элемент '{element}': значение = {value}")
 
-    # Обновляем данные на сервере
+    if element in ["emotional", "physical", "seasonal", "subjective", "statistical"]:
+        enabled = bool(value)
+        data[element] = enabled
+        if element in criteria_data:
+            criteria_data[element]["enabled"] = enabled
+            # Если секция отключена, обнуляем все значения
+            if not enabled:
+                criteria_data[element]["score"] = 0
+                for sublevel in criteria_data[element].get("sublevels", {}).values():
+                    sublevel["score"] = 0
+            socketio.emit("criteria_updated", criteria_data)
+        return jsonify({"status": "success", "data": data})
+
     if element in data:
         data[element] = value
     elif element in ["genderSelect", "ageInput", "departureInput", "arrivalInput"]:
-        # Обработка полей "Данные"
         if element == "genderSelect":
             data["gender"] = value
         elif element == "ageInput":
-            try:
+            with contextlib.suppress(ValueError):
                 data["age"] = int(value)
-            except ValueError:
-                pass
         elif element == "departureInput":
             data["departure"] = value
         elif element == "arrivalInput":
             data["arrival"] = value
     elif element == "subjective_rating":
-        try:
+        with contextlib.suppress(ValueError):
             data["subjective_rating"] = int(value)
-        except ValueError:
-            pass
     elif element == "question1":
         data["question1"] = value
     elif element == "question2":
-        data["question2"] = value  # Ожидается список значений
-    elif element in ["emotional", "physical", "seasonal", "subjective", "statistical"]:
-        data[element] = bool(value)
-    elif element == "reportButton":
-        # Обработка нажатия кнопки "Показать отчет"
-        pass  # Добавьте необходимую логику
-    # Добавьте обработку других элементов по необходимости
-
+        data["question2"] = value
+    print(criteria_data)
     return jsonify({"status": "success", "data": data})
 
+
+@socketio.on("update_criteria")
+def handle_criteria_update(update_data):  # sourcery skip: merge-repeated-ifs
+    category = update_data.get("category")
+    sublevel = update_data.get("sublevel")
+    score = update_data.get("score")
+
+    # Обновляем только если категория включена
+    if category in criteria_data and criteria_data[category]["enabled"]:
+        if sublevel:
+            if sublevel in criteria_data[category]["sublevels"]:
+                criteria_data[category]["sublevels"][sublevel]["score"] = score
+        else:
+            criteria_data[category]["score"] = score
+
+        # Пересчитываем общий балл
+        if sublevel:
+            criteria_data[category]["score"] = sum(
+                sub["score"] for sub in criteria_data[category]["sublevels"].values()
+            )
+
+        socketio.emit("criteria_updated", criteria_data)
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
-    
+    if mode == "dev":
+        socketio.run(app, debug=True)
