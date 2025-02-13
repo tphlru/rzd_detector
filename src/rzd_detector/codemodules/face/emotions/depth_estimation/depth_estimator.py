@@ -99,11 +99,14 @@ class DepthEstimator:
         """Генерация карты глубин из изображения.
 
         Args:
-            image_input: путь к файлу изображения или изображение в формате OpenCV
-            output_path (str, optional): путь для сохранения результата
+            image_input (str или numpy.ndarray): Путь к файлу изображения или изображение в формате OpenCV.
+            save_path (str, optional): Путь для сохранения результата. Если указан, карта глубин будет сохранена в
+                формате PNG. По умолчанию None.
+            fix_shape (bool, optional): Если True, возвращает карту глубин в виде 3-мерного массива, иначе возвращает
+                исходную форму. По умолчанию True.
 
         Returns:
-            depthmap: карта глубин
+            numpy.ndarray: Карта глубин.
         """
         image = self._load_image(image_input)
         depth = self._generate(image)
