@@ -4,6 +4,8 @@ import numpy as np
 import logging
 import os
 
+from typing import Union
+
 logger = logging.getLogger(__name__)
 
 
@@ -94,7 +96,6 @@ class FaceLandmarksProcessor:
     def process_image(
         self,
         img,
-        static_image_mode=True,
         max_num_faces=1,
         refine_landmarks=True,
         min_detection_confidence=0.4,
@@ -103,7 +104,6 @@ class FaceLandmarksProcessor:
 
         Args:
             img (numpy.ndarray): Изображение в формате OpenCV.
-            static_image_mode (bool): Режим обработки статического изображения.
             max_num_faces (int): Максимальное количество лиц для обнаружения.
             refine_landmarks (bool): Уточнять ли маркеры.
             min_detection_confidence (float): Минимальная уверенность для обнаружения.
@@ -114,7 +114,7 @@ class FaceLandmarksProcessor:
         rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         with self.mp_face_mesh.FaceMesh(
-            static_image_mode=static_image_mode,
+            static_image_mode=True,
             max_num_faces=max_num_faces,
             refine_landmarks=refine_landmarks,
             min_detection_confidence=min_detection_confidence,
@@ -263,15 +263,15 @@ class FaceLandmarksProcessor:
 
     def process_landmarks(
         self,
-        image,
-        save_path=None,
+        image: Union[str, np.ndarray],
+        save_path: str = None,
         hide_eyes=True,
         hide_mouth=True,
         mouth_k=0.5,
         curve_crop=True,
         return_image=False,
         return_raw=False,
-    ):
+    ) -> "FaceLandmarksResult":
         """Обрабатывает лицевые маркеры и выполняет модификации.
 
         Обрабатывает входное изображение для обнаружения лицевых маркеров и применяет
@@ -321,8 +321,8 @@ class FaceLandmarksProcessor:
             landmarks=np.array([(lm.x, lm.y, lm.z) for lm in landmarks]),
             processed_image=result_image,
             raw=raw,
-            return_image=return_image,
-            last_crop_info=self.last_crop_info,
+            _return_image=return_image,
+            _last_crop_info=self.last_crop_info,
         )
         if save_path:
             result_obj.save_image(save_path)
@@ -330,7 +330,18 @@ class FaceLandmarksProcessor:
 
 
 class FaceLandmarksResult(FaceLandmarksProcessor):
-    """Подкласс, содержащий результаты обработки изображения лицевых маркеров, а также методы доступа к ним."""
+    """Подкласс, содержащий результаты обработки изображения лицевых маркеров, а также методы доступа к ним.
+
+    Attributes:
+        original_image (numpy.ndarray): Исходное изображение.
+        landmarks (numpy.ndarray): Координаты маркеров лица.
+        processed_image (numpy.ndarray): Обработанное изображение.
+        raw (numpy.ndarray): Необработанные координаты маркеров лица (None если отключено).
+
+    Methods:
+        get_full_mask(): Возвращает маску исходного изображения, где область лица выделена белым цветом.
+        save_image(path): Сохраняет обработанное изображение по указанному пути.
+    """
 
     def __init__(
         self,
@@ -338,17 +349,17 @@ class FaceLandmarksResult(FaceLandmarksProcessor):
         landmarks,
         processed_image,
         raw,
-        return_image,
-        last_crop_info,
+        _return_image,
+        _last_crop_info,
     ):
         # Инициализируем родительский класс, чтобы иметь доступ к его методам и полям.
         super().__init__()
         self.original_image = original_image
         self.landmarks = landmarks
-        self.processed_image = processed_image if return_image else None
+        self.processed_image = processed_image if _return_image else None
         self.raw = raw
         # Сохраняем данные кропа, чтобы в дальнейшем восстановить координаты лица в полном изображении.
-        self.last_crop_info = last_crop_info
+        self.last_crop_info = _last_crop_info
 
     def get_full_mask(self):
         """Возвращает маску исходного изображения, где область лица выделена белым цветом.

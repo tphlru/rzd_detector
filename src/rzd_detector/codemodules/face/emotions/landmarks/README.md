@@ -1,112 +1,227 @@
-## Функция `process_landmarks`
+# Модуль `landmarks.py`
 
-Функция `process_landmarks` является основной функцией для обработки изображений лиц. Она принимает изображение, обнаруживает лицевые маркеры и применяет различные модификации, такие как скрытие глаз и рта, а также криволинейную обрезку лица.
+Этот модуль предназначен для обработки изображений лиц и извлечения координат лицевых ориентиров (landmarks) с использованием библиотеки `mediapipe`. Он предоставляет класс `FaceLandmarksProcessor` для обнаружения лиц на изображениях, извлечения координат ориентиров и выполнения различных операций, таких как скрытие глаз/рта и криволинейная обрезка.
+
+## Обзор
+
+Модуль состоит из двух основных классов:
+
+-   `FaceLandmarksProcessor`: Основной класс для обработки изображений и извлечения лицевых ориентиров.
+-   `FaceLandmarksResult`: Класс, содержащий результаты обработки, включая исходное изображение, обработанное изображение, координаты ориентиров и маску лица.
+
+## Класс `FaceLandmarksProcessor`
+
+### Инициализация
+
+Для начала работы с модулем необходимо создать экземпляр класса `FaceLandmarksProcessor`.
+
+```python
+from rzd_detector.codemodules.face.emotions.landmarks import FaceLandmarksProcessor
+
+processor = FaceLandmarksProcessor(verbose=False)
+```
+
+-   `verbose`: (bool, optional) Если `True`, будут отображаться отладочные изображения. По умолчанию `False`.
+
+### Метод `process_landmarks`
+
+Этот метод является основным для обработки изображений. Он принимает путь к изображению или изображение в формате `numpy.ndarray`, обнаруживает лицевые ориентиры и применяет опциональные модификации.
+
+```python
+def process_landmarks(
+	self,
+	image: Union[str, np.ndarray],
+	save_path: str = None,
+	hide_eyes=True,
+	hide_mouth=True,
+	mouth_k=0.5,
+	curve_crop=True,
+	return_image=False,
+	return_raw=False,
+) -> "FaceLandmarksResult":
+```
 
 **Аргументы:**
 
-*   `image` (Union[str, numpy.ndarray]): Путь к изображению или изображение в формате OpenCV (массив numpy).
-*   `save_path` (Optional[str]): Путь для сохранения обработанного изображения. Если не указан, изображение не сохраняется.
-*   `hide_eyes` (bool): Флаг, указывающий, нужно ли скрывать области глаз. По умолчанию `True`.
-*   `hide_mouth` (bool): Флаг, указывающий, нужно ли скрывать область рта. По умолчанию `True`.
-*   `curve_crop` (bool): Флаг, указывающий, нужно ли применять криволинейную обрезку лица. По умолчанию `True`.
-*   `return_image` (bool): Флаг, указывающий, нужно ли возвращать обработанное изображение вместе с маркерами. По умолчанию `False`.
-*   `verbose` (bool): Флаг, указывающий, нужно ли отображать результирующее изображение с помощью `cv2.imshow`. По умолчанию `False`.
+-   `image` (Union[str, numpy.ndarray]): Путь к изображению или изображение в формате OpenCV.
+-   `save_path` (str, optional): Путь для сохранения обработанного изображения. Если указан, изображение будет сохранено.
+-   `hide_eyes` (bool, optional): Скрывать ли области глаз. По умолчанию `True`.
+-   `hide_mouth` (bool, optional): Скрывать ли область рта. По умолчанию `True`.
+-   `mouth_k` (float, optional): Коэффициент для закрытия губ (0-1 и больше). По умолчанию `0.5`.
+-   `curve_crop` (bool, optional): Применять ли криволинейную обрезку лица. По умолчанию `True`.
+-   `return_image` (bool, optional): Возвращать ли обработанное изображение вместе с маркерами. По умолчанию `False`.
+-   `return_raw` (bool, optional): Возвращать ли landmarks в необработанном виде. По умолчанию `False`.
 
-**Возвращаемое значение:**
+**Возвращает:**
 
-*   Если `return_image=True`: Возвращает кортеж `(landmarks, result_image)`, где `landmarks` - это список координат лицевых маркеров, а `result_image` - обработанное изображение.
-*   Если `return_image=False`: Возвращает список координат лицевых маркеров `landmarks`.
-*   Если лицо не обнаружено: Возвращает `None`.
+-   `FaceLandmarksResult`: Объект, содержащий результаты обработки. Возвращает `None`, если лицо не обнаружено.
 
-**Исключения:**
+**Пример использования:**
 
-*   `FileNotFoundError`: Если `image` является строкой (путем к файлу), и файл не найден.
-*   `ValueError`: Если `image` не является ни строкой, ни массивом numpy.
+```python
+image_path = "path/to/your/image.jpg"
+result = processor.process_landmarks(
+	image_path,
+	save_path="path/to/save/processed_image.jpg",
+	hide_eyes=True,
+	hide_mouth=True,
+	curve_crop=True,
+	return_image=True,
+)
 
-**Примеры использования:**
+if result:
+	processed_image = result.processed_image  # Получаем обработанное изображение
+	# Дальнейшая работа с изображением
+else:
+	print("Лицо не обнаружено")
+```
 
-1.  **Простая обработка изображения с сохранением результата:**
+## Класс `FaceLandmarksResult`
 
-	```python
-	from rzd_detector.codemodules.face.emotions.landmarks import process_landmarks
+Этот класс предназначен для хранения результатов обработки изображения.
 
-	image_path = "path/to/your/image.jpg"
-	save_path = "path/to/save/processed_image.jpg"
-	landmarks = process_landmarks(image_path, save_path=save_path)
+### Атрибуты
 
-	if landmarks:
-		print(f"Обнаружено {len(landmarks)} маркеров лица.")
-	else:
-		print("Лицо не обнаружено.")
-	```
+-   `original_image` (numpy.ndarray): Исходное изображение.
+-   `landmarks` (numpy.ndarray): Координаты маркеров лица.
+-   `processed_image` (numpy.ndarray): Обработанное изображение (доступно, если `return_image=True` в `process_landmarks`).
+-   `raw` (numpy.ndarray): Необработанные координаты маркеров лица (None если `return_raw=False` в `process_landmarks`).
+-   `last_crop_info` (dict): Информация об обрезке лица, используемая для восстановления координат на полном изображении.
 
-	В этом примере изображение по указанному пути обрабатывается, лицевые маркеры обнаруживаются, и результат сохраняется в указанный файл.  Глаза и рот скрываются, и применяется криволинейная обрезка по умолчанию.
+### Методы
 
-2.  **Обработка изображения с возвратом маркеров и изображения:**
+#### `get_full_mask()`
 
-	```python
-	from rzd_detector.codemodules.face.emotions.landmarks import process_landmarks
-	import cv2
+Возвращает маску исходного изображения, где область лица выделена белым цветом. Маска вычисляется с использованием сохраненных координат обрезки.
 
-	image_path = "path/to/your/image.jpg"
-	landmarks, processed_image = process_landmarks(image_path, return_image=True)
+```python
+def get_full_mask(self):
+```
 
-	if landmarks:
-		print(f"Обнаружено {len(landmarks)} маркеров лица.")
-		cv2.imshow("Processed Image", processed_image)
-		cv2.waitKey(0)
-		cv2.destroyAllWindows()
-	else:
-		print("Лицо не обнаружено.")
-	```
+**Возвращает:**
 
-	В этом примере изображение обрабатывается, и возвращаются как маркеры лица, так и обработанное изображение.  Обработанное изображение отображается с использованием `cv2.imshow`.
+-   `numpy.ndarray`: Маска лица на исходном изображении. Возвращает `None`, если информация об обрезке отсутствует.
 
-3.  **Обработка изображения без скрытия глаз и рта, без криволинейной обрезки:**
+**Пример использования:**
 
-	```python
-	from rzd_detector.codemodules.face.emotions.landmarks import process_landmarks
+```python
+full_mask = result.get_full_mask()
+if full_mask is not None:
+	# Дальнейшая работа с маской
+	pass
+```
 
-	image_path = "path/to/your/image.jpg"
-	landmarks = process_landmarks(image_path, hide_eyes=False, hide_mouth=False, curve_crop=False)
+#### `save_image(path)`
 
-	if landmarks:
-		print(f"Обнаружено {len(landmarks)} маркеров лица.")
-	else:
-		print("Лицо не обнаружено.")
-	```
+Сохраняет обработанное изображение по указанному пути.
 
-	В этом примере обработка выполняется без скрытия глаз и рта, а также без криволинейной обрезки.
+```python
+def save_image(self, path):
+```
 
-4.  **Обработка изображения из массива numpy:**
+**Аргументы:**
 
-	```python
-	from rzd_detector.codemodules.face.emotions.landmarks import process_landmarks
-	import cv2
+-   `path` (str): Путь для сохранения изображения.
 
-	image = cv2.imread("path/to/your/image.jpg")
-	landmarks = process_landmarks(image)
+**Пример использования:**
 
-	if landmarks:
-		print(f"Обнаружено {len(landmarks)} маркеров лица.")
-	else:
-		print("Лицо не обнаружено.")
-	```
+```python
+result.save_image("path/to/save/processed_image.jpg")
+```
 
-	В этом примере изображение загружается в формате numpy array с помощью `cv2.imread`, а затем передается в функцию `process_landmarks`.
+## Примеры использования
 
-5. **Отображение результирующего изображения в процессе обработки:**
+### Пример 1: Обработка изображения и получение координат
 
-	```python
-	from rzd_detector.codemodules.face.emotions.landmarks import process_landmarks
+```python
+import cv2
+from rzd_detector.codemodules.face.emotions.landmarks import FaceLandmarksProcessor
 
-	image_path = "path/to/your/image.jpg"
-	landmarks = process_landmarks(image_path, verbose=True)
+# Инициализация процессора
+processor = FaceLandmarksProcessor()
 
-	if landmarks:
-		print(f"Обнаружено {len(landmarks)} маркеров лица.")
-	else:
-		print("Лицо не обнаружено.")
-	```
+# Путь к изображению
+image_path = "path/to/your/image.jpg"
 
-	В этом примере, установив `verbose=True`, результирующее изображение будет отображено с использованием `cv2.imshow` в процессе обработки. Это полезно для отладки и визуальной оценки результатов.
+# Обработка изображения
+result = processor.process_landmarks(image_path, return_image=True)
+
+# Проверка, что лицо было обнаружено
+if result:
+	# Получение координат лицевых ориентиров
+	landmarks = result.landmarks
+
+	# Вывод координат
+	for i, (x, y, z) in enumerate(landmarks):
+		print(f"Landmark {i}: x={x:.4f}, y={y:.4f}, z={z:.4f}")
+
+	# Отображение обработанного изображения
+	cv2.imshow("Processed Image", result.processed_image)
+	cv2.waitKey(0)
+	cv2.destroyAllWindows()
+else:
+	print("Лицо не обнаружено.")
+```
+
+### Пример 2: Скрытие глаз и рта, криволинейная обрезка
+
+```python
+import cv2
+from rzd_detector.codemodules.face.emotions.landmarks import FaceLandmarksProcessor
+
+# Инициализация процессора
+processor = FaceLandmarksProcessor()
+
+# Путь к изображению
+image_path = "path/to/your/image.jpg"
+
+# Обработка изображения с опциями
+result = processor.process_landmarks(
+	image_path, hide_eyes=True, hide_mouth=True, curve_crop=True, return_image=True
+)
+
+# Проверка, что лицо было обнаружено
+if result:
+	# Отображение обработанного изображения
+	cv2.imshow("Processed Image", result.processed_image)
+	cv2.waitKey(0)
+	cv2.destroyAllWindows()
+else:
+	print("Лицо не обнаружено.")
+```
+
+### Пример 3: Получение маски лица на полном изображении
+
+```python
+import cv2
+from rzd_detector.codemodules.face.emotions.landmarks import FaceLandmarksProcessor
+
+# Инициализация процессора
+processor = FaceLandmarksProcessor()
+
+# Путь к изображению
+image_path = "path/to/your/image.jpg"
+
+# Обработка изображения
+result = processor.process_landmarks(image_path, return_image=True)
+
+# Проверка, что лицо было обнаружено
+if result:
+	# Получение маски лица
+	full_mask = result.get_full_mask()
+
+	# Отображение маски
+	cv2.imshow("Full Mask", full_mask)
+	cv2.waitKey(0)
+	cv2.destroyAllWindows()
+else:
+	print("Лицо не обнаружено.")
+```
+
+## Дополнительная информация
+
+-   Для работы с модулем необходимо установить библиотеку `mediapipe`.
+-   Координаты лицевых ориентиров нормализованы в диапазоне [0, 1].
+-   Параметр `mouth_k` позволяет регулировать степень закрытия рта при применении маски.
+
+Этот модуль предоставляет удобный и гибкий способ для обработки изображений лиц и извлечения лицевых ориентиров с возможностью применения различных модификаций.

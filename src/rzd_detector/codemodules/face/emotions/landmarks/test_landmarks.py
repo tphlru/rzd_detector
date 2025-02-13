@@ -1,6 +1,6 @@
 import cv2
 import pprint
-from landmarks import FaceLandmarksProcessor
+from rzd_detector.codemodules.face.emotions.landmarks import FaceLandmarksProcessor
 
 
 def main():
@@ -8,20 +8,22 @@ def main():
     processor = FaceLandmarksProcessor(verbose=True)
 
     # Process the image
-    result = processor.process_landmarks(image_path, return_image=True, return_raw=True)
+    result = processor.process_landmarks(
+        image_path, return_image=True, return_raw=True, mouth_k=1.5
+    )
 
     if result is None:
         print("No face landmarks detected.")
         return
 
     # Display the processed image
-    processed_image = result.get_result()
+    processed_image = result.processed_image
     cv2.imshow("Processed Image", processed_image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
     # Pretty print the coordinates of the landmarks
-    coordinates = result.get_coordinates()
+    coordinates = result.landmarks
     print("Landmark Coordinates:")
     pprint.pprint(coordinates)
 
