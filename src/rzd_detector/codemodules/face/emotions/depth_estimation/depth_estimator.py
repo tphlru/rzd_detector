@@ -27,8 +27,8 @@ class DepthEstimator:
             torch_dtype=torch.float16 if self.use_gpu else torch.float32,
         ).to("cuda" if self.use_gpu else "cpu")
 
-    def load_image(self, image_input):
-        """Загрузка изображения из файла или OpenCV. (Происходит при infer)
+    def _load_image(self, image_input):
+        """Загрузка изображения из файла или OpenCV (преобразование в RGB).
 
         Args:
             image_input (str или numpy.ndarray): Путь к файлу изображения или изображение в формате OpenCV.
@@ -77,8 +77,6 @@ class DepthEstimator:
         Returns:
             3-мерный массив карты глубин
         """
-        # old shape: (1, h, w, 1)
-        # new shape: (h, w)
         return depthmap.squeeze()
 
     def show_heatmap(self, depthmap):
@@ -107,7 +105,7 @@ class DepthEstimator:
         Returns:
             depthmap: карта глубин
         """
-        image = self.load_image(image_input)
+        image = self._load_image(image_input)
         depth = self._generate(image)
         if save_path:
             self._save_depth_map_img(depth, save_path)
