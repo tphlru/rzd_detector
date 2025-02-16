@@ -34,15 +34,15 @@ window.addEventListener('click', function() {
     document.querySelector('.dropdown ul').style.display = 'none';
 });
 
-// Редирект для мобильных устройств
-document.addEventListener("DOMContentLoaded", function() {
-    if (window.matchMedia("(pointer: coarse)").matches &&
-        Math.max(window.innerWidth, window.innerHeight) / Math.min(window.innerWidth, window.innerHeight) > 2) {
-        window.location.replace("mobile.html");
-    } else if (window.matchMedia("(pointer: coarse)").matches && window.innerWidth < window.innerHeight) {
-        window.location.replace("tablet.html");
-    }
-});
+// Редирект для мобильных устройств // с 16.02.25 признан не рабочим
+// document.addEventListener("DOMContentLoaded", function() {
+//     if (window.matchMedia("(pointer: coarse)").matches &&
+//         Math.max(window.innerWidth, window.innerHeight) / Math.min(window.innerWidth, window.innerHeight) > 2) {
+//         window.location.replace("mobile.html");
+//     } else if (window.matchMedia("(pointer: coarse)").matches && window.innerWidth < window.innerHeight) {
+//         window.location.replace("tablet.html");
+//     }
+// });
 
 // таблица
 // Criteria data

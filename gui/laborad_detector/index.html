@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
     <head>
         <meta charset="utf-8">
             <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -10,409 +10,67 @@
                 </script>
                 <script src="https://cdn.tailwindcss.com">
                 </script>
-                <link href="resources/css/index.css?<?php echo time(); ?>" rel="stylesheet"/>
                 <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js">
                 </script>
-                <link href="resources/icon.png" rel="shortcut icon" type="image/png">
-                </link>
             </meta>
         </meta>
+        <style>
+            .outer {
+                display: flex;
+                width: 100%;
+                height: 100%;
+            }
+
+            .inner {
+                margin: auto;
+                background: red;
+            }
+            .blocks {
+                height: 100%;
+            }
+            body,html {
+                height: 100%;
+            }
+        </style>
     </head>
-    <body class="bg-gray-300 font-sans" id="body">
-        <div class="container mx-auto p-4">
-            <header class="mb-8">
-                <h1 class="text-3xl font-bold text-center text-gray-800">
-                    <!-- <img src="logo.jpg" alt="LaboRad Logo" class="h-12 w-auto"> -->
-                    LaboRad "Детектор состояния человека"
-                    <form action="info.html" target="_blank">
-                        <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="infobtn">
-                            О нас
-                        </button>
-                    </form>
+    <body>
+        <div class="outer">
+            <div class="inner bg-white rounded-lg shadow-md p-6">
+                <h1 align="center" class="text-xl font-semibold mb-4">
+                    Добро пожаловать!
                 </h1>
-            </header>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="bg-white rounded-lg shadow-md p-6" id="videoPanel">
-                    <h2 class="text-xl font-semibold mb-4">
-                        Видео
-                    </h2>
-                    <div class="aspect-w-16 aspect-h-9">
-                        <video class="rounded-lg w-full" controls="">
-                            <source id="video" src="resources/video.mp4" type="video/mp4">
-                                Возникла ошибка при загрузке видео, попробуйте перезагрузить страницу и убедитесь что Ваше устройство поддерживает видео. Если вам нужна помощь, напишите нам >
-                                <a class="text-blue-500 hover:text-blue-600" href="https://vk.com/laborad" target="_blank">
-                                    https://vk.com/laborad
-                                </a>
-                                .
-                            </source>
-                        </video>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg shadow-md p-6" id="managementConsole">
-                    <h2 class="text-xl font-semibold mb-4">
-                        Панель управления
-                    </h2>
-                    <div class="space-y-4">
-                        <!-- Updated button layout for responsiveness and proper spacing -->
-                        <div class="flex flex-wrap gap-2 sm:gap-4">
-                            <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="next">
-                                Следующий
-                            </button>
-                            <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="stop">
-                                Остановить
-                            </button>
-                            <button class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="more">
-                                Показать подробную информацию
-                            </button>
-                            <button class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="videoBtn" onclick="showPopupVideo()">
-                                Показать запись
-                            </button>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">
-                                Устройство
-                            </label>
-                            <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="deviceSelect">
-                                <option>
-                                    Устройство 1
-                                </option>
-                                <option>
-                                    Устройство 2
-                                </option>
-                                <option>
-                                    Неизвестное устройство
-                                </option>
-                            </select>
-                        </div>
-                        <div class="dropdown">
-                            <label class="block text-sm font-medium text-gray-700">
-                                Настройка подсчета
-                            </label>
-                            <span>
-                                Учитывать при подсчете
-                            </span>
-                            <ul>
-                            <li>
-                                <input type="checkbox" id="emotional" checked>
-                                <label for="emotional">Эмоциональное состояние</label>
-                            </li>
-                            <li>
-                                <input type="checkbox" id="physical" checked>
-                                <label for="physical">Физическое состояние</label>
-                            </li>
-                            <li>
-                                <input type="checkbox" id="seasonal" checked>
-                                <label for="seasonal">Сезонность одежды</label>
-                            </li>
-                            <li>
-                                <input type="checkbox" id="subjective" checked>
-                                <label for="subjective">Субъективная оценка</label>
-                            </li>
-                            <li>
-                                <input type="checkbox" id="statistical" checked>
-                                <label for="statistical">Статистическая оценка</label>
-                            </li>
-                        </ul>
-                        </div>
-                        <button class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="more" onclick="showPopup()">
-                            Показать отчет
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8" id="data">
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h2 class="text-xl font-semibold mb-4">
-                        Данные
-                    </h2>
-                    <!-- First Nested Panel (No Title) -->
-                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">
-                                    Пол
-                                </label>
-                                <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="genderSelect">
-                                    <option disabled="" selected="">
-                                        Выберите...
-                                    </option>
-                                    <option>
-                                        Мужской
-                                    </option>
-                                    <option>
-                                        Женский
-                                    </option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">
-                                    Возраст
-                                </label>
-                                <input class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="ageInput" type="number">
-                                </input>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">
-                                    Место посадки/высадки
-                                </label>
-                                <div class="flex mt-1">
-                                    <input class="block w-full rounded-l-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="departureInput" type="text">
-                                        <label class="block text-sm font-medium text-gray-700">
-                                            &nbsp/&nbsp
-                                        </label>
-                                        <input class="block w-full rounded-r-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="arrivalInput" type="text">
-                                        </input>
-                                    </input>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Second Nested Panel (With Title) -->
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <h3 class="text-lg font-semibold mb-4">
-                            Социальное взаимодействие
-                        </h3>
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">
-                                    Субъективная оценка
-                                </label>
-                                <div class="mt-2 flex items-center space-x-4">
-                                    <label class="inline-flex items-center">
-                                        <input class="form-radio" name="rating" type="radio" value="-2">
-                                            <span class="ml-2">
-                                                -2
-                                            </span>
-                                        </input>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input class="form-radio" name="rating" type="radio" value="-1">
-                                            <span class="ml-2">
-                                                -1
-                                            </span>
-                                        </input>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input class="form-radio" name="rating" type="radio" value="0">
-                                            <span class="ml-2">
-                                                0
-                                            </span>
-                                        </input>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input class="form-radio" name="rating" type="radio" value="1">
-                                            <span class="ml-2">
-                                                +1
-                                            </span>
-                                        </input>
-                                    </label>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">
-                                    Первый вопрос
-                                </label>
-                                <input class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="question1" type="text">
-                                </input>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">
-                                    Второй вопрос
-                                </label>
-                                <div class="mt-2 flex items-center space-x-4">
-                                    <label class="inline-flex items-center">
-                                        <input class="form-checkbox" name="question2" type="checkbox" value="1">
-                                            <span class="ml-2">
-                                                1
-                                            </span>
-                                        </input>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input class="form-checkbox" name="question2" type="checkbox" value="2">
-                                            <span class="ml-2">
-                                                2
-                                            </span>
-                                        </input>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input class="form-checkbox" name="question2" type="checkbox" value="3">
-                                            <span class="ml-2">
-                                                3
-                                            </span>
-                                        </input>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input class="form-checkbox" name="question2" type="checkbox" value="4">
-                                            <span class="ml-2">
-                                                4
-                                            </span>
-                                        </input>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg shadow-md p-6" id="criteriaTable">
-                    <h2 class="text-xl font-semibold mb-4">
-                        Критерии
-                    </h2>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Критерии
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Подуровни
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Баллы
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Общий балл
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200" id="criteriaTableBody">
-                                <!-- Table rows will be dynamically populated by JavaScript -->
-                                 <tr id="statisticalRow">
-                                    <td class="px-6 py-4 whitespace-nowrap">Статистическая оценка</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">0</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">0</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">0</td>
-                                 </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg shadow-md p-6 mt-8" id="grafics">
-                <h2 class="text-xl font-semibold mb-4">
-                    Графики
+                <h2 align="center" class="text-x font-semi mb-4">
+                    Выберите устройство
                 </h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-8">
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <h3 class="text-lg font-semibold mb-4">
-                            Пульс
-                        </h3>
-                        <div id="pulseStatus" class="text-2xl text-center">-</div>
-                        <!-- <div id="pulseStatus2" class="text-2xl text-center hidden">-</div> -->
-                        <img id="pulseImage" src="resources/disgust.png" class="hidden cursor-pointer w-full h-auto" onclick="openImageFullscreen(this.src)"/>
-                    </div>
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <h3 class="text-lg font-semibold mb-4">
-                            Частота дыхания
-                        </h3>
-                        <div id="breathingStatus" class="text-2xl text-center">-</div>
-                        <img id="breathingImage" src="resources/resp.png" class="hidden cursor-pointer w-full h-auto" onclick="openImageFullscreen(this.src)"/>
-                    </div>
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <h3 class="text-lg font-semibold mb-4">
-                            Частота моргания
-                        </h3>
-                        <div id="blinkingValue" class="text-4xl font-bold text-center">0</div>
-                        <canvas id="blinkingChart" style="display: none;"></canvas>
-                        <div id="blinkingMedian" class="text-lg mt-4 text-center"></div>
-                    </div>
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <h3 class="text-lg font-semibold mb-4">
-                            Эмоция лица
-                        </h3>
-                        <canvas id="emotionsChart">
-                        </canvas>
-                    </div>
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <h3 class="text-lg font-semibold mb-4">
-                            Эмоция голоса
-                        </h3>
-                        <canvas id="voiceChart"></canvas>
-                    </div>
-                                        <div class="bg-white rounded-lg shadow-md p-6">
-                        <h3 class="text-lg font-semibold mb-4">
-                            Искажения голоса
-                        </h3>
-                        <div class="bg-white rounded-lg shadow-md p-6 hidden" id="voiceDistortion">
-                            <div>
-                                <p class="text-sm text-gray-600">Спрогнозированная фундаментальная частота голоса (в разработке)</p>
-                                <p class="text-lg font-semibold">140</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-600">Измеренная фундаментальная частота</p>
-                                <p class="text-lg font-semibold">148</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-600">Спазмы (QNMVS)</p>
-                                <p class="text-lg font-semibold text-green-500">32</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-600">Вердикт</p>
-                                <p class="text-lg font-semibold text-green-500">нормально</p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="mb-3">
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg shadow-md p-4 blocks" style="margin: auto;" onclick="document.location='desktop.html'">
+                        Десктопное устройство
+                    </button>
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg shadow-md p-4 blocks" style="margin: auto;" onclick="document.location='mobile.html'">
+                        Мобильное устройство
+                    </button>
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg shadow-md p-4 blocks" style="margin: auto;" onclick="document.location='tablet.html'">
+                        Планшет
+                    </button>
                 </div>
-            </div>
-            <footer class="mt-8 text-center text-sm text-gray-600">
-                <p>
-                    Создано в рамках конкурса "Инженеры транспорта" командой LaboRad
-                </p>
-                <p>
-                    Наш ВК -
-                    <a class="text-blue-500 hover:text-blue-600" href="https://vk.com/laborad" target="_blank">
-                        https://vk.com/laborad
-                    </a>
-                </p>
-                <p>
-                    Версия приложения - 2025.02.03a
-                </p>
-            </footer>
-        </div>
-        <div id="popup-overlay">
-            <div id="popup">
-                <h2 class="text-xl font-semibold mb-4">
-                    Отчет
+                <button class="bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg shadow-md p-4 blocks w-full" style="margin: auto;" onclick="document.location='linear.html'">
+                    Линейная версия интерфейса
+                </button>
+                <div class="mt-9">
+                    <h2 align="center" class="text-x font-semi mb-3">
+                        Или посмотрите
+                    </h2>
+                    <button class="bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-lg shadow-md p-4 blocks w-full" id="infobtn" onclick="document.location='https://github.com/tphlru/rzd_detector'">
+                        Репозиторий
+                    </button>
+                    <button class="bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-lg shadow-md p-4 blocks mt-3 w-full" id="infobtn" onclick="document.location='https://tphlru.github.io/'">
+                        Документация
+                    </button>
+                </div>
+                <h2 align="center" class="text-x font-semi mt-3">
+                    Версия - 2025.02.16a
                 </h2>
-                <table>
-                    <tr>
-                        <td>
-                            <img id="img1" src="resources/image1.png"/>
-                        </td>
-                        <td>
-                            <img id="img2" src="resources/image2.png"/>
-                        </td>
-                        <td>
-                            <img id="img3" src="resources/image3.png"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <img id="img4" src="resources/image4.png"/>
-                        </td>
-                        <td>
-                            <img id="img5" src="resources/image5.png"/>
-                        </td>
-                        <td>
-                            <img id="img6" src="resources/image6.png"/>
-                        </td>
-                    </tr>
-                </table>
             </div>
         </div>
-        <div id="popup-overlay-video">
-            <div id="popup-video">
-                <h2 class="text-xl font-semibold mb-4">
-                    Записи
-                </h2>
-                <video class="rounded-lg w-full" controls>
-                    <source id="video" src="resources/gesha_otvra.mp4" type="video/mp4">
-                </video>
-            </div>
-        </div>
-        <script defer="" src="resources/js/index.js">
-        </script>
-        <script defer="" src="resources/js/camera.js"></script>
-        
     </body>
 </html>

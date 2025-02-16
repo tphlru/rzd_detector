@@ -10,7 +10,7 @@
                 </script>
                 <script src="https://cdn.tailwindcss.com">
                 </script>
-                <link href="resources/css/mobile.css?<?php echo time(); ?>" rel="stylesheet"/>
+                <link href="resources/css/desktop.css?<?php echo time(); ?>" rel="stylesheet"/>
                 <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js">
                 </script>
                 <link href="resources/icon.png" rel="shortcut icon" type="image/png">
@@ -22,6 +22,7 @@
         <div class="container mx-auto p-4">
             <header class="mb-8">
                 <h1 class="text-3xl font-bold text-center text-gray-800">
+                    <!-- <img src="logo.jpg" alt="LaboRad Logo" class="h-12 w-auto"> -->
                     LaboRad "Детектор состояния человека"
                     <form action="info.html" target="_blank">
                         <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="infobtn">
@@ -57,9 +58,6 @@
                             <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="next">
                                 Следующий
                             </button>
-                            <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="restart">
-                                Начать заново
-                            </button>
                             <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="stop">
                                 Остановить
                             </button>
@@ -94,28 +92,27 @@
                                 Учитывать при подсчете
                             </span>
                             <ul>
-                                <li>
-                                    <input id="opt1" type="checkbox">
-                                        <label for="opt1">
-                                            Опция 1
-                                        </label>
-                                    </input>
-                                </li>
-                                <li>
-                                    <input id="opt2" type="checkbox">
-                                        <label for="opt2">
-                                            Опция 2
-                                        </label>
-                                    </input>
-                                </li>
-                                <li>
-                                    <input id="opt3" type="checkbox">
-                                        <label for="opt3">
-                                            Опция 3
-                                        </label>
-                                    </input>
-                                </li>
-                            </ul>
+                            <li>
+                                <input type="checkbox" id="emotional" checked>
+                                <label for="emotional">Эмоциональное состояние</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" id="physical" checked>
+                                <label for="physical">Физическое состояние</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" id="seasonal" checked>
+                                <label for="seasonal">Сезонность одежды</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" id="subjective" checked>
+                                <label for="subjective">Субъективная оценка</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" id="statistical" checked>
+                                <label for="statistical">Статистическая оценка</label>
+                            </li>
+                        </ul>
                         </div>
                         <button class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="more" onclick="showPopup()">
                             Показать отчет
@@ -161,7 +158,7 @@
                                 <div class="flex mt-1">
                                     <input class="block w-full rounded-l-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="departureInput" type="text">
                                         <label class="block text-sm font-medium text-gray-700">
-                                            /
+                                            &nbsp/&nbsp
                                         </label>
                                         <input class="block w-full rounded-r-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="arrivalInput" type="text">
                                         </input>
@@ -280,6 +277,12 @@
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200" id="criteriaTableBody">
                                 <!-- Table rows will be dynamically populated by JavaScript -->
+                                 <tr id="statisticalRow">
+                                    <td class="px-6 py-4 whitespace-nowrap">Статистическая оценка</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">0</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">0</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">0</td>
+                                 </tr>
                             </tbody>
                         </table>
                     </div>
@@ -294,29 +297,60 @@
                         <h3 class="text-lg font-semibold mb-4">
                             Пульс
                         </h3>
-                        <canvas id="pulseChart">
-                        </canvas>
+                        <div id="pulseStatus" class="text-2xl text-center">-</div>
+                        <!-- <div id="pulseStatus2" class="text-2xl text-center hidden">-</div> -->
+                        <img id="pulseImage" src="resources/disgust.png" class="hidden cursor-pointer w-full h-auto" onclick="openImageFullscreen(this.src)"/>
                     </div>
                     <div class="bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-lg font-semibold mb-4">
                             Частота дыхания
                         </h3>
-                        <canvas id="breathingChart">
-                        </canvas>
+                        <div id="breathingStatus" class="text-2xl text-center">-</div>
+                        <img id="breathingImage" src="resources/resp.png" class="hidden cursor-pointer w-full h-auto" onclick="openImageFullscreen(this.src)"/>
                     </div>
                     <div class="bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-lg font-semibold mb-4">
                             Частота моргания
                         </h3>
-                        <canvas id="blinkingChart">
+                        <div id="blinkingValue" class="text-4xl font-bold text-center">0</div>
+                        <canvas id="blinkingChart" style="display: none;"></canvas>
+                        <div id="blinkingMedian" class="text-lg mt-4 text-center"></div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold mb-4">
+                            Эмоция лица
+                        </h3>
+                        <canvas id="emotionsChart">
                         </canvas>
                     </div>
                     <div class="bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-lg font-semibold mb-4">
-                            Эмоции
+                            Эмоция голоса
                         </h3>
-                        <canvas id="emotionsChart">
-                        </canvas>
+                        <canvas id="voiceChart"></canvas>
+                    </div>
+                                        <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-semibold mb-4">
+                            Искажения голоса
+                        </h3>
+                        <div class="bg-white rounded-lg shadow-md p-6 hidden" id="voiceDistortion">
+                            <div>
+                                <p class="text-sm text-gray-600">Спрогнозированная фундаментальная частота голоса (в разработке)</p>
+                                <p class="text-lg font-semibold">140</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Измеренная фундаментальная частота</p>
+                                <p class="text-lg font-semibold">148</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Спазмы (QNMVS)</p>
+                                <p class="text-lg font-semibold text-green-500">32</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Вердикт</p>
+                                <p class="text-lg font-semibold text-green-500">нормально</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -371,18 +405,14 @@
                 <h2 class="text-xl font-semibold mb-4">
                     Записи
                 </h2>
-                <video class="rounded-lg w-full" controls="">
-                    <source id="video2" src="resources/video.mp4" type="video/mp4">
-                        Возникла ошибка при загрузке видео, попробуйте перезагрузить страницу и убедитесь что Ваше устройство поддерживает видео. Если вам нужна помощь, напишите нам >
-                        <a class="text-blue-500 hover:text-blue-600" href="https://vk.com/laborad" target="_blank">
-                            https://vk.com/laborad
-                        </a>
-                        .
-                    </source>
+                <video class="rounded-lg w-full" controls>
+                    <source id="video" src="resources/gesha_otvra.mp4" type="video/mp4">
                 </video>
             </div>
         </div>
-        <script defer="" src="resources/js/mobile.js">
+        <script defer="" src="resources/js/desktop.js">
         </script>
+        <script defer="" src="resources/js/camera.js"></script>
+        
     </body>
 </html>

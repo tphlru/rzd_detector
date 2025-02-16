@@ -86,7 +86,7 @@ window.addEventListener('click', function() {
     document.querySelector('.dropdown ul').style.display = 'none';
 });
 
-// Редирект для мобильных устройств ! в линейном режиме не требуется
+// Редирект для мобильных устройств // в линейном режиме не требуется
 // document.addEventListener("DOMContentLoaded", function() {
 //     if (window.matchMedia("(pointer: coarse)").matches &&
 //         Math.max(window.innerWidth, window.innerHeight) / Math.min(window.innerWidth, window.innerHeight) > 2) {
