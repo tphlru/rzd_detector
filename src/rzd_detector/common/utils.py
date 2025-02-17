@@ -155,7 +155,7 @@ def get_plot_tops_adaptive(
 
 
 def cur_resize_image(input_img_path: str, output_img_path: str, needed_size: int):
-    '''
+    """
     Преобразует любое изображение в квадратное изображение со стороной needed_size,
     добавляя сверху и снизу чёрные рамки для сохранения соотношения сторон исходного
     изображения.
@@ -164,20 +164,20 @@ def cur_resize_image(input_img_path: str, output_img_path: str, needed_size: int
        input_img_path(str): путь к исходному изображению
        output_img_path(str): путь для сохранения нормализованного изображения
        needed_size(int): сторона изображениях в пикселях
-    
+
     Returns:
         tuple[int, int, int]: высота исходного изображения, ширина исходного изображения, высота нормализованного изображения
-    '''
+    """
     img = cv2.imread(input_img_path)
     cv2.imshow("lol", img)
     cv2.waitKey(0)
     h, l, _ = img.shape
     if l > h:
-        attitude = h/l
-        cur_y = int(needed_size/attitude)
+        attitude = h / l
+        cur_y = int(needed_size / attitude)
         missing_y = needed_size - cur_y
         cur_img = cv2.resize(img, (needed_size, cur_y))
-        black = np.zeros((int(missing_y // 2), needed_size, 3), dtype='uint8')
+        black = np.zeros((int(missing_y // 2), needed_size, 3), dtype="uint8")
         cur_img = np.vstack((black, cur_img))
         cur_img = np.vstack((cur_img, black))
         cv2.imwrite(output_img_path, cur_img)
@@ -185,11 +185,11 @@ def cur_resize_image(input_img_path: str, output_img_path: str, needed_size: int
         cv2.waitKey(0)
         return (h, l, cur_y)
     else:
-        attitude = l/h
-        cur_x = int(needed_size*attitude)
+        attitude = l / h
+        cur_x = int(needed_size * attitude)
         missing_x = needed_size - cur_x
         cur_img = cv2.resize(img, (cur_x, needed_size))
-        black = np.zeros((needed_size, int(missing_x // 2), 3), dtype='uint8')
+        black = np.zeros((needed_size, int(missing_x // 2), 3), dtype="uint8")
         cur_img = np.hstack((black, cur_img))
         cur_img = np.hstack((cur_img, black))
         cv2.imwrite(output_img_path, cur_img)
