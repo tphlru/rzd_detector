@@ -3,7 +3,7 @@ from tqdm import tqdm
 import shutil
 import os
 
-standart_path = "/content/DeepFashion2_standart/"
+standart_path = r"C:/Users/Georges/Projects/datasets/DeepFashion2_standart/"
 train_path = standart_path + "train/"
 validation_path = standart_path + "validation/"
 test_path = standart_path + "test/"
@@ -38,9 +38,9 @@ for x in test:
 print(f"Count  -  Train: {len(training)} Validation: {len(validation)} Test: {len(test)}")
 print(f"Images  -  Train: {training_images[0]} Validation: {validation_images[0]} Test: {test_images[0]}")
 print(f"Annotations  -  Train: {training_annos[0]} Validation: {validation_annos[0]} Test: {test_annos[0]}")
-os.mkdir("/content/DeepFashion2_standart/test")
-os.mkdir("/content/DeepFashion2_standart/test/image")
-os.mkdir("/content/DeepFashion2_standart/test/annos")
+os.mkdir("C:/Users/Georges/Projects/datasets/DeepFashion2_standart/test")
+os.mkdir("C:/Users/Georges/Projects/datasets/DeepFashion2_standart/test/image")
+os.mkdir("C:/Users/Georges/Projects/datasets/DeepFashion2_standart/test/annos")
 for img in tqdm(test_paths):
     annos = img.replace(".jpg", ".json").replace("image", "annos")
     test_images_path = test_path + 'image/'
