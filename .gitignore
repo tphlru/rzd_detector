@@ -178,3 +178,5 @@ annotations.csv
 hotkeys_config.json
 last_directory.txt
 skipped.txt
+src/rzd_detector/codemodules/voice/intonation/models/hubert-rus/hubert-rus-model/model.safetensors
+src/rzd_detector/codemodules/voice/intonation/models/hubert-rus/hubert-rus-model/model.safetensors

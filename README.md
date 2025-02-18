@@ -9,6 +9,9 @@
 ### Установка библиотек
 
 ```
+conda env create -f /home/timur/Projects/rzd_detector2/environment.yaml
+conda activate ti2
+pip install -r reqs.txt
 pip install poetry cython
 poetry lock
 poetry install
@@ -53,6 +56,18 @@ error: command '/home/timur/miniforge3/envs/ti/bin/x86_64-conda-linux-gnu-cc' fa
 conda install --channel=conda-forge libxcrypt
 export CPATH=/opt/conda/include/     
 ```
+
+ModuleNotFoundError: No module named '_sysconfigdata_x86_64_conda_cos7_linux_gnu'
+conda install python=3.9.7 pip --force-reinstall
+cd $(python -c "import sys; print(sys.prefix)")/lib/python3.9
+ln -s _sysconfigdata_x86_64_conda_linux_gnu.py _sysconfigdata_x86_64_conda_cos7_linux_gnu.py
+
+
+Error while loading conda entry point: conda-libmamba-solver (/home/timur/.conda/envs/ti/lib/libstdc++.so.6: version `GLIBCXX_3.4.32' not found (required by /usr/lib64/python3.13/site-packages/libmambapy/bindings.cpython-313-x86_64-linux-gnu.so))
+
+
+conda install --solver=classic conda-forge::conda-libmamba-solver conda-forge::libmamba conda-forge::libmambapy conda-forge::libarchive
+conda install -c conda-forge libstdcxx-ng
 
 TEMP:
 ```
