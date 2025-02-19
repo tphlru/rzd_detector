@@ -34,15 +34,15 @@ window.addEventListener('click', function() {
 });
 
 // липкое меню
-const menu = document.createElement("nav");
-menu.id = "nav-fixed";
-menu.align = "center";
-menu.innerHTML = `
-<form action="mobile.html#videoPanel"><button id="ne" class="bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto">Видео</button></form>
-<form action="mobile.html#data"><button id="ne" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto">Данные</button></form>
-<form action="mobile.html#criteriaTable"><button id="ne" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto">Таблица</button></form>
-<form action="mobile.html#grafics"><button id="ne" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto">Графики</button></form>`;
-document.body.appendChild(menu);
+// const menu = document.createElement("nav");
+// menu.id = "nav-fixed";
+// menu.align = "center";
+// menu.innerHTML = `
+// <form action="mobile.html#videoPanel"><button id="ne" class="bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto">Видео</button></form>
+// <form action="mobile.html#data"><button id="ne" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto">Данные</button></form>
+// <form action="mobile.html#criteriaTable"><button id="ne" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto">Таблица</button></form>
+// <form action="mobile.html#grafics"><button id="ne" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto">Графики</button></form>`;
+// document.body.appendChild(menu);
 
 
 // таблица
