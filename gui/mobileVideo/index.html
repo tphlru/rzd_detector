@@ -12,9 +12,6 @@
                 </script>
                 <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js">
                 </script>
-        <script src="./video.js/dist/video.min.js">
-        </script>
-        <script src="./videojs-webrtc-plugin/dist/videojs-webrtc-plugin.min.js">
         </script>
             </meta>
         </meta>
@@ -42,13 +39,13 @@
                 </h1>
                 <div id="video_container">
                     <video class="video-js vjs-default-skin" controls="" height="540" id="my-video" width="960">
-                        <source iceservers='[ { "urls": "stun:stun1.l.google.com:19302" } ]' src="ws://localhost:5080/LiveApp/stream1.webrtc">
+                        <source>
                         </source>
                     </video>
                 </div>
             </div>
             <script>
-                let player = videojs('my-video');
+
             </script>
         </div>
     </body>
