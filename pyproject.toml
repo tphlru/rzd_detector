@@ -53,10 +53,6 @@ transformers = "*"
 accelerate = "*"
 dicttoxml = "*"
 xmltodict = "*"
-pycocotools = { git = "https://github.com/abhi-kumar/cocoapi.git", subdirectory = "PythonAPI" }
-# cpools = { git = "https://github.com/tphlru/cornernet.git", subdirectory = "core/models/py_utils/_cpools" }
-# "cpools @ git+https://github.com/tphlru/cornernet.git#egg=cpools&subdirectory=core/models/py_utils/_cpools"
-# todo add script install for cpools and second one (one with make)
 poethepoet = "*"
 gitpython = "^3.1.43"
 gdown = "^5.2.0"
