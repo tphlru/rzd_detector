@@ -33,20 +33,7 @@ window.addEventListener('click', function() {
     document.querySelector('.dropdown ul').style.display = 'none';
 });
 
-// липкое меню
-// const menu = document.createElement("nav");
-// menu.id = "nav-fixed";
-// menu.align = "center";
-// menu.innerHTML = `
-// <form action="mobile.html#videoPanel"><button id="ne" class="bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto">Видео</button></form>
-// <form action="mobile.html#data"><button id="ne" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto">Данные</button></form>
-// <form action="mobile.html#criteriaTable"><button id="ne" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto">Таблица</button></form>
-// <form action="mobile.html#grafics"><button id="ne" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto">Графики</button></form>`;
-// document.body.appendChild(menu);
-
-
-// таблица
-// Criteria data
+// Данные для критериев
 const criteriaData = [{
     category: 'Эмоциональное состояние',
     subcategories: [{
@@ -91,7 +78,7 @@ const criteriaData = [{
     totalScore: 7,
     maxScore: 10
 }];
-// Populate criteria table
+// Инициализация таблицы
 function populateCriteriaTable() {
     const tableBody = document.querySelector('#criteriaTableBody');
     tableBody.innerHTML = '';
@@ -119,13 +106,13 @@ function populateCriteriaTable() {
         }
     });
 }
-// Get CSS class based on criteria score
+// Добавляем цвета на ячейки таблицы с помощью CSS
 function getCriteriaClass(score) {
     if (score <= 3) return 'criteria-low';
     if (score <= 7) return 'criteria-medium';
     return 'criteria-high';
 }
-// Initialize charts
+// Инициализация графиков
 function initializeCharts() {
     const chartOptions = {
         responsive: true,
@@ -136,13 +123,15 @@ function initializeCharts() {
 }
 // Event listeners (unchanged)
 // ...
-// Initialize the application
+// Инициализация приложения
 function init() {
     populateCriteriaTable();
     initializeCharts();
 }
-// Run initialization when the DOM is fully loaded
+// Добавляем DOM EventListener для отслеживания загрузки страницы
 document.addEventListener('DOMContentLoaded', init);
+
+// Далее - графики
 const barColors = ["green", "orange", "blue", "red", "brown", "purple", "black", "yellow"];
 const xValuesEV = ["Нейтраль", "Радость", "Грусть", "Гнев", "Отвращение", "Страх", "Удивление"];
 var yValuesEV = [50, 15, 11, 1, 2, 5, 10];
