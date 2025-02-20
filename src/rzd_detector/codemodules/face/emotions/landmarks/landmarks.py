@@ -134,6 +134,7 @@ class FaceLandmarksProcessor:
         hide_mouth=True,
         curve_crop=True,
         mouth_k=0.5,
+        transparent_bg=False,
     ):
         """Выполняет кривую обрезку и маскирование для рта или глаз.
 
@@ -143,6 +144,7 @@ class FaceLandmarksProcessor:
             hide_eyes (bool): Скрыть ли глаза.
             hide_mouth (bool): Скрыть ли рот.
             curve_crop (bool): Выполнить кривую обрезку.
+            transparent_bg (bool): Использовать прозрачный фон вместо белого.
 
         Returns:
             numpy.ndarray: Изображение с примененной маской и обрезкой.
@@ -151,7 +153,9 @@ class FaceLandmarksProcessor:
         mask = self.create_mask(
             local_landmarks, hide_eyes, hide_mouth, face_crop, mouth_k=mouth_k
         )
-        return self.apply_mask_and_crop(face_crop, local_landmarks, mask, curve_crop)
+        return self.apply_mask_and_crop(
+            face_crop, local_landmarks, mask, curve_crop, transparent_bg=transparent_bg
+        )
 
     def crop_face(self, image, landmarks):
         """Обрезает изображение по границам маркеров лица.
@@ -237,7 +241,9 @@ class FaceLandmarksProcessor:
 
         return mask
 
-    def apply_mask_and_crop(self, face_crop, local_landmarks, mask, curve_crop):
+    def apply_mask_and_crop(
+        self, face_crop, local_landmarks, mask, curve_crop, transparent_bg=False
+    ):
         """Применяет маску и выполняет кривую обрезку изображения.
 
         Args:
@@ -245,20 +251,40 @@ class FaceLandmarksProcessor:
             local_landmarks (list): Локальные координаты маркеров лица.
             mask (numpy.ndarray): Маска для скрытия глаз и/или рта.
             curve_crop (bool): Выполнить кривую обрезку.
+            transparent_bg (bool): Использовать прозрачный фон вместо белого.
 
         Returns:
             numpy.ndarray: Изображение с примененной маской и обрезкой.
         """
+        if transparent_bg:
+            # Convert to BGRA
+            result = np.zeros((*face_crop.shape[:2], 4), dtype=np.uint8)
+            result[..., :3] = face_crop
+            result[..., 3] = 255  # Full opacity initially
+        else:
+            result = np.full_like(face_crop, 255)
+
         if curve_crop:
             face_mask = np.zeros(face_crop.shape[:2], dtype=np.uint8)
             hull = cv2.convexHull(np.array(local_landmarks)[:, :2].astype(np.int32))
             cv2.fillPoly(face_mask, [hull], 255)
 
-            result = np.full_like(face_crop, 255)
-            np.copyto(result, face_crop, where=(face_mask[:, :, None] == 255))
+            if transparent_bg:
+                # Set alpha channel to 0 (transparent) outside face area
+                result[..., 3] = face_mask
+                # Copy face area
+                np.copyto(
+                    result[..., :3], face_crop, where=(face_mask[:, :, None] == 255)
+                )
+            else:
+                np.copyto(result, face_crop, where=(face_mask[:, :, None] == 255))
+
+        # Handle masked areas (eyes/mouth)
+        if transparent_bg:
+            result[mask == 255, 3] = 0  # Make masked areas transparent
         else:
-            result = face_crop.copy()
-        result[mask == 255] = 255
+            result[mask == 255] = 255  # Make masked areas white
+
         return result
 
     def process_landmarks(
@@ -271,6 +297,7 @@ class FaceLandmarksProcessor:
         curve_crop=True,
         return_image=False,
         return_raw=False,
+        transparent_bg=False,
     ) -> "FaceLandmarksResult":
         """Обрабатывает лицевые маркеры и выполняет модификации.
 
@@ -305,6 +332,7 @@ class FaceLandmarksProcessor:
             hide_mouth=hide_mouth,
             curve_crop=curve_crop,
             mouth_k=mouth_k,
+            transparent_bg=transparent_bg,
         )
 
         if self.verbose:
@@ -324,8 +352,13 @@ class FaceLandmarksProcessor:
             _return_image=return_image,
             _last_crop_info=self.last_crop_info,
         )
+        if result_obj is None:
+            return None
         if save_path:
-            result_obj.save_image(save_path)
+            try:
+                cv2.imwrite(save_path, result_image)
+            except Exception as e:
+                return None
         return result_obj
 
 
