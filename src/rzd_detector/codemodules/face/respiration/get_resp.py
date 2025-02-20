@@ -2,7 +2,7 @@ from respiration.mttscan.predict_vitals import predict_vitals
 from common.utils import get_plot_tops_n_times
 import numpy as np
 
-def get_resp(iter_for_maxs: int, maxs_treshold: int):
+def get_resp(video_path: str, iter_for_maxs: int, maxs_treshold: int) -> tuple:
     '''Объеденяет весь модуль.
     Args:
         iter_for_maxs (int): Число итераций, при поиске верхушек графика дыхания (вздохов).
@@ -10,7 +10,7 @@ def get_resp(iter_for_maxs: int, maxs_treshold: int):
     Returns:
         tu: частота дыхания, оценка дыхания.
     '''
-    predicted_resp, predicted_pulse, duration = predict_vitals(video_path="Scripts/test_files/common/example1.mp4", show_plot=False)
+    predicted_resp, predicted_pulse, duration = predict_vitals(video_path=video_path, show_plot=False)
     mids, ids_tops, vals_tops = get_plot_tops_n_times(predicted_resp, iter_for_maxs)
     if len(ids_tops) < maxs_treshold:
         #экстрополируем
@@ -19,9 +19,7 @@ def get_resp(iter_for_maxs: int, maxs_treshold: int):
     points = 0 
     if 12 < resp_rate < 20:
         points += 1
-    elif resp_rate < 8:
-        points -= 1
-    elif resp_rate > 25:
+    elif resp_rate < 8 or resp_rate > 25:
         points -= 1
     if max(vals_tops) / np.mean(vals_tops) > 1.5:
         points -= 1
