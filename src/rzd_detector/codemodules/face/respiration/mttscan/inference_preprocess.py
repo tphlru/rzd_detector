@@ -16,6 +16,7 @@ def preprocess_raw_video(videoFilePath, dim=36):
     Xsub = np.zeros((totalFrames, dim, dim, 3), dtype=np.float32)
     height = vidObj.get(cv2.CAP_PROP_FRAME_HEIGHT)
     width = vidObj.get(cv2.CAP_PROP_FRAME_WIDTH)
+    duration = vidObj.get(cv2.CAP_PROP_FRAME_COUNT)/vidObj.get(cv2.CAP_PROP_FPS)
     success, img = vidObj.read()
     print("Orignal Height", height)
     print("Original width", width)
@@ -63,7 +64,7 @@ def preprocess_raw_video(videoFilePath, dim=36):
     #########################################################################
     # Plot an example of data after preprocess
     dXsub = np.concatenate((dXsub, Xsub), axis=3)
-    return dXsub
+    return dXsub, duration
 
 
 def detrend(signal, Lambda):

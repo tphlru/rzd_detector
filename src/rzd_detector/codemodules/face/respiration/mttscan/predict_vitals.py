@@ -19,7 +19,8 @@ def predict_vitals(video_path: str, sampling_rate=30, batch_size=100, show_plot=
         sampling_rate (int, optional): Частота, с которой кадры извлекаются из видео (по умолчанию 30 кадров в секунду).
         batch_size (int, optional): Количество образцов, обработанных до обновления модели (по умолчанию 100).
         show_plot (bool, optional): Показ графиков и изображений (по умолчанию включено).
-    
+    Returns:
+        tu: список спрогнозированных значений дыхания(1) и пульса(2), а также длина видео, из которого получены эти значения.
     '''
     img_rows = 36
     img_cols = 36
@@ -28,7 +29,7 @@ def predict_vitals(video_path: str, sampling_rate=30, batch_size=100, show_plot=
     fs = sampling_rate
     sample_data_path = video_path
 
-    dXsub = preprocess_raw_video(sample_data_path, dim=36)
+    dXsub, video_duration = preprocess_raw_video(sample_data_path, dim=36)
     print("dXsub shape", dXsub.shape)
 
     dXsub_len = (dXsub.shape[0] // frame_depth) * frame_depth
@@ -61,7 +62,7 @@ def predict_vitals(video_path: str, sampling_rate=30, batch_size=100, show_plot=
         plt.title("Resp Prediction")
         plt.show()
     
-    return pulse_pred, resp_pred
+    return pulse_pred, resp_pred, video_duration
 
 
 if __name__ == "__main__":
