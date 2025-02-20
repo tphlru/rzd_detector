@@ -180,3 +180,14 @@ last_directory.txt
 skipped.txt
 src/rzd_detector/codemodules/voice/intonation/models/hubert-rus/hubert-rus-model/model.safetensors
 src/rzd_detector/codemodules/voice/intonation/models/hubert-rus/hubert-rus-model/model.safetensors
+src/rzd_detector/codemodules/face/emotions/dev/supernet/datasets
+src/rzd_detector/codemodules/face/emotions/dev/supernet/datasets/*
+src/rzd_detector/codemodules/face/emotions/dev/supernet/hyper_tuning
+src/rzd_detector/codemodules/face/emotions/dev/supernet/image_classifier
+src/rzd_detector/codemodules/face/emotions/dev/supernet/raf-db-dataset.zip
+src/rzd_detector/codemodules/face/emotions/dev/supernet/affectnet-training-data.zip
+src/rzd_detector/codemodules/face/emotions/dev/supernet/best_CNNModel.keras
+src/rzd_detector/codemodules/face/emotions/dev/supernet/best_CNNModel1.keras
+src/rzd_detector/codemodules/face/emotions/dev/supernet/expression-in-the-wild-expw-dataset.zip
+src/rzd_detector/codemodules/face/emotions/dev/supernet/merged_dataset.csv
+src/rzd_detector/codemodules/face/emotions/notebooks/MeshCNN
