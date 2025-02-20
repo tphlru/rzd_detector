@@ -11,14 +11,22 @@ import argparse
 sys.path.append("../")
 
 
-def predict_vitals(args):
+def predict_vitals(video_path: str, sampling_rate=30, batch_size=100, show_plot=True):
+    '''Прогнозирует частоту дыхания и пульс по видео.
+    
+    Args:
+        video_path (str): Путь к видеофайлу, на основе которого будут прогнозироваться показатели.
+        sampling_rate (int, optional): Частота, с которой кадры извлекаются из видео (по умолчанию 30 кадров в секунду).
+        batch_size (int, optional): Количество образцов, обработанных до обновления модели (по умолчанию 100).
+        show_plot (bool, optional): Показ графиков и изображений (по умолчанию включено).
+    
+    '''
     img_rows = 36
     img_cols = 36
     frame_depth = 10
     model_checkpoint = "./mtts_can.hdf5"
-    batch_size = args.batch_size
-    fs = args.sampling_rate
-    sample_data_path = args.video_path
+    fs = sampling_rate
+    sample_data_path = video_path
 
     dXsub = preprocess_raw_video(sample_data_path, dim=36)
     print("dXsub shape", dXsub.shape)
@@ -44,13 +52,14 @@ def predict_vitals(args):
     resp_pred = scipy.signal.filtfilt(b_resp, a_resp, np.double(resp_pred))
 
     # ---------- Plot ----------------
-    plt.subplot(211)
-    plt.plot(pulse_pred)
-    plt.title("Pulse Prediction")
-    plt.subplot(212)
-    plt.plot(resp_pred)
-    plt.title("Resp Prediction")
-    plt.show()
+    if show_plot:
+        plt.subplot(211)
+        plt.plot(pulse_pred)
+        plt.title("Pulse Prediction")
+        plt.subplot(212)
+        plt.plot(resp_pred)
+        plt.title("Resp Prediction")
+        plt.show()
     
     return pulse_pred, resp_pred
 
