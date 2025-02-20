@@ -51,6 +51,8 @@ def predict_vitals(args):
     plt.plot(resp_pred)
     plt.title("Resp Prediction")
     plt.show()
+    
+    return pulse_pred, resp_pred
 
 
 if __name__ == "__main__":

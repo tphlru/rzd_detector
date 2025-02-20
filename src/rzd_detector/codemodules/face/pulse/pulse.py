@@ -220,7 +220,7 @@ def process_pulse_info(
         plt.show(block=False)
         # plt.pause(20)
 
-    return base_mean, trend, high_med
+    return base_mean, trend, high_med, mids, tvals
 
 
 def evaluate_pulse_results(

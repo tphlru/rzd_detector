@@ -2,7 +2,7 @@ from glob import glob
 import os
 import shutil
 from tqdm import tqdm
-input_root_path = r"C:/Users/Georges/Projects/datasets/DeepFashion2_standart" # in stndrt DeerFashion format
+input_root_path = r"C:/Users/Georges/Projects/datasets/DeepFashion2_standart" # in stndrt DeepFashion format
 output_root_path = r"C:/Users/Georges/Projects/datasets/DeepFashion2_10%" 
 part = 10 # in %
 
