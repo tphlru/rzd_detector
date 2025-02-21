@@ -73,10 +73,19 @@ data = {
     "voice_emotions": {"Спокойствие": 60, "Стресс": 40},
 }
 
-
 @app.route("/")
 def index():
-    return render_template("index.html", data=data)
+    return render_template("index.html", data="")
+
+@app.route("/desktop")
+def desktop():
+    return render_template("desktop.html", data=data)
+@app.route("/mobile")
+def mobile():
+    return render_template("mobile.html", data=data)
+@app.route("/tablet")
+def tablet():
+    return render_template("tablet.html", data=data)
 
 
 @app.route("/submit", methods=["POST"])
@@ -148,4 +157,4 @@ def handle_criteria_update(update_data):  # sourcery skip: merge-repeated-ifs
 
 if __name__ == "__main__":
     if mode == "dev":
-        socketio.run(app, debug=True)
+        socketio.run(app, debug=True, port=5000)
