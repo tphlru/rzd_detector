@@ -193,6 +193,17 @@ class WHEPClient:
 
         cv2.destroyAllWindows()
 
+    async def get_frame_yield(self):
+        while True:
+            if self.track_video:
+                try:
+                    frame = await self.track_video.recv()
+                    if isinstance(frame, VideoFrame):
+                        yield frame.to_ndarray(format="bgr24")
+                except Exception as e:
+                    print(f"Frame processing error: {str(e)}")
+                    break
+
     async def close(self):
         """Закрытие соединения"""
         if self.pc:
@@ -202,10 +213,14 @@ class WHEPClient:
                 await session.delete(self.session_url, ssl=self.ssl_context)
 
 
-async def connect_hsd_camera(rpi_ip, stream_path="cam"):
-    async with WHEPClient(f"http://{rpi_ip}:8889/{stream_path}/whep") as client:
+def get_hsd_camera_url(rpi_ip, stream_path="cam"):
+    return f"http://{rpi_ip}:8889/{stream_path}/whep"
+
+
+async def main():
+    async with WHEPClient(get_hsd_camera_url("192.168.1.47")) as client:
         await client.display_stream()
 
 
 if __name__ == "__main__":
-    asyncio.run(connect_hsd_camera("192.168.1.49"))
+    asyncio.run(main())
