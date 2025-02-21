@@ -92,7 +92,11 @@ class FaceLandmarksProcessor:
             raise ValueError(
                 "Входные данные должны быть строкой (путь к файлу) или массивом NumPy."
             )
-
+    def get_params(
+            self,
+            image
+    ):
+        
     def process_image(
         self,
         img,
