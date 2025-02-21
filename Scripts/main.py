@@ -1,6 +1,7 @@
 # emotions - :(
 # pulse - ✓
-# respiration - ✓(нет экстраполяции)
+# respiration - ✓ (нет экстраполяции)
+# blinking - ✓
 # voice - 
 from rzd_detector.codemodules.face.pulse import get_bpm_with_pbv, process_pulse_info, evaluate_pulse_results
 from rzd_detector.codemodules.face.respiration import get_resp

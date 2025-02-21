@@ -1,5 +1,6 @@
 import mediapipe as mp
 import cv2
+from common.utils import get_plot_tops_n_times as get_maxs
 
 BaseOptions = mp.tasks.BaseOptions
 FaceLandmarker = mp.tasks.vision.FaceLandmarker
@@ -20,7 +21,7 @@ options = FaceLandmarkerOptions(
 blink_scores_left = []
 blink_scores_right = []
 
-def get_blinking_count(video_path: str) -> float:
+def get_blinking_count(video_path: str, iter_for_maxs: int) -> float:
     '''Вычиляет частоту моргания раз/минуту.
     Args:
         video_path (str): Путь к видео, по которому будет вычисляться частота.
@@ -41,5 +42,8 @@ def get_blinking_count(video_path: str) -> float:
 
             blink_scores_left.append(blendshapes[9].score)
             blink_scores_right.append(blendshapes[10].score)
-    return round((len(blink_scores_left)+len(blink_scores_right))/2, 0)*60/duration
+            blink_scores = [(x + y) / 2 for x, y in zip(blink_scores_left, blink_scores_right)]
+            blink_count = get_maxs(blink_scores, iter_for_maxs)
+            
+    return blink_count*60/duration
 
