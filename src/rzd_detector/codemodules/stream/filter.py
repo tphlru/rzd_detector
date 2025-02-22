@@ -3,6 +3,7 @@ import torch
 from facenet_pytorch import MTCNN, InceptionResnetV1
 from PIL import Image
 import time
+import aiofiles
 
 # Initialize the MTCNN module for face detection and the InceptionResnetV1 module for face embedding.
 mtcnn = MTCNN(image_size=160, keep_all=True)
@@ -16,7 +17,44 @@ class Frame:
         self.frame_id = frame_id
         self.human_availability = human_availability
 
+
+class Buffer:
+
+    def __init__(self, max_count: int, out_of_range_action: int, save_path: str):
+        self.max_count = max_count
+        self.out_of_range_action = out_of_range_action
+        self.save_path = save_path
+        if save_path[-1] != "/":
+            save_path += "/"
+        self.frames = []
+
+    async def write_json(self, frame: Frame):
+        async with aiofiles.open(self.save_path + "labels/" + frame.frame_id + ".json", "w") as f:
+            await f.write("{")
+            await f.write("id: " + frame.frame_id)
+            await f.write("image_path: " + self.save_path + "images/" + frame.frame_id + "jpg")
+            await f.write("human_id: " + frame.human_id)
+            await f.write("human_availability: " + frame.human_availability)
+            await f.write("}")
+
+    async def add(self, frame: Frame):
+        self.frames.append(frame)
+        if len(self.frames) > self.max_count:
+            if self.action <= 0:
+                out_of_range_frame = self.frames[0]
+                self.frames = self.frames[1:self.max_count+1]
+                out_of_range_frame.image.save(self.save_path + "images/" + frame.frame_id + "jpg") # работать не будет, но нужно спросить Тимура в каком формате у нас изображения + выбрать формат
+                await self.write_json(frame)
+            else:
+                self.frames = self.frames[1:self.max_count+1]
+
+
+
 class Filter:
+
+    def __init__(self):
+        self.buffer = Buffer(60, 0, "Scripts/test_files/common/buffer_out_files")
+        self.frame = 0
 
     def _get_embedding_and_face(self, image):
 
@@ -57,12 +95,16 @@ class Filter:
                 self.fps = len(times)/duration
                 img = i
                 if self._get_embedding_and_face(img) == (None, None):
-                    yield Frame(img, human_id=human_id, frame_id=frame_id, human_availability=False)
+                    self.frame = Frame(img, human_id=human_id, frame_id=frame_id, human_availability=False)
                 if self._is_the_same(img, past_img, 0.7):
-                    yield Frame(img, human_id=human_id, frame_id=frame_id, human_availability=True)
+                    self.frame = Frame(img, human_id=human_id, frame_id=frame_id, human_availability=True)
                 else:
-                    yield None
-                
+                    self.frame = None
+                    human_id += 1
+                yield self.frame
+                self.buffer.add(self.frame)
                 frame_id += 1
+                past_img = img
+
     def get_fps(self):
         return self.fps
