@@ -1,10 +1,11 @@
 from webrtc_receiver import WHEPClient, get_hsd_camera_url
 import torch
 from facenet_pytorch import MTCNN, InceptionResnetV1
-from PIL import Image
+import numpy as np
 import time
-import aiofiles
 import asyncio
+import cv2
+import json
 
 # Initialize the MTCNN module for face detection and the InceptionResnetV1 module for face embedding.
 mtcnn = MTCNN(image_size=160, keep_all=True)
@@ -29,22 +30,23 @@ class Buffer:
             save_path += "/"
         self.frames = []
 
-    async def write_json(self, frame: Frame):
-        async with aiofiles.open(self.save_path + "labels/" + frame.frame_id + ".json", "w") as f:
-            await f.write("{")
-            await f.write("id: " + frame.frame_id)
-            await f.write("image_path: " + self.save_path + "images/" + frame.frame_id + "jpg")
-            await f.write("human_id: " + frame.human_id)
-            await f.write("human_availability: " + frame.human_availability)
-            await f.write("}")
+    def write_json(self, frame: Frame):
+        frame_params = {
+            "id": frame.frame_id, 
+            "image_path": self.save_path + "images/" + frame.frame_id + "jpg",
+            "human_id": frame.human_id,
+            "human_availability": frame.human_availability
+        }
+        with open(self.save_path + "labels/" + frame.frame_id + ".json", "w") as f:
+            json.dumps(frame_params, f)
 
     async def add(self, frame: Frame):
         self.frames.append(frame)
         if len(self.frames) > self.max_count:
             if self.action <= 0:
-                out_of_range_frame = self.frames[0]
+                out_of_range_frame = np.array(self.frames[0]).astype(np.uint8)
                 self.frames = self.frames[1:self.max_count+1]
-                out_of_range_frame.image.save(self.save_path + "images/" + frame.frame_id + "jpg") # работать не будет, но нужно спросить Тимура в каком формате у нас изображения + выбрать формат
+                cv2.imwrite(self.save_path + "images/" + frame.frame_id + "jpg", out_of_range_frame) # работать не будет, но нужно спросить Тимура в каком формате у нас изображения + выбрать формат
                 await self.write_json(frame)
             else:
                 self.frames = self.frames[1:self.max_count+1]

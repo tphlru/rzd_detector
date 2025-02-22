@@ -92,10 +92,6 @@ class FaceLandmarksProcessor:
             raise ValueError(
                 "Входные данные должны быть строкой (путь к файлу) или массивом NumPy."
             )
-    def get_params(
-            self,
-            image
-    ):
         
     def process_image(
         self,
@@ -104,7 +100,7 @@ class FaceLandmarksProcessor:
         refine_landmarks=True,
         min_detection_confidence=0.4,
     ):
-        """Обрабатывает изображение для извлечения координат лицевых маркеров.
+        """Обрабатывает изображение для извлечения координат лицевых маркеров.        
 
         Args:
             img (numpy.ndarray): Изображение в формате OpenCV.
@@ -127,8 +123,10 @@ class FaceLandmarksProcessor:
 
         if not results.multi_face_landmarks:
             return None
-
-        return results.multi_face_landmarks[0].landmark
+        if len(results.multi_face_landmarks) > 1:
+            return results.multi_face_landmarks
+        else:
+            return results.multi_face_landmarks[0].landmark
 
     def curved_crop_and_mask(
         self,
@@ -302,6 +300,7 @@ class FaceLandmarksProcessor:
         return_image=False,
         return_raw=False,
         transparent_bg=False,
+        max_faces_count = 1
     ) -> "FaceLandmarksResult":
         """Обрабатывает лицевые маркеры и выполняет модификации.
 
@@ -325,19 +324,25 @@ class FaceLandmarksProcessor:
             ValueError: Если входное изображение не является ни путём, ни массивом numpy
         """
         original_image = self._load_image(image)
-        landmarks = self.process_image(original_image)
-        if landmarks is None:
+        multi_face_landmarks = self.process_image(original_image, max_num_faces=max_faces_count)
+        if multi_face_landmarks is None:
             return None
+        elif type(multi_face_landmarks) == list:
+            for landmark in multi_face_landmarks:
+                landmark.landmark
 
-        result_image = self.curved_crop_and_mask(
-            original_image,
-            landmarks,
-            hide_eyes=hide_eyes,
-            hide_mouth=hide_mouth,
-            curve_crop=curve_crop,
-            mouth_k=mouth_k,
-            transparent_bg=transparent_bg,
-        )
+
+
+        else:
+            result_image = self.curved_crop_and_mask(
+                original_image,
+                multi_face_landmarks,
+                hide_eyes=hide_eyes,
+                hide_mouth=hide_mouth,
+                curve_crop=curve_crop,
+                mouth_k=mouth_k,
+                transparent_bg=transparent_bg,
+            )
 
         if self.verbose:
             cv2.imshow("Result", result_image)
