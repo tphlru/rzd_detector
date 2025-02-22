@@ -1,10 +1,16 @@
+import cv2
+import numpy as np
+
+cv2.imshow("frame", np.zeros((480, 640, 3), np.uint8))
+cv2.waitKey(1)
+cv2.destroyAllWindows()
+
 from webrtc_receiver import WHEPClient, get_hsd_camera_url
 import torch
 from facenet_pytorch import MTCNN, InceptionResnetV1
 import numpy as np
 import time
 import asyncio
-import cv2
 import json
 
 # Initialize the MTCNN module for face detection and the InceptionResnetV1 module for face embedding.
@@ -39,7 +45,7 @@ class Buffer:
         with open(self.save_path + "labels/" + frame.frame_id + ".json", "w") as f:
             json.dumps(frame_params, f)
 
-    async def add(self, frame: Frame):
+    def add(self, frame: Frame):
         self.frames.append(frame)
         if len(self.frames) > self.max_count:
             if self.action <= 0:
@@ -49,7 +55,7 @@ class Buffer:
                     self.save_path + "images/" + frame.frame_id + "jpg",
                     out_of_range_frame,
                 )  # работать не будет, но нужно спросить Тимура в каком формате у нас изображения + выбрать формат
-                await self.write_json(frame)
+                self.write_json(frame)
             else:
                 self.frames = self.frames[1 : self.max_count + 1]
 
@@ -57,8 +63,9 @@ class Buffer:
 class Filter:
     def __init__(self):
         self.buffer = Buffer(60, 0, "Scripts/test_files/common/buffer_out_files")
-        self.frame = 0
+        self.frame = None
         self.fps = 30
+        self.counter = 0
 
     def _get_embedding_and_face(self, image):
         faces, probs = mtcnn(image, return_prob=True)
@@ -69,6 +76,7 @@ class Filter:
         return embedding, faces[0]
 
     def _is_the_same(self, image, candidate_image, treshold: float):
+        print(image.shape, candidate_image.shape)
         target_emb, target_face = self._get_embedding_and_face(image)
         if target_emb is None:
             return None
@@ -86,44 +94,58 @@ class Filter:
         else:
             return True
 
-    async def _get_frame(self):
-        past_img = 0
+    async def _get_frame(self, client: WHEPClient):
         human_id = 0
         frame_id = 0
-        async with WHEPClient(get_hsd_camera_url("192.168.1.89")) as client:
-            while True:
-                img = await client.get_raw_frame()
-                if self._get_embedding_and_face(img) == (None, None):
-                    self.frame = Frame(
-                        img,
-                        human_id=human_id,
-                        frame_id=frame_id,
-                        human_availability=False,
-                    )
-                if self._is_the_same(img, past_img, 0.7):
-                    self.frame = Frame(
-                        img,
-                        human_id=human_id,
-                        frame_id=frame_id,
-                        human_availability=True,
-                    )
-                else:
-                    self.frame = None
-                    human_id += 1
-                self.buffer.add(self.frame)
-                frame_id += 1
-                past_img = img
+        img = await client.get_raw_frame()
+        past_img = img
+        if self._get_embedding_and_face(img) == (None, None):
+            self.frame = Frame(
+                img,
+                human_id=human_id,
+                frame_id=frame_id,
+                human_availability=False,
+            )
+        elif self._is_the_same(img, past_img, 0.7):
+            self.frame = Frame(
+                img,
+                human_id=human_id,
+                frame_id=frame_id,
+                human_availability=True,
+            )
+        elif not self._is_the_same(img, past_img, 0.7):
+            self.frame = None
+            human_id += 1
+        # self.buffer.add(self.frame)
+        frame_id += 1
+        past_img = img
 
-    def get_frame(self):
-        asyncio.run(self._get_frame())
-        return self.frame
+    async def get_frame(self, client: WHEPClient):
+        self.counter += 1
+        if self.counter % 3 == 0:
+            await self._get_frame(client)
+        yield self.frame
 
     def get_fps(self):
         return self.fps
 
 
-if __name__ == "__main__":
+async def main():
     f = Filter()
-    for i in f.get_frame():
-        x = i.img
-        x.show()
+    client = WHEPClient(get_hsd_camera_url("192.168.1.49"))
+    await client.connect()
+    while True:
+        try:
+            i = await f.get_frame(client).__anext__()
+            cv2.imshow("frame", i.image)
+            if cv2.waitKey(1) & 0xFF == ord("q"):
+                await client.close()
+                cv2.destroyAllWindows()
+        except StopIteration:
+            print("stop iteration")
+            await client.close()
+            break
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
