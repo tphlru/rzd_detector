@@ -1,7 +1,8 @@
-from webrtc_receiver import VideoStream
+from webrtc_receiver import WHEPClient, get_hsd_camera_url
 import torch
 from facenet_pytorch import MTCNN, InceptionResnetV1
 from PIL import Image
+import time
 
 # Initialize the MTCNN module for face detection and the InceptionResnetV1 module for face embedding.
 mtcnn = MTCNN(image_size=160, keep_all=True)
@@ -15,15 +16,9 @@ class Frame:
         self.frame_id = frame_id
         self.human_availability = human_availability
 
-
-
-
 class Filter:
 
-    def __init__(self):
-        self.video = VideoStream(queue_size=60)
-
-    def get_embedding_and_face(self, image):
+    def _get_embedding_and_face(self, image):
 
         faces, probs = mtcnn(image, return_prob=True)
         if faces is None or len(faces) == 0:
@@ -32,12 +27,12 @@ class Filter:
         embedding = resnet(faces[0].unsqueeze(0))
         return embedding, faces[0]
     
-    def is_the_same(self, image, candidate_image, treshold: float):
-        target_emb, target_face = self.get_embedding_and_face(image)
+    def _is_the_same(self, image, candidate_image, treshold: float):
+        target_emb, target_face = self._get_embedding_and_face(image)
         if target_emb is None:
             return None
 
-        candidate_emb, candidate_face = self.get_embedding_and_face(candidate_image)
+        candidate_emb, candidate_face = self._get_embedding_and_face(candidate_image)
         if candidate_emb is None:
             similarity = None
         else:
@@ -48,4 +43,26 @@ class Filter:
         else:
             return True
         
-    def 
+    async def get_frame_and_fps(self):
+        past_img = 0
+        human_id = 0
+        frame_id = 0
+        times = []
+        start_time = time.time()
+        async with WHEPClient(get_hsd_camera_url("192.168.1.47")) as client:
+            for i in await client.get_frame_yield:
+                times.append(time.time()-start_time)
+                times = time[1:11]
+                duration = times[0] - times[9]
+                self.fps = 10/duration
+                img = i
+                if self._get_embedding_and_face(img) == (None, None):
+                    yield Frame(img, human_id=human_id, frame_id=frame_id, human_availability=False), fps
+                if self._is_the_same(img, past_img, 0.7):
+                    yield Frame(img, human_id=human_id, frame_id=frame_id, human_availability=True), fps
+                else:
+                    yield None
+                
+                frame_id += 1
+    def get_fps(self):
+        return self.fps
