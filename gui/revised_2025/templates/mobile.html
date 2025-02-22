@@ -47,6 +47,13 @@
                                 .
                             </source>
                         </video>
+                        <label class="block text-sm font-medium text-gray-700 mt-3">
+                            Выберите видео
+                        </label>
+                        <form action="/upload" method="post" enctype="multipart/form-data">
+                            <input class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 mt-1 rounded w-full sm:w-auto" type="file" name="files" multiple>
+                            <input class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 mt-1 rounded w-full sm:w-auto" type="submit" value="Загрузить">
+                        </form>
                     </div>
                 </div>
                 <div class="bg-white rounded-lg shadow-md p-6" id="managementConsole">
@@ -440,30 +447,6 @@
                     </button>
                 </div>
             </div>
-            <nav align="center" id="nav-fixed" class="pb-4">
-                <div class="pb-4">
-                    <form action="mobile.html#videoPanel">
-                        <button class="bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded sm:w-auto" style="width: 24%;">
-                            Видео
-                        </button>
-                    </form>
-                    <form action="mobile.html#data">
-                        <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded sm:w-auto" style="width: 24%;">
-                            Данные
-                        </button>
-                    </form>
-                    <form action="mobile.html#criteriaTable">
-                        <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded sm:w-auto" style="width: 24%;">
-                            Таблица
-                        </button>
-                    </form>
-                    <form action="mobile.html#grafics">
-                        <button class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded sm:w-auto" style="width: 24%;">
-                            Графики
-                        </button>
-                    </form>
-                </div>
-            </nav>
             <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="popup-overlay">
                 <div class="bg-white rounded-lg shadow-lg p-6" id="popup">
                     <h2 class="text-xl font-semibold mb-4">
@@ -499,6 +482,31 @@
                 </div>
             </div>
         </div>
+        
+            <nav align="center" id="nav-fixed" class="pb-4">
+                <div class="pb-4">
+                    <form action="mobile.html#videoPanel">
+                        <button class="bg-blue-700 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded sm:w-auto" style="width: 24%;">
+                            Видео
+                        </button>
+                    </form>
+                    <form action="mobile.html#data">
+                        <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded sm:w-auto" style="width: 24%;">
+                            Данные
+                        </button>
+                    </form>
+                    <form action="mobile.html#criteriaTable">
+                        <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded sm:w-auto" style="width: 24%;">
+                            Таблица
+                        </button>
+                    </form>
+                    <form action="mobile.html#grafics">
+                        <button class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded sm:w-auto" style="width: 24%;">
+                            Графики
+                        </button>
+                    </form>
+                </div>
+            </nav>
         <script src="{{ url_for('static', filename='js/mobile.js') }}">
         </script>
         <script src="{{ url_for('static', filename='camera.js') }}">

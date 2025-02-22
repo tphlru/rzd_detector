@@ -1,5 +1,4 @@
-import contextlib
-import logging
+import contextlib, os, logging
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO
 
@@ -10,6 +9,10 @@ socketio = SocketIO(app)
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
+
+UPLOAD_FOLDER = "upload"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 criteria_data = {
     "emotional": {
@@ -131,6 +134,16 @@ def submit():
     print(criteria_data)
     return jsonify({"status": "success", "data": data})
 
+@app.route("/upload", methods=["POST"])
+def upload_file():
+    if "files" not in request.files:
+        return "Файлы не были выбраны", 400
+
+    files = request.files.getlist("files")
+    for file in files:
+        if file.filename:
+            file.save(os.path.join(app.config["UPLOAD_FOLDER"], file.filename))
+    return "Файлы успешно загружены"
 
 @socketio.on("update_criteria")
 def handle_criteria_update(update_data):  # sourcery skip: merge-repeated-ifs
