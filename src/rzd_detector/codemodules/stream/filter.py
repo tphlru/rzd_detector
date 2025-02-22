@@ -91,12 +91,12 @@ class Filter:
         times = []
         start_time = time.time()
         async with WHEPClient(get_hsd_camera_url("192.168.1.47")) as client:
-            for i in await client.get_frame_yield:
+            while True:
                 times.append(time.time()-start_time)
-                times = time[1:11]
+                times = times[1:11]
                 duration = times[0] - times[-1]
                 self.fps = len(times)/duration
-                img = i
+                img = WHEPClient.get_raw_frame()
                 if self._get_embedding_and_face(img) == (None, None):
                     self.frame = Frame(img, human_id=human_id, frame_id=frame_id, human_availability=False)
                 if self._is_the_same(img, past_img, 0.7):
@@ -112,5 +112,6 @@ class Filter:
     def get_frame(self):
         resp = asyncio.run(self._get_frame)
         return resp 
+    
     def get_fps(self):
         return self.fps

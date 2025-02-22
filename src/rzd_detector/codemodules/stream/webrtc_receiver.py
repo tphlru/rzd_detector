@@ -193,16 +193,19 @@ class WHEPClient:
 
         cv2.destroyAllWindows()
 
-    async def get_frame_yield(self):
-        while True:
-            if self.track_video:
-                try:
-                    frame = await self.track_video.recv()
-                    if isinstance(frame, VideoFrame):
-                        yield frame.to_ndarray(format="bgr24")
-                except Exception as e:
-                    print(f"Frame processing error: {str(e)}")
-                    break
+    async def get_raw_frame(self):
+        if self.track_video:
+            try:
+                frame = await self.track_video.recv()
+                if isinstance(frame, VideoFrame):
+                    # Конвертация кадра в формат OpenCV
+                    img = frame.to_ndarray(format="bgr24")
+                    return img
+
+            except Exception as e:
+                print(f"Frame processing error: {str(e)}")
+        else:
+            await asyncio.sleep(0.02)
 
     async def close(self):
         """Закрытие соединения"""
