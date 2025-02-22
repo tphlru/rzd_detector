@@ -7,7 +7,7 @@ from webrtc_receiver import WHEPClient, get_hsd_camera_url
 
 
 class VideoStream:
-    def __init__(self, source=0, queue_size=60, rpi_ip="192.168.1.49"):
+    def __init__(self, queue_size=60, rpi_ip="192.168.1.89"):
         # self.stream = cv2.VideoCapture(source)
         self.url = get_hsd_camera_url(rpi_ip)
         self.stream = WHEPClient(self.url)

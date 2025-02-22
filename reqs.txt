@@ -1,7 +1,6 @@
 absl-py
 accelerate
 addict
-aider-chat
 aiohappyeyeballs
 aiohttp
 aioice
@@ -415,3 +414,4 @@ zipp
 zope-event
 zope-interface
 zstandard
+facenet-pytorch

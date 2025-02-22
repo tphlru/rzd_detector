@@ -58,6 +58,7 @@ class Filter:
     def __init__(self):
         self.buffer = Buffer(60, 0, "Scripts/test_files/common/buffer_out_files")
         self.frame = 0
+        self.fps = 30
 
     def _get_embedding_and_face(self, image):
         faces, probs = mtcnn(image, return_prob=True)
@@ -89,15 +90,9 @@ class Filter:
         past_img = 0
         human_id = 0
         frame_id = 0
-        times = []
-        start_time = time.time()
         async with WHEPClient(get_hsd_camera_url("192.168.1.89")) as client:
             while True:
-                times.append(time.time() - start_time)
-                times = times[1:11]
-                duration = times[0] - times[-1]
-                self.fps = len(times) / duration
-                img = WHEPClient.get_raw_frame()
+                img = await client.get_raw_frame()
                 if self._get_embedding_and_face(img) == (None, None):
                     self.frame = Frame(
                         img,
@@ -115,14 +110,13 @@ class Filter:
                 else:
                     self.frame = None
                     human_id += 1
-                yield self.frame
                 self.buffer.add(self.frame)
                 frame_id += 1
                 past_img = img
 
     def get_frame(self):
-        resp = asyncio.run(self._get_frame)
-        return resp
+        asyncio.run(self._get_frame())
+        return self.frame
 
     def get_fps(self):
         return self.fps
