@@ -2,7 +2,7 @@ from respiration.mttscan.predict_vitals import predict_vitals
 from common.utils import get_plot_tops_n_times
 import numpy as np
 
-def get_resp(video_path: str, iter_for_maxs: int, maxs_treshold: int) -> tuple:
+def get_resp(iter_for_maxs: int, maxs_treshold: int) -> tuple:
     '''Объеденяет весь модуль.
     Args:
         iter_for_maxs (int): Число итераций, при поиске верхушек графика дыхания (вздохов).

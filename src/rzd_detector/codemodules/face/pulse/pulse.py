@@ -191,7 +191,6 @@ logger = logging.getLogger(__name__)
 
 
 def get_bpm_with_pbv(
-        videoFileName: str,
         cuda: bool = True,
         winsize: int = 4,
 ) -> tuple:
@@ -218,8 +217,6 @@ def get_bpm_with_pbv(
         Skin_LOW_HIGH_TH = (75, 230)
         movement_thrs = [10, 5, 2]  # или [15, 15, 15]
 
-    if not os.path.exists(videoFileName):
-        raise FileNotFoundError("Видео файл не существует!")
     filter = Filter()
     sig_processing = NewSignalProcessing(filter)
 
@@ -243,13 +240,13 @@ def get_bpm_with_pbv(
     SkinProcessingParams.RGB_LOW_TH = Constants.Skin_LOW_HIGH_TH[0]
     SkinProcessingParams.RGB_HIGH_TH = Constants.Skin_LOW_HIGH_TH[1]
 
-    logger.info(f"Обработка видео: {videoFileName}")
+    logger.info(f"Обработка видеопотока")
 
     # Ставим 0, чтобы обработать все доступные кадры
     sig_processing.set_total_frames(0)
     fps = filter.get_fps()
     # Извлекаем patches из видео
-    sig= sig_processing.extract_patches(videoFileName, "squares", "mean")
+    sig= sig_processing.extract_patches("squares", "mean")
 
     # Разбиваем на перекрывающиеся временные промежутки по 3 RGB каналам
     windowed_sig, timesES = sig_windowing(sig, winsize, 1, fps)

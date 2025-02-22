@@ -8,7 +8,7 @@ from rzd_detector.codemodules.face.respiration import get_resp
 from rzd_detector.codemodules.face.blinking import get_score as get_blink
 def main(cuda: bool, video):
 
-    bvp, times, bpm = get_bpm_with_pbv(videoFileName=video_path, cuda=cuda)
+    bvp, times, bpm = get_bpm_with_pbv(cuda=cuda)
     base_mean, trend, high_med, mids, tvals = process_pulse_info(bvp, show_plot=False)
     pulse_score = evaluate_pulse_results(base_mean=base_mean, trend=trend, high_med=high_med, midpoints=mids, tops_values=tvals)
 
