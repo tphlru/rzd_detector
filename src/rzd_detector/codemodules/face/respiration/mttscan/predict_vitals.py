@@ -11,7 +11,7 @@ import argparse
 sys.path.append("../")
 
 
-def predict_vitals(video_path: str, sampling_rate=30, batch_size=100, show_plot=True):
+def predict_vitals(sampling_rate=30, batch_size=100, show_plot=True):
     '''Прогнозирует частоту дыхания и пульс по видео.
     
     Args:
@@ -27,7 +27,6 @@ def predict_vitals(video_path: str, sampling_rate=30, batch_size=100, show_plot=
     frame_depth = 10
     model_checkpoint = "./mtts_can.hdf5"
     fs = sampling_rate
-    sample_data_path = video_path
 
     dXsub, video_duration = preprocess_raw_video(sample_data_path, dim=36)
     print("dXsub shape", dXsub.shape)

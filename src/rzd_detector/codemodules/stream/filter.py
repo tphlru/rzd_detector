@@ -53,8 +53,8 @@ class Filter:
             for i in await client.get_frame_yield:
                 times.append(time.time()-start_time)
                 times = time[1:11]
-                duration = times[0] - times[9]
-                self.fps = 10/duration
+                duration = times[0] - times[-1]
+                self.fps = len(times)/duration
                 img = i
                 if self._get_embedding_and_face(img) == (None, None):
                     yield Frame(img, human_id=human_id, frame_id=frame_id, human_availability=False)

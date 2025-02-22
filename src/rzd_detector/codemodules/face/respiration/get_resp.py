@@ -10,7 +10,7 @@ def get_resp(iter_for_maxs: int, maxs_treshold: int) -> tuple:
     Returns:
         tu: частота дыхания, оценка дыхания.
     '''
-    predicted_resp, predicted_pulse, duration = predict_vitals(video_path=video_path, show_plot=False)
+    predicted_resp, predicted_pulse, duration = predict_vitals(show_plot=False)
     mids, ids_tops, vals_tops = get_plot_tops_n_times(predicted_resp, iter_for_maxs)
     if len(ids_tops) < maxs_treshold:
         #экстрополируем
