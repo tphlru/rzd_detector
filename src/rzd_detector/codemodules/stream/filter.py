@@ -57,9 +57,9 @@ class Filter:
                 self.fps = 10/duration
                 img = i
                 if self._get_embedding_and_face(img) == (None, None):
-                    yield Frame(img, human_id=human_id, frame_id=frame_id, human_availability=False), fps
+                    yield Frame(img, human_id=human_id, frame_id=frame_id, human_availability=False)
                 if self._is_the_same(img, past_img, 0.7):
-                    yield Frame(img, human_id=human_id, frame_id=frame_id, human_availability=True), fps
+                    yield Frame(img, human_id=human_id, frame_id=frame_id, human_availability=True)
                 else:
                     yield None
                 
