@@ -110,7 +110,7 @@ class NewSignalProcessing(SignalProcessing):
                 max_num_faces=1,
                 min_detection_confidence=0.5,
                 min_tracking_confidence=0.5) as face_mesh:
-            for frame in await self.filter.get_frame():
+            for frame in self.filter.get_frame():
                 if frame == None:
                     break
                 image = frame.image

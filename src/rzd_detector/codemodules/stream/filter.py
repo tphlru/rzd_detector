@@ -4,6 +4,7 @@ from facenet_pytorch import MTCNN, InceptionResnetV1
 from PIL import Image
 import time
 import aiofiles
+import asyncio
 
 # Initialize the MTCNN module for face detection and the InceptionResnetV1 module for face embedding.
 mtcnn = MTCNN(image_size=160, keep_all=True)
@@ -81,7 +82,7 @@ class Filter:
         else:
             return True
         
-    async def get_frame_and_fps(self):
+    async def _get_frame(self):
         past_img = 0
         human_id = 0
         frame_id = 0
@@ -106,5 +107,8 @@ class Filter:
                 frame_id += 1
                 past_img = img
 
+    def get_frame(self):
+        resp = asyncio.run(self._get_frame)
+        return resp 
     def get_fps(self):
         return self.fps
