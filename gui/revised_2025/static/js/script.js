@@ -126,6 +126,18 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('reportButton').addEventListener('click', () => {
         sendData('reportButton', 'clicked');
     });
+    var img = document.getElementById("video_feed");
+
+    socket.on('connect', function() {
+        socket.emit('start_video');
+        alert("a2");
+    });
+
+    socket.on('video_frame', function(data) {
+        console.log("a");
+        img.src = "data:image/jpeg;base64," + btoa(String.fromCharCode.apply(null, new Uint8Array(data.frame)));
+        
+    });
 });
 
 const socket = io();

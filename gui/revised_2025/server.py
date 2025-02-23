@@ -1,11 +1,18 @@
+import cv2
+
 import contextlib, os, logging
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, Response
 from flask_socketio import SocketIO
+import numpy as np
+import asyncio, time
+
+import eventlet
+import eventlet.wsgi
 
 mode = "dev"  # "dev" or "prod"
 
 app = Flask(__name__)
-socketio = SocketIO(app)
+socketio = SocketIO(app, async_mode="eventlet")
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
@@ -92,7 +99,7 @@ def tablet():
 
 
 @app.route("/submit", methods=["POST"])
-def submit():
+async def submit():
     user_data = request.json
     element = user_data.get("element")
     value = user_data.get("value")
@@ -168,6 +175,27 @@ def handle_criteria_update(update_data):  # sourcery skip: merge-repeated-ifs
         socketio.emit("criteria_updated", criteria_data)
 
 
+def generate_stream():
+    video_capture = cv2.VideoCapture(0)
+    while True:
+        success, frame = video_capture.read()
+        # success = True
+        # frame = np.zeros((1080,1920 ,3),np.uint8)
+        if not success: 
+            print("not success")
+            break
+        _, buffer = cv2.imencode('.jpg', frame)
+        frame_bytes = buffer.tobytes() 
+        socketio.emit('video_frame', {'frame': frame_bytes})
+        eventlet.sleep(0.03)
+
+@socketio.on('start_video')
+def start_video():
+    print("aa")
+    socketio.start_background_task(generate_stream)
+
 if __name__ == "__main__":
     if mode == "dev":
+        counter = 0
+        video = cv2.VideoCapture("Scripts/test_files/common/example1.mp4")
         socketio.run(app, debug=True, port=5000)
