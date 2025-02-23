@@ -32,7 +32,7 @@ from stream import Filter
 
 
 class NewSignalProcessing(SignalProcessing):
-    def __init__(self, filter: Filter):
+    def __init__(self, filter: Filter, client):
         # Common parameters #
         self.tot_frames = None
         self.visualize_skin_collection = []
@@ -51,6 +51,7 @@ class NewSignalProcessing(SignalProcessing):
         self.visualize_skin_collection = []
         self.visualize_landmarks_collection = []
         self.filter = filter
+        self.client = client
 
     def extract_patches(self, region_type, sig_extraction_method):
         """
@@ -110,7 +111,8 @@ class NewSignalProcessing(SignalProcessing):
                 max_num_faces=1,
                 min_detection_confidence=0.5,
                 min_tracking_confidence=0.5) as face_mesh:
-            for frame in self.filter.get_frame():
+            while True:
+                frame = filter.get_frame(self.client)
                 if frame == None:
                     break
                 image = frame.image
@@ -218,7 +220,8 @@ def get_bpm_with_pbv(
         movement_thrs = [10, 5, 2]  # или [15, 15, 15]
 
     filter = Filter()
-    sig_processing = NewSignalProcessing(filter)
+    client = filter.create(ip="192.168.43.96")
+    sig_processing = NewSignalProcessing(filter, client)
 
     if cuda:
         logger.debug("Использование GPU")
@@ -423,3 +426,7 @@ def evaluate_pulse_results(
         logger.info("--- Тренд изменений отсутствует. Эта метрика не учитывается. ---")
 
     return points
+
+
+if __name__ == "__main__":
+    pass
