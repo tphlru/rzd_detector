@@ -6,12 +6,13 @@
                 <title>
                     LaboRad - Детектор состояния человека
                 </title>
-                <script src="https://cdn.jsdelivr.net/npm/tailwindcss/lib/index.min.js">
-                </script>
-                <script src="https://cdn.tailwindcss.com">
+                <script src="{{ url_for('static', filename='packages/tailwindcss.js') }}">
                 </script>
                 <link href="resources/css/linear.css?<?php echo time(); ?>" rel="stylesheet"/>
-                <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js">
+                <script src="{{ url_for('static', filename='packages/chart.umd.min.js') }}">
+                </script>
+
+                <script src="{{ url_for('static', filename='packages/socket.io.js') }}">
                 </script>
                 <link href="resources/icon.png" rel="shortcut icon" type="image/png">
                 </link>
@@ -24,11 +25,6 @@
                 <h1 class="text-3xl font-bold text-center text-gray-800">
                     <!-- <img src="logo.jpg" alt="LaboRad Logo" class="h-12 w-auto"> -->
                     LaboRad "Детектор состояния человека"
-                    <form action="info.html" target="_blank">
-                        <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="infobtn">
-                            О нас
-                        </button>
-                    </form>
                 </h1>
             </header>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -398,7 +394,7 @@
                     </a>
                 </p>
                 <p>
-                    Версия приложения - 2025.02.16a
+                    Версия приложения - 2025.02.23a
                 </p>
             </footer>
         </div>
