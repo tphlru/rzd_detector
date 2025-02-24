@@ -112,72 +112,75 @@ class NewSignalProcessing(SignalProcessing):
                 min_detection_confidence=0.5,
                 min_tracking_confidence=0.5) as face_mesh:
             while True:
-                frame = filter.get_frame(self.client)
-                if frame == None:
-                    break
-                image = frame.image
-                # convert the BGR image to RGB.
-                image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                processed_frames_count += 1
-                width = image.shape[1]
-                height = image.shape[0]
-                # [landmarks, info], with info->x_center ,y_center, r, g, b
-                ldmks = np.zeros((468, 5), dtype=np.float32)
-                ldmks[:, 0] = -1.0
-                ldmks[:, 1] = -1.0
-                magic_ldmks = []
-                ### face landmarks ###
-                results = face_mesh.process(image)
-                if results.multi_face_landmarks:
-                    face_landmarks = results.multi_face_landmarks[0]
-                    landmarks = [l for l in face_landmarks.landmark]
-                    for idx in range(len(landmarks)):
-                        landmark = landmarks[idx]
-                        if not ((landmark.HasField('visibility') and landmark.visibility < VISIBILITY_THRESHOLD)
-                                or (landmark.HasField('presence') and landmark.presence < PRESENCE_THRESHOLD)):
-                            coords = mp_drawing._normalized_to_pixel_coordinates(
-                                landmark.x, landmark.y, width, height)
-                            if coords:
-                                ldmks[idx, 0] = coords[1]
-                                ldmks[idx, 1] = coords[0]
-                    ### skin extraction ###
-                    cropped_skin_im, full_skin_im = skin_ex.extract_skin(
-                        image, ldmks)
-                else:
-                    cropped_skin_im = np.zeros_like(image)
-                    full_skin_im = np.zeros_like(image)
-                ### sig computing ###
-                for idx in self.ldmks:
-                    magic_ldmks.append(ldmks[idx])
-                magic_ldmks = np.array(magic_ldmks, dtype=np.float32)
-                temp = sig_ext_met(magic_ldmks, full_skin_im, ldmks_regions,
-                                   np.int32(SignalProcessingParams.RGB_LOW_TH), np.int32(SignalProcessingParams.RGB_HIGH_TH))
-                sig.append(temp)
-                # visualize patches and skin
-                if self.visualize_skin == True:
-                    self.visualize_skin_collection.append(full_skin_im)
-                if self.visualize_landmarks == True:
-                    annotated_image = full_skin_im.copy()
-                    color = np.array([self.font_color[0],
-                                      self.font_color[1], self.font_color[2]], dtype=np.uint8)
+                try:
+                    frame = filter.get_frame(self.client)
+                    if frame == None:
+                        break
+                    image = frame.image
+                    # convert the BGR image to RGB.
+                    image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                    processed_frames_count += 1
+                    width = image.shape[1]
+                    height = image.shape[0]
+                    # [landmarks, info], with info->x_center ,y_center, r, g, b
+                    ldmks = np.zeros((468, 5), dtype=np.float32)
+                    ldmks[:, 0] = -1.0
+                    ldmks[:, 1] = -1.0
+                    magic_ldmks = []
+                    ### face landmarks ###
+                    results = face_mesh.process(image)
+                    if results.multi_face_landmarks:
+                        face_landmarks = results.multi_face_landmarks[0]
+                        landmarks = [l for l in face_landmarks.landmark]
+                        for idx in range(len(landmarks)):
+                            landmark = landmarks[idx]
+                            if not ((landmark.HasField('visibility') and landmark.visibility < VISIBILITY_THRESHOLD)
+                                    or (landmark.HasField('presence') and landmark.presence < PRESENCE_THRESHOLD)):
+                                coords = mp_drawing._normalized_to_pixel_coordinates(
+                                    landmark.x, landmark.y, width, height)
+                                if coords:
+                                    ldmks[idx, 0] = coords[1]
+                                    ldmks[idx, 1] = coords[0]
+                        ### skin extraction ###
+                        cropped_skin_im, full_skin_im = skin_ex.extract_skin(
+                            image, ldmks)
+                    else:
+                        cropped_skin_im = np.zeros_like(image)
+                        full_skin_im = np.zeros_like(image)
+                    ### sig computing ###
                     for idx in self.ldmks:
-                        cv2.circle(
-                            annotated_image, (int(ldmks[idx, 1]), int(ldmks[idx, 0])), radius=0, color=self.font_color, thickness=-1)
-                        if self.visualize_landmarks_number == True:
-                            cv2.putText(annotated_image, str(idx),
-                                        (int(ldmks[idx, 1]), int(ldmks[idx, 0])), cv2.FONT_HERSHEY_SIMPLEX, self.font_size,  self.font_color,  1)
-                    if self.visualize_patch == True:
-                        if region_type == "squares":
-                            sides = np.array([self.square] * len(magic_ldmks))
-                            annotated_image = draw_rects(
-                                annotated_image, np.array(magic_ldmks[:, 1]), np.array(magic_ldmks[:, 0]), sides, sides, color)
-                        elif region_type == "rects":
-                            annotated_image = draw_rects(
-                                annotated_image, np.array(magic_ldmks[:, 1]), np.array(magic_ldmks[:, 0]), np.array(self.rects[:, 0]), np.array(self.rects[:, 1]), color)
-                    self.visualize_landmarks_collection.append(
-                        annotated_image)
-                ### loop break ###
-                if self.tot_frames is not None and self.tot_frames > 0 and processed_frames_count >= self.tot_frames:
+                        magic_ldmks.append(ldmks[idx])
+                    magic_ldmks = np.array(magic_ldmks, dtype=np.float32)
+                    temp = sig_ext_met(magic_ldmks, full_skin_im, ldmks_regions,
+                                    np.int32(SignalProcessingParams.RGB_LOW_TH), np.int32(SignalProcessingParams.RGB_HIGH_TH))
+                    sig.append(temp)
+                    # visualize patches and skin
+                    if self.visualize_skin == True:
+                        self.visualize_skin_collection.append(full_skin_im)
+                    if self.visualize_landmarks == True:
+                        annotated_image = full_skin_im.copy()
+                        color = np.array([self.font_color[0],
+                                        self.font_color[1], self.font_color[2]], dtype=np.uint8)
+                        for idx in self.ldmks:
+                            cv2.circle(
+                                annotated_image, (int(ldmks[idx, 1]), int(ldmks[idx, 0])), radius=0, color=self.font_color, thickness=-1)
+                            if self.visualize_landmarks_number == True:
+                                cv2.putText(annotated_image, str(idx),
+                                            (int(ldmks[idx, 1]), int(ldmks[idx, 0])), cv2.FONT_HERSHEY_SIMPLEX, self.font_size,  self.font_color,  1)
+                        if self.visualize_patch == True:
+                            if region_type == "squares":
+                                sides = np.array([self.square] * len(magic_ldmks))
+                                annotated_image = draw_rects(
+                                    annotated_image, np.array(magic_ldmks[:, 1]), np.array(magic_ldmks[:, 0]), sides, sides, color)
+                            elif region_type == "rects":
+                                annotated_image = draw_rects(
+                                    annotated_image, np.array(magic_ldmks[:, 1]), np.array(magic_ldmks[:, 0]), np.array(self.rects[:, 0]), np.array(self.rects[:, 1]), color)
+                        self.visualize_landmarks_collection.append(
+                            annotated_image)
+                    ### loop break ###
+                    if self.tot_frames is not None and self.tot_frames > 0 and processed_frames_count >= self.tot_frames:
+                        break
+                except KeyboardInterrupt:
                     break
         sig = np.array(sig, dtype=np.float32)
         return np.copy(sig[:, :, 2:])
@@ -429,4 +432,6 @@ def evaluate_pulse_results(
 
 
 if __name__ == "__main__":
-    pass
+    bvp, times, bpm = get_bpm_with_pbv(cuda=False)
+    base_mean, trend, high_med, mids, tvals = process_pulse_info(bvp, show_plot=True)
+
