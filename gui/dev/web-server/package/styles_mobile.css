@@ -1,0 +1,25 @@
+/* Custom styles */
+.criteria-low {
+    background-color: #FFCCCB;
+}
+
+.criteria-medium {
+    background-color: #FFFFA1;
+}
+
+.criteria-high {
+    background-color: #90EE90;
+}
+
+/* Make table responsive */
+@media (max-width: 640px) {
+    table {
+        font-size: 0.8rem;
+    }
+
+    th, td {
+        padding: 0.5rem 0.25rem;
+    }
+}
+
+/* Additional custom styles can be added here */

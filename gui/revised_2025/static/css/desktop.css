@@ -1,0 +1,58 @@
+.criteria-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.criteria-table th,
+.criteria-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.criteria-row {
+    background-color: #f8f9fa;
+}
+
+.sublevel-row {
+    background-color: #ffffff;
+}
+
+.score-cell {
+    width: 100px;
+    text-align: center;
+}
+
+.score-indicator {
+    height: 24px;
+    border-radius: 12px;
+    transition: background-color 0.3s ease;
+}
+
+/* Score colors */
+.score-low { background-color: #ff4444; }
+.score-medium { background-color: #ffbb33; }
+.score-high { background-color: #00C851; }
+
+.disabled-row {
+    opacity: 0.5 !important;
+    background-color: #f1f1f1 !important;
+}
+
+/* Увеличиваем специфичность селектора для disabled-row */
+table.criteria-table tr.disabled-row,
+table.criteria-table tr.disabled-row.criteria-row,
+table.criteria-table tr.disabled-row.sublevel-row {
+    opacity: 0.5 !important;
+    background-color: #f1f1f1 !important;
+    pointer-events: none !important;
+}
+
+/* Добавляем стили для более явного визуального отключения */
+table.criteria-table tr.disabled-row td {
+    color: #999 !important;
+}
+
+table.criteria-table tr.disabled-row .score-indicator {
+    background-color: #ddd !important;
+}

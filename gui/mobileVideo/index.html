@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="utf-8">
+            <meta content="width=device-width, initial-scale=1.0" name="viewport">
+                <title>
+                    LaboRad - Детектор состояния человека
+                </title>
+                <script src="https://cdn.jsdelivr.net/npm/tailwindcss/lib/index.min.js">
+                </script>
+                <script src="https://cdn.tailwindcss.com">
+                </script>
+                <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js">
+                </script>
+        </script>
+            </meta>
+        </meta>
+        <style>
+            .outer {
+                display: flex;
+                width: 100%;
+                height: 100%;
+            }
+
+            .inner {
+                margin: auto;
+                background: red;
+            }
+            body,html {
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="outer">
+            <div class="inner bg-white rounded-lg shadow-md p-6">
+                <h1 align="center" class="text-xl font-semibold mb-4">
+                    Трансляция
+                </h1>
+                <div id="video_container">
+                    <video class="video-js vjs-default-skin" controls="" width="700" id="my-video">
+                        <source>
+                        </source>
+                    </video>
+                </div>
+                <h2 align="center" class="text-x font-semi mt-4">
+                    Рекомендуется пользоваться этим приложением в горизонтальной ориентации
+                </h2>
+            </div>
+            <script>
+
+            </script>
+        </div>
+    </body>
+</html>
