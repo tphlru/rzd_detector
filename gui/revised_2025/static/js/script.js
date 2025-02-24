@@ -41,21 +41,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Обработчики событий для кнопок
-    document.getElementById('next').addEventListener('click', () => {
-        sendData('next', 'clicked');
-    });
+    // document.getElementById('next').addEventListener('click', () => {
+    //     sendData('next', 'clicked');
+    // });
 
-    document.getElementById('stop').addEventListener('click', () => {
-        sendData('stop', 'clicked');
-    });
+    // document.getElementById('stop').addEventListener('click', () => {
+    //     sendData('stop', 'clicked');
+    // });
 
-    document.getElementById('more').addEventListener('click', () => {
-        sendData('more', 'clicked');
-    });
+    // document.getElementById('more').addEventListener('click', () => {
+    //     sendData('more', 'clicked');
+    // });
 
     document.getElementById('videoBtn').addEventListener('click', () => {
         sendData('videoBtn', 'clicked');
     });
+
+    // document.getElementById("outFile").addEventListener("click", () => {;
+    //     var url = new URL(document.location);
+    //     let filess = new URLSearchParams(url.search).get("files");
+    //     alert(filess);
+    //     socket.emit("file",filess);
+    // });
+
+    // var myfile='';
+    // var input = document.getElementById('myfile');
+    // input.onchange = function(evt){
+    //     var tgt = evt.target || window.event.srcElement, files = tgt.files;
+    //     if (FileReader && files && files.length) {
+    //         var fr = new FileReader();
+    //         fr.onload = function(){
+    //             myfile = fr.result;
+    //         }
+    //         fr.readAsDataURL(files[0]);
+    //     }
+    //     alert(myfile);
+    // }
+
 
     // Debounce функция для задержки отправки данных
     function debounce(func, delay) {
@@ -130,11 +152,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on('connect', function() {
         socket.emit('start_video');
-        alert("a2");
+        alert("Видеотрансляция началась!");
     });
 
+    // socket.on("file", function(data) {
+    //     if (data=="not uploaded") {
+    //         alert("Не удалось загрузить файлы на сервер, пожалуйста, попробуйте снова");
+    //     } if (data=="success") {
+    //         alert("Файл успешно загружен!");
+    //     }
+    // })
+
     socket.on('video_frame', function(data) {
-        console.log("a");
+        console.log("get video frame");
         img.src = "data:image/jpeg;base64," + btoa(String.fromCharCode.apply(null, new Uint8Array(data.frame)));
         
     });

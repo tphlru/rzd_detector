@@ -43,9 +43,9 @@
                         <label class="block text-sm font-medium text-gray-700 mt-3">
                             Выберите видео
                         </label>
-                        <form action="/upload" method="post" enctype="multipart/form-data">
-                            <input class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 mt-1 rounded w-full sm:w-auto" type="file" name="files" multiple>
-                            <input class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 mt-1 rounded w-full sm:w-auto" type="submit" value="Загрузить">
+                        <form enctype="multipart/form-data">
+                            <input class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 mt-1 rounded w-full sm:w-auto" type="file" name="files" multiple id="myfile">
+                            <input class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 mt-1 rounded w-full sm:w-auto" type="submit" value="Загрузить" id="outFile">
                         </form>
                     </div>
                 </div>
@@ -57,7 +57,7 @@
                     <div class="space-y-4">
                         <!-- Action Buttons -->
                         <div class="flex flex-wrap gap-2 sm:gap-4">
-                            <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="next">
+                            <!-- <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="next">
                                 Следующий
                             </button>
                             <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="stop">
@@ -65,7 +65,7 @@
                             </button>
                             <button class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="more">
                                 Показать подробную информацию
-                            </button>
+                            </button> -->
                             <button class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="videoBtn" onclick="showPopupVideo()">
                                 Показать запись
                             </button>
@@ -76,25 +76,25 @@
                                 Устройство
                             </label>
                             <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="deviceSelect">
-                                <option {% if data.deviceSelect == 'Устройство 1' %}selected{% endif %}>
-                                    Устройство 1
+                                <option {% if data.deviceSelect == 'zero1' %}selected{% endif %}>
+                                    zero1
                                 </option>
-                                <option {% if data.deviceSelect == 'Устройство 2' %}selected{% endif %}>
-                                    Устройство 2
+                                <option {% if data.deviceSelect == 'zero2' %}selected{% endif %}>
+                                    zero2
                                 </option>
-                                <option {% if data.deviceSelect == 'Неизвестное устройство' %}selected{% endif %}>
-                                    Неизвестное устройство
+                                <option {% if data.deviceSelect == 'zero3' %}selected{% endif %}>
+                                    zero3
+                                </option>
+                                <option {% if data.deviceSelect == 'Any Android device' %}selected{% endif %}>
+                                    Any Android device
                                 </option>
                             </select>
                         </div>
                         <!-- Count Settings -->
                         <div class="dropdown">
                             <label class="block text-sm font-medium text-gray-700">
-                                Настройка подсчета
+                                Учитывать при подсчете следующие параметры:
                             </label>
-                            <span class="block text-sm text-gray-600">
-                                Учитывать при подсчете
-                            </span>
                             <ul class="mt-2 space-y-2">
                                 <li>
                                     <input type="checkbox" id="emotional" {% if data.emotional %}checked{% endif %}>
@@ -466,11 +466,11 @@
             </div>
             <!-- Video Popup -->
             <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="popup-overlay-video">
-                <div class="bg-white rounded-lg shadow-lg p-6" id="popup-video">
+                <div class="bg-white rounded-lg shadow-lg p-6" width="75%" id="popup-video">
                     <h2 class="text-xl font-semibold mb-4">
                         Записи
                     </h2>
-                    <video class="rounded-lg w-full" controls="">
+                    <video class="rounded-lg" controls="">
                         <source src="{{ url_for('static', filename='resources/video2.mp4') }}" type="video/mp4">
                             Ваш браузер не поддерживает воспроизведение видео.
                         </source>
