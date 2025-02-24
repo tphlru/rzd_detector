@@ -7,19 +7,17 @@
                     LaboRad - Детектор состояния человека
                 </title>
                 <!-- Tailwind CSS -->
-                <script src="https://cdn.jsdelivr.net/npm/tailwindcss/lib/index.min.js">
-                </script>
-                <script src="https://cdn.tailwindcss.com">
-                </script>
+                <script src="{{ url_for('static', filename='js/tailwindcss.js') }}"></script>
+            
                 <!-- Chart.js -->
-                <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js">
+                <script src="{{ url_for('static', filename='js/chart.umd.min.js') }}">
                 </script>
                 <!-- Styles and Favicon -->
                 <link href="{{ url_for('static', filename='css/desktop.css') }}" rel="stylesheet">
                     <link href="{{ url_for('static', filename='resources/icon.png') }}" rel="shortcut icon" type="image/png">
                     </link>
                 </link>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+                <script src="{{ url_for('static', filename='js/socket.io.js') }}"></script>
             </meta>
         </meta>
     </head>
@@ -44,16 +42,8 @@
                         Видео
                     </h2>
                     <div class="aspect-w-16 aspect-h-9">
-                        <video class="rounded-lg w-full" controls="">
-                            <source id="video" src="{{ url_for('static', filename='resources/video1.mp4') }}" type="video/mp4">
-                                Возникла ошибка при загрузке видео. Попробуйте перезагрузить страницу и убедитесь, что ваше устройство поддерживает видео. Если вам нужна помощь, напишите нам:
-                                <a class="text-blue-500 hover:text-blue-600" href="https://vk.com/laborad" target="_blank">
-                                    https://vk.com/laborad
-                                </a>
-                                .
-                            </source>
-                        </video>
-
+                        
+                        <img id="video_feed" width="640" height="480" alt="Видеопоток" class="rounded-lg w-full">
                         <label class="block text-sm font-medium text-gray-700 mt-3">
                             Выберите видео
                         </label>
@@ -500,6 +490,8 @@
             <script src="{{ url_for('static', filename='js/script.js') }}">
             </script>
             <script src="{{ url_for('static', filename='camera.js') }}">
+            </script>
+            <script src="{{ url_for('static', filename='js/video_viewer.js') }}">
             </script>
         </div>
     </body>
