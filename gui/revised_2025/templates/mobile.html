@@ -6,17 +6,16 @@
                 <title>
                     LaboRad - Детектор состояния человека
                 </title>
-                <script src="https://cdn.jsdelivr.net/npm/tailwindcss/lib/index.min.js">
+                <script src="{{ url_for('static', filename='packages/tailwindcss.js') }}">
                 </script>
-                <script src="https://cdn.tailwindcss.com">
-                </script>
-                <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js">
+                <script src="{{ url_for('static', filename='packages/chart.umd.min.js') }}">
                 </script>
                 <link href="{{ url_for('static', filename='css/mobile.css') }}" rel="stylesheet">
                     <link href="{{ url_for('static', filename='resources/icon.png') }}" rel="shortcut icon" type="image/png">
                     </link>
                 </link>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+                <script src="{{ url_for('static', filename='packages/socket.io.js') }}">
+                </script>
             </meta>
         </meta>
     </head>
@@ -25,11 +24,6 @@
             <header class="mb-8">
                 <h1 class="text-3xl font-bold text-center text-gray-800">
                     LaboRad "Детектор состояния человека"
-                    <form action="info.html" target="_blank">
-                        <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="infobtn">
-                            О нас
-                        </button>
-                    </form>
                 </h1>
             </header>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -428,7 +422,7 @@
                     </a>
                 </p>
                 <p>
-                    Версия приложения - 2024.12.13a
+                    Версия приложения - 2025.02.23a
                 </p>
             </footer>
 
