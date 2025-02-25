@@ -150,10 +150,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     var img = document.getElementById("video_feed");
 
-    socket.on('connect', function() {
-        socket.emit('start_video');
-        alert("Видеотрансляция началась!");
-    });
+    // socket.on('connect', function() {
+    //     socket.emit('start_video');
+    //     alert("Видеотрансляция началась!");
+    // });
 
     // socket.on("file", function(data) {
     //     if (data=="not uploaded") {
@@ -163,17 +163,19 @@ document.addEventListener('DOMContentLoaded', () => {
     //     }
     // })
 
-    socket.on('video_frame', function(data) {
-        console.log("get video frame");
-        img.src = "data:image/jpeg;base64," + btoa(String.fromCharCode.apply(null, new Uint8Array(data.frame)));
+    // socket.on('video_frame', function(data) {
+    //     console.log("get video frame");
+    //     img.src = "data:image/jpeg;base64," + btoa(String.fromCharCode.apply(null, new Uint8Array(data.frame)));
         
-    });
-    document.getElementById("changeType").addEventListener("change",(e)=>{
-        alert(e);
+    // });
+    const changer = document.querySelector("#changeType");
+    changer.addEventListener("change",(e)=>{
+        // socket.emit("videoType",changer.value);
+        alert(changer.value);
     });
 });
 
-const socket = io();
+// const socket = io();
                 
 function updateScoreColors() {
     document.querySelectorAll('.score-indicator').forEach(indicator => {
@@ -192,28 +194,28 @@ function updateScoreColors() {
     });
 }
         
-socket.on('criteria_updated', function(criteriaData) {
-    for (const [category, info] of Object.entries(criteriaData)) {
-        // Update main category score
-        const categoryRow = document.querySelector(`tr[data-category="${category}"]`);
-        if (categoryRow) {
-            const scoreDiv = categoryRow.querySelector('.score-indicator');
-            scoreDiv.textContent = `${info.score}/${info.max_score}`;
-            scoreDiv.dataset.score = info.score;
-        }
+// socket.on('criteria_updated', function(criteriaData) {
+//     for (const [category, info] of Object.entries(criteriaData)) {
+//         // Update main category score
+//         const categoryRow = document.querySelector(`tr[data-category="${category}"]`);
+//         if (categoryRow) {
+//             const scoreDiv = categoryRow.querySelector('.score-indicator');
+//             scoreDiv.textContent = `${info.score}/${info.max_score}`;
+//             scoreDiv.dataset.score = info.score;
+//         }
 
-        if (info.sublevels) {
-            for (const [sublevel, subInfo] of Object.entries(info.sublevels)) {
-                const sublevelRow = document.querySelector(`tr[data-category="${category}"][data-sublevel="${sublevel}"]`);
-                if (sublevelRow) {
-                    const scoreDiv = sublevelRow.querySelector('.score-indicator');
-                    scoreDiv.textContent = `${subInfo.score}/${subInfo.max_score}`;
-                    scoreDiv.dataset.score = subInfo.score;
-                }
-            }
-        }
-        }
-    updateScoreColors();
-});
+//         if (info.sublevels) {
+//             for (const [sublevel, subInfo] of Object.entries(info.sublevels)) {
+//                 const sublevelRow = document.querySelector(`tr[data-category="${category}"][data-sublevel="${sublevel}"]`);
+//                 if (sublevelRow) {
+//                     const scoreDiv = sublevelRow.querySelector('.score-indicator');
+//                     scoreDiv.textContent = `${subInfo.score}/${subInfo.max_score}`;
+//                     scoreDiv.dataset.score = subInfo.score;
+//                 }
+//             }
+//         }
+//         }
+//     updateScoreColors();
+// });
 
-document.addEventListener('DOMContentLoaded', updateScoreColors);
+// document.addEventListener('DOMContentLoaded', updateScoreColors);
