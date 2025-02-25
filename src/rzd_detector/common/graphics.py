@@ -104,3 +104,4 @@ def gauge_chart(
         plt.savefig(fname, bbox_inches="tight")
     if show:
         plt.show(block=False)
+    plt.close()
