@@ -1,7 +1,9 @@
+import numpy as np
 import mediapipe as mp
 import cv2
 from rzd_detector.common.utils import get_plot_tops_n_times as get_maxs
-
+from scipy.signal import find_peaks
+import matplotlib.pyplot as plt
 BaseOptions = mp.tasks.BaseOptions
 FaceLandmarker = mp.tasks.vision.FaceLandmarker
 FaceLandmarkerOptions = mp.tasks.vision.FaceLandmarkerOptions
@@ -43,8 +45,15 @@ def get_blinking_count(video_path: str, iter_for_maxs: int) -> float:
             blink_scores_left.append(blendshapes[9].score)
             blink_scores_right.append(blendshapes[10].score)
             blink_scores = [(x + y) / 2 for x, y in zip(blink_scores_left, blink_scores_right)]
-            midpoints, tnums, tops_values = get_maxs(blink_scores, iter_for_maxs)
-            # print(blink_count)
-            
-    return len(tnums)*60/duration
+            blink_scores = np.array(blink_scores)
+            # midpoints, tnums, tops_values = get_maxs(blink_scores, iter_for_maxs)
+            peaks, _ = find_peaks(blink_scores, distance=100)
+            peaks = np.array(peaks)
+            plt.figure()
+            xs = list(range(len(blink_scores)))
+            plt.plot(xs, blink_scores)
+            plt.plot(peaks, blink_scores[peaks], "go") 
+            plt.savefig("blink.png")
+            plt.close()
+    return len(peaks)*60/duration
 
