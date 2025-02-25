@@ -31,8 +31,8 @@ frame_var = None
 
 shm = shared_memory.SharedMemory(create=True, size=np.prod(FRAME_SHAPE) * np.dtype(FRAME_DTYPE).itemsize)
 frame_array = np.ndarray(FRAME_SHAPE, dtype=FRAME_DTYPE, buffer=shm.buf)
-predicts_data = shared_memory.SharedMemory(create=True, size = 3 * np.dtype(np.uint8).itemsize)
-pred = np.ndarray((3,), dtype=np.uint8, buffer=predicts_data.buf)
+predicts_data = shared_memory.SharedMemory(create=True, size = 4 * np.dtype(np.uint8).itemsize)
+pred = np.ndarray((4,), dtype=np.uint8, buffer=predicts_data.buf)
 new_frame_event = mp.Event()
 new_predict_event = mp.Event()
 
@@ -53,7 +53,8 @@ def translate_score():
             "score": predict[1]
         }
         sio.emit("update_criteria", update_data)
-def get_pedict():
+
+def get_predict():
     while True:
         new_frame_event.wait()  # Ждем новый кадр
         new_frame_event.clear()
@@ -63,72 +64,76 @@ def get_pedict():
         pred[1] = 2
         pred[2] = 3
         pred[3] = 4
+        print(pred)
         new_predict_event.set()
 
 async def generate_stream():
     """Асинхронная функция для генерации потока видео"""
-    client = WHEPClient(get_hsd_camera_url(HSD_IP))
-    await client.connect()
-    while True:
-        frame = await client.get_raw_frame()
-        frame = crop_face(frame)
-        global frame_array
-        frame_array[:] = np.array( dtype=FRAME_DTYPE)
-        new_frame_event.set()
-        await asyncio.sleep(0.03)  # Небольшая задержка для уменьшения нагрузки
+    new_frame_event.set()
+    # client = WHEPClient(get_hsd_camera_url(HSD_IP))
+    # await client.connect()
+    # while True:
+    #     frame = await client.get_raw_frame()
+    #     frame = crop_face(frame)
+    #     global frame_array
+    #     frame_array[:] = np.array(dtype=FRAME_DTYPE)
+    #     new_frame_event.set()
+    #     await asyncio.sleep(0.03)  # Небольшая задержка для уменьшения нагрузки
 
 
-@socketio.on('start_video')
-def start_video():
-    print("aa")
-    socketio.start_background_task(generate_stream)
+# @socketio.on('start_video')
+# def start_video():
+#     print("aa")
+#     socketio.start_background_task(generate_stream)
 
 def main():
     generate = mp.Process(target=asyncio.run(generate_stream()))
     generate.start()
-    predict = mp.Process(target=get_pedict)
+    predict = mp.Process(target=get_predict)
     predict.start()
 
-def generate_random_scores():
-    categories = ["emotional", "physical", "seasonal", "subjective", "statistical"]
-    sublevels = {
-        "emotional": ["happiness", "stress", "anxiety"],
-        "physical": ["pulse", "breathing", "blinking"],
-    }
+# def generate_random_scores():
+#     categories = ["emotional", "physical", "seasonal", "subjective", "statistical"]
+#     sublevels = {
+#         "emotional": ["happiness", "stress", "anxiety"],
+#         "physical": ["pulse", "breathing", "blinking"],
+#     }
 
-    while True:
-        try:
-            # Update main categories
-            for category in categories:
-                if category in sublevels:
-                    for sublevel in sublevels[category]:
-                        update_data = {
-                            "category": category,
-                            "sublevel": sublevel,
-                            "score": random.randint(0, 5),
-                        }
-                        sio.emit("update_criteria", update_data)
-                        time.sleep(1)
-                else:
-                    update_data = {
-                        "category": category,
-                        "sublevel": None,
-                        "score": random.randint(0, 5),
-                    }
-                    sio.emit("update_criteria", update_data)
-                    time.sleep(1)
+#     while True:
+#         try:
+#             # Update main categories
+#             for category in categories:
+#                 if category in sublevels:
+#                     for sublevel in sublevels[category]:
+#                         update_data = {
+#                             "category": category,
+#                             "sublevel": sublevel,
+#                             "score": random.randint(0, 5),
+#                         }
+#                         sio.emit("update_criteria", update_data)
+#                         time.sleep(1)
+#                 else:
+#                     update_data = {
+#                         "category": category,
+#                         "sublevel": None,
+#                         "score": random.randint(0, 5),
+#                     }
+#                     sio.emit("update_criteria", update_data)
+#                     time.sleep(1)
 
-            time.sleep(5)
+#             time.sleep(5)
 
-        except Exception as e:
-            logging.error(f"Error in demo: {e}")
-            time.sleep(5)
+#         except Exception as e:
+#             logging.error(f"Error in demo: {e}")
+#             time.sleep(5)
 
 
 @sio.event
 def connect():
     logging.info("Connected to server")
-    generate_random_scores()
+    # generate_random_scores()
+    # get_predict()
+    main()
 
 
 @sio.event

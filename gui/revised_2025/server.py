@@ -28,12 +28,12 @@ HSD_IP = "192.168.0.102"
 frame_queue = asyncio.Queue(maxsize=30)  # Асинхронная очередь для хранения кадров
 frame_var = None
 
-shm = shared_memory.SharedMemory(create=True, size=np.prod(FRAME_SHAPE) * np.dtype(FRAME_DTYPE).itemsize)
-frame_array = np.ndarray(FRAME_SHAPE, dtype=FRAME_DTYPE, buffer=shm.buf)
-predicts_data = shared_memory.SharedMemory(create=True, size = 3 * np.dtype(np.uint8).itemsize)
-pred = np.ndarray((3,), dtype=np.uint8, buffer=predicts_data.buf)
-new_frame_event = mp.Event()
-new_predict_event = mp.Event()
+# shm = shared_memory.SharedMemory(create=True, size=np.prod(FRAME_SHAPE) * np.dtype(FRAME_DTYPE).itemsize)
+# frame_array = np.ndarray(FRAME_SHAPE, dtype=FRAME_DTYPE, buffer=shm.buf)
+# predicts_data = shared_memory.SharedMemory(create=True, size = 3 * np.dtype(np.uint8).itemsize)
+# pred = np.ndarray((3,), dtype=np.uint8, buffer=predicts_data.buf)
+# new_frame_event = mp.Event()
+# new_predict_event = mp.Event()
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
 
@@ -195,50 +195,51 @@ def handle_criteria_update(update_data):  # sourcery skip: merge-repeated-ifs
         socketio.emit("criteria_updated", criteria_data)
         eventlet.sleep(0.01)
 
-def translate_score():
-    while True:
-        new_predict_event.wait()
-        new_predict_event.clear()
-        predict = pred
-        update_data = {
-            "category": "physical",
-            "sublevel": "pulse",
-            "score": predict[1]
-        }
-        sio.emit("update_criteria", update_data)
-def get_pedict():
-    while True:
-        new_frame_event.wait()  # Ждем новый кадр
-        new_frame_event.clear()
-        frame = frame_array
-        # pulse, resp, blink = run_moduls(False, frame)
-        pred[1] = 1
-        pred[2] = 2
-        pred[3] = 3
-        new_predict_event.set()
+# def translate_score():
+#     while True:
+#         new_predict_event.wait()
+#         new_predict_event.clear()
+#         predict = pred
+#         update_data = {
+#             "category": "physical",
+#             "sublevel": "pulse",
+#             "score": predict[1]
+#         }
+#         sio.emit("update_criteria", update_data)
+# def get_pedict():
+#     while True:
+#         new_frame_event.wait()  # Ждем новый кадр
+#         new_frame_event.clear()
+#         frame = frame_array
+#         # pulse, resp, blink = run_moduls(False, frame)
+#         pred[1] = 1
+#         pred[2] = 2
+#         pred[3] = 3
+#         new_predict_event.set()
 
-async def generate_stream():
-    """Асинхронная функция для генерации потока видео"""
-    client = WHEPClient(get_hsd_camera_url(HSD_IP))
-    await client.connect()
-    while True:
-        frame = await client.get_raw_frame()
-        frame = crop_face(frame)
-        global frame_array
-        frame_array[:] = np.array( dtype=FRAME_DTYPE)
-        new_frame_event.set()
-        await asyncio.sleep(0.03)  # Небольшая задержка для уменьшения нагрузки
+# async def generate_stream():
+#     """Асинхронная функция для генерации потока видео"""
+#     client = WHEPClient(get_hsd_camera_url(HSD_IP))
+#     await client.connect()
+#     while True:
+#         frame = await client.get_raw_frame()
+#         frame = crop_face(frame)
+#         global frame_array
+#         frame_array[:] = np.array( dtype=FRAME_DTYPE)
+#         new_frame_event.set()
+#         await asyncio.sleep(0.03)  # Небольшая задержка для уменьшения нагрузки
 
 
-@socketio.on('start_video')
-def start_video():
-    print("aa")
-    socketio.start_background_task(generate_stream)
+# @socketio.on('start_video')
+# def start_video():
+#     print("aa")
+#     socketio.start_background_task(generate_stream)
 
 def main():
-    generate = mp.Process(target=asyncio.run(generate_stream()))
-    generate.start()
-    predict = mp.Process(target=get_pedict)
-    predict.start()
-
+    # generate = mp.Process(target=asyncio.run(generate_stream()))
+    # generate.start()
+    # predict = mp.Process(target=get_pedict)
+    # predict.start()
     socketio.run(app, host="0.0.0.0", port=5000, allow_unsafe_werkzeug=True)
+
+main()
