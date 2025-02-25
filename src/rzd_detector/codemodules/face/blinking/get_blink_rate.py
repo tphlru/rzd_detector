@@ -23,7 +23,7 @@ options = FaceLandmarkerOptions(
 blink_scores_left = []
 blink_scores_right = []
 
-def get_blinking_count(video_path: str, iter_for_maxs: int) -> float:
+def get_blinking_count(video_path: str, iter_for_maxs: int, plot=False) -> float:
     '''Вычиляет частоту моргания раз/минуту.
     Args:
         video_path (str): Путь к видео, по которому будет вычисляться частота.
@@ -49,11 +49,12 @@ def get_blinking_count(video_path: str, iter_for_maxs: int) -> float:
             # midpoints, tnums, tops_values = get_maxs(blink_scores, iter_for_maxs)
             peaks, _ = find_peaks(blink_scores, distance=100)
             peaks = np.array(peaks)
-            plt.figure()
-            xs = list(range(len(blink_scores)))
-            plt.plot(xs, blink_scores)
-            plt.plot(peaks, blink_scores[peaks], "go") 
-            plt.savefig("blink.png")
-            plt.close()
+            if plot:
+                plt.figure()
+                xs = list(range(len(blink_scores)))
+                plt.plot(xs, blink_scores)
+                plt.plot(peaks, blink_scores[peaks], "go") 
+                plt.savefig("blink.png")
+                plt.close()
     return len(peaks)*60/duration
 

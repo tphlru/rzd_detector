@@ -6,7 +6,7 @@ from rzd_detector.codemodules.behaviour.clothes.cornernetlib.loadinstall import 
 
 
 def install_cpools():
-    os.system("pip install pip install git+https://github.com/tphlru/cpools.git")
+    os.system("pip install git+https://github.com/tphlru/cpools.git")
 
 
 def install_pycocotools():
@@ -23,6 +23,7 @@ def install_pycocotools():
 
 def run_postinstall():
     print("Post-installation script")
+    install_cpools()
     install_coco()
     install_pycocotools()
     load_cornernet_pretrained()

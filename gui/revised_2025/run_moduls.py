@@ -5,9 +5,13 @@
 # voice - 
 from rzd_detector.codemodules.face.pulse import get_bpm_with_pbv, process_pulse_info, evaluate_pulse_results
 from rzd_detector.codemodules.face.respiration.get_resp import get_resp
-from rzd_detector.codemodules.face.blinking.get_blink_rate import get_blinking_count as get_blink
+from rzd_detector.codemodules.face.blinking.rating import get_score
 from rzd_detector.codemodules.face.emotions.main_em import get_emotion
 import timeit
+import json
+
+def write_table(a, b, c):
+    return {"category": a, "sublevel": b, "score": c}
 
 def run(cuda: bool, video_path):
     print("start")
@@ -18,10 +22,17 @@ def run(cuda: bool, video_path):
 
     resp_rate, resp_score = get_resp(video_path=video_path, iter_for_maxs=8, maxs_treshold=3)
 
-    blink_rate = get_blink(video_path=video_path, iter_for_maxs=5)
+    blink_rate, blink_scores = get_score(video_path=video_path, iter_for_maxs=5)
 
     emotions = get_emotion(video_path)
     print("finished", timeit.default_timer() - t)
+    with open("/home/LaboRad/rzd_detector/Scripts/table_values.json", "w") as f:
+        d = {
+            "pulse":write_table("physical", "pulse", pulse_score),
+            "resp":write_table("physical", "breathing", resp_score),
+            "blink":write_table("physical", "blinking", blink_scores)
+        }
+        json.dump(d, f)
     return pulse_score, resp_score, blink_rate, emotions
     # return blink_rate
 if __name__ == "__main__":

@@ -16,6 +16,8 @@ import multiprocessing as mp
 from multiprocessing import shared_memory
 from rzd_detector.codemodules.stream.webrtc_receiver import WHEPClient, get_hsd_camera_url
 
+import json
+
 mode = "dev"  # "dev" or "prod"
 
 app = Flask(__name__)
@@ -125,6 +127,18 @@ async def submit():
     value = user_data.get("value")
 
     logging.info(f"Изменен элемент '{element}': значение = {value}")
+
+    if element == 'subjective_rating':
+        with open("Scripts/table_values.json", mode="r") as jf:
+            dt = dict(json.load(jf))
+        dt["subj"] = {}
+        dt["subj"]["category"] = "subjective"
+        dt["subj"]["score"] = value
+        # last = max([0, 0] + [int(i) for i in dt])
+        # dt[str(last+1)] = {"category": "subjective", "sublevel": {}, "score": str(value)}
+        with open("Scripts/table_values.json", mode="w") as jf:
+            json.dump(dt, jf)
+
 
     if element in ["emotional", "physical", "seasonal", "subjective", "statistical"]:
         enabled = bool(value)
