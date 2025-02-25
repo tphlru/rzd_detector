@@ -3,24 +3,18 @@ import os
 import statistics
 from random import choice
 import matplotlib.pyplot as plt
-import numpy as np
-import cv2
-import mediapipe as mp
-from pyVHR.extraction.utils import *
-from pyVHR.extraction.skin_extraction_methods import *
-from pyVHR.extraction.sig_extraction_methods import *
 
 from pyVHR.BPM.BPM import BPM_clustering
 from pyVHR.BVP.BVP import RGB_sig_to_BVP
 from pyVHR.BVP.filters import BPfilter, apply_filter
-from pyVHR.BVP.methods import cpu_PBV
+from pyVHR.BVP.methods import cpu_PBV, cpu_GREEN
 from pyVHR.extraction.sig_extraction_methods import SignalProcessingParams
 from pyVHR.extraction.sig_processing import SignalProcessing
 from pyVHR.extraction.skin_extraction_methods import (
     SkinExtractionConvexHull,
     SkinProcessingParams,
 )
-from pyVHR.extraction.utils import MotionAnalysis, sig_windowing
+from pyVHR.extraction.utils import MotionAnalysis, get_fps, sig_windowing
 
 from .helpers_code import vhr_ldmks_list, get_largest_serially
 from rzd_detector.common.utils import (
@@ -28,158 +22,8 @@ from rzd_detector.common.utils import (
     get_plot_tops_n_times,
     get_trend,
 )
-from stream import Filter
 
-
-class NewSignalProcessing(SignalProcessing):
-    def __init__(self, filter: Filter):
-        # Common parameters #
-        self.tot_frames = None
-        self.visualize_skin_collection = []
-        self.skin_extractor = SkinExtractionConvexHull()
-        # Patches parameters #
-        high_prio_ldmk_id, mid_prio_ldmk_id = get_magic_landmarks()
-        self.ldmks = high_prio_ldmk_id + mid_prio_ldmk_id
-        self.square = None
-        self.rects = None
-        self.visualize_skin = False
-        self.visualize_landmarks = False
-        self.visualize_landmarks_number = False
-        self.visualize_patch = False
-        self.font_size = 0.3
-        self.font_color = (255, 0, 0, 255)
-        self.visualize_skin_collection = []
-        self.visualize_landmarks_collection = []
-        self.filter = filter
-
-    def extract_patches(self, region_type, sig_extraction_method):
-        """
-        This method compute the RGB-mean signal using specific skin regions (patches).
-
-        Args:
-            videoFileName (str): video file name or path.
-            region_type (str): patches types can be  "squares" or "rects".
-            sig_extraction_method (str): RGB signal can be computed with "mean" or "median". We recommend to use mean.
-
-        Returns: 
-            float32 ndarray: RGB signal as ndarray with shape [num_frames, num_patches, rgb_channels].
-        """
-        if self.square is None and self.rects is None:
-            print(
-                "[ERROR] Use set_landmarks_squares or set_landmarkds_rects before calling this function!")
-            return None
-        if region_type != "squares" and region_type != "rects":
-            print("[ERROR] Invalid landmarks region type!")
-            return None
-        if sig_extraction_method != "mean" and sig_extraction_method != "median":
-            print("[ERROR] Invalid signal extraction method!")
-            return None
-
-        ldmks_regions = None
-        if region_type == "squares":
-            ldmks_regions = np.float32(self.square)
-        elif region_type == "rects":
-            ldmks_regions = np.float32(self.rects)
-
-        sig_ext_met = None
-        if sig_extraction_method == "mean":
-            if region_type == "squares":
-                sig_ext_met = landmarks_mean
-            elif region_type == "rects":
-                sig_ext_met = landmarks_mean_custom_rect
-        elif sig_extraction_method == "median":
-            if region_type == "squares":
-                sig_ext_met = landmarks_median
-            elif region_type == "rects":
-                sig_ext_met = landmarks_median_custom_rect
-
-        self.visualize_skin_collection = []
-        self.visualize_landmarks_collection = []
-
-        skin_ex = self.skin_extractor
-
-        mp_drawing = mp.solutions.drawing_utils
-        mp_face_mesh = mp.solutions.face_mesh
-        PRESENCE_THRESHOLD = 0.5
-        VISIBILITY_THRESHOLD = 0.5
-
-        sig = []
-        processed_frames_count = 0
-
-        with mp_face_mesh.FaceMesh(
-                max_num_faces=1,
-                min_detection_confidence=0.5,
-                min_tracking_confidence=0.5) as face_mesh:
-            for frame in self.filter.get_frame():
-                if frame == None:
-                    break
-                image = frame.image
-                # convert the BGR image to RGB.
-                image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                processed_frames_count += 1
-                width = image.shape[1]
-                height = image.shape[0]
-                # [landmarks, info], with info->x_center ,y_center, r, g, b
-                ldmks = np.zeros((468, 5), dtype=np.float32)
-                ldmks[:, 0] = -1.0
-                ldmks[:, 1] = -1.0
-                magic_ldmks = []
-                ### face landmarks ###
-                results = face_mesh.process(image)
-                if results.multi_face_landmarks:
-                    face_landmarks = results.multi_face_landmarks[0]
-                    landmarks = [l for l in face_landmarks.landmark]
-                    for idx in range(len(landmarks)):
-                        landmark = landmarks[idx]
-                        if not ((landmark.HasField('visibility') and landmark.visibility < VISIBILITY_THRESHOLD)
-                                or (landmark.HasField('presence') and landmark.presence < PRESENCE_THRESHOLD)):
-                            coords = mp_drawing._normalized_to_pixel_coordinates(
-                                landmark.x, landmark.y, width, height)
-                            if coords:
-                                ldmks[idx, 0] = coords[1]
-                                ldmks[idx, 1] = coords[0]
-                    ### skin extraction ###
-                    cropped_skin_im, full_skin_im = skin_ex.extract_skin(
-                        image, ldmks)
-                else:
-                    cropped_skin_im = np.zeros_like(image)
-                    full_skin_im = np.zeros_like(image)
-                ### sig computing ###
-                for idx in self.ldmks:
-                    magic_ldmks.append(ldmks[idx])
-                magic_ldmks = np.array(magic_ldmks, dtype=np.float32)
-                temp = sig_ext_met(magic_ldmks, full_skin_im, ldmks_regions,
-                                   np.int32(SignalProcessingParams.RGB_LOW_TH), np.int32(SignalProcessingParams.RGB_HIGH_TH))
-                sig.append(temp)
-                # visualize patches and skin
-                if self.visualize_skin == True:
-                    self.visualize_skin_collection.append(full_skin_im)
-                if self.visualize_landmarks == True:
-                    annotated_image = full_skin_im.copy()
-                    color = np.array([self.font_color[0],
-                                      self.font_color[1], self.font_color[2]], dtype=np.uint8)
-                    for idx in self.ldmks:
-                        cv2.circle(
-                            annotated_image, (int(ldmks[idx, 1]), int(ldmks[idx, 0])), radius=0, color=self.font_color, thickness=-1)
-                        if self.visualize_landmarks_number == True:
-                            cv2.putText(annotated_image, str(idx),
-                                        (int(ldmks[idx, 1]), int(ldmks[idx, 0])), cv2.FONT_HERSHEY_SIMPLEX, self.font_size,  self.font_color,  1)
-                    if self.visualize_patch == True:
-                        if region_type == "squares":
-                            sides = np.array([self.square] * len(magic_ldmks))
-                            annotated_image = draw_rects(
-                                annotated_image, np.array(magic_ldmks[:, 1]), np.array(magic_ldmks[:, 0]), sides, sides, color)
-                        elif region_type == "rects":
-                            annotated_image = draw_rects(
-                                annotated_image, np.array(magic_ldmks[:, 1]), np.array(magic_ldmks[:, 0]), np.array(self.rects[:, 0]), np.array(self.rects[:, 1]), color)
-                    self.visualize_landmarks_collection.append(
-                        annotated_image)
-                ### loop break ###
-                if self.tot_frames is not None and self.tot_frames > 0 and processed_frames_count >= self.tot_frames:
-                    break
-        sig = np.array(sig, dtype=np.float32)
-        return np.copy(sig[:, :, 2:])
-
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
@@ -191,6 +35,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_bpm_with_pbv(
+        videoFileName: str,
         cuda: bool = True,
         winsize: int = 4,
 ) -> tuple:
@@ -217,8 +62,10 @@ def get_bpm_with_pbv(
         Skin_LOW_HIGH_TH = (75, 230)
         movement_thrs = [10, 5, 2]  # или [15, 15, 15]
 
-    filter = Filter()
-    sig_processing = NewSignalProcessing(filter)
+    if not os.path.exists(videoFileName):
+        raise FileNotFoundError("Видео файл не существует!")
+
+    sig_processing = SignalProcessing()
 
     if cuda:
         logger.debug("Использование GPU")
@@ -240,13 +87,14 @@ def get_bpm_with_pbv(
     SkinProcessingParams.RGB_LOW_TH = Constants.Skin_LOW_HIGH_TH[0]
     SkinProcessingParams.RGB_HIGH_TH = Constants.Skin_LOW_HIGH_TH[1]
 
-    logger.info(f"Обработка видеопотока")
+    logger.info(f"Обработка видео: {videoFileName}")
 
     # Ставим 0, чтобы обработать все доступные кадры
     sig_processing.set_total_frames(0)
-    fps = filter.get_fps()
+    fps = get_fps(videoFileName)  # Частота кадров исходного видео
+
     # Извлекаем patches из видео
-    sig= sig_processing.extract_patches("squares", "mean")
+    sig = sig_processing.extract_patches(videoFileName, "squares", "mean")
 
     # Разбиваем на перекрывающиеся временные промежутки по 3 RGB каналам
     windowed_sig, timesES = sig_windowing(sig, winsize, 1, fps)
@@ -279,7 +127,7 @@ def get_bpm_with_pbv(
         filtered_windowed_sig,
         fps,
         device_type="cpu",
-        method=cpu_PBV,
+        method=cpu_GREEN,
         params={},
     )
 
@@ -322,7 +170,10 @@ def process_pulse_info(
     Returns:
         tuple: _description_
     """
-    if not bpm.any():
+    if not isinstance(bpm, list):
+        bpm = bpm.tolist()
+
+    if len(bpm) == 0:
         raise ValueError("bpm list is empty!")
 
     if len(bpm) < 4:
@@ -335,8 +186,8 @@ def process_pulse_info(
 
     bpm = add_offset_to_values(bpm, base_offset)  # Добавляем смещение
 
-    if min(bpm) < 0:
-        raise ValueError("bpm must be positive! Probably, offset is too large.")
+    # if min(bpm) < 0:
+    #     raise ValueError("bpm must be positive! Probably, offset is too large.")
 
     base_mean = round(statistics.median(bpm), 2)  # Медианное значение
     mids, tnums, tvals = get_plot_tops_n_times(bpm, 1)  # Верхушки графика

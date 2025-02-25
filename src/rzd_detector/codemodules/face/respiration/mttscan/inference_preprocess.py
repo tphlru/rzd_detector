@@ -44,9 +44,10 @@ def preprocess_raw_video(videoFilePath, dim=36):
         Xsub[i, :, :, :] = vidLxL
         success, img = vidObj.read()  # read the next one
         i = i + 1
-    plt.imshow(Xsub[0])
-    plt.title("Sample Preprocessed Frame")
-    plt.show()
+    #     print(i)
+    # plt.imshow(Xsub[0])
+    # plt.title("Sample Preprocessed Frame")
+    # plt.show()
     #########################################################################
     # Normalized Frames in the motion branch
     normalized_len = len(t) - 1

@@ -1,4 +1,4 @@
-from rating import get_score
+from .rating import get_score
 __all__ = [
     "get_score"
 ]

@@ -1,7 +1,7 @@
-from model import MTTS_CAN
+from .model import MTTS_CAN
 import matplotlib.pyplot as plt
 from scipy.signal import butter
-from inference_preprocess import preprocess_raw_video, detrend
+from .inference_preprocess import preprocess_raw_video, detrend
 
 import numpy as np
 import scipy.io
@@ -11,7 +11,7 @@ import argparse
 sys.path.append("../")
 
 
-def predict_vitals(sampling_rate=30, batch_size=100, show_plot=True):
+def predict_vitals(video_path, sampling_rate=30, batch_size=100, show_plot=False):
     '''Прогнозирует частоту дыхания и пульс по видео.
     
     Args:
@@ -27,9 +27,10 @@ def predict_vitals(sampling_rate=30, batch_size=100, show_plot=True):
     frame_depth = 10
     model_checkpoint = "./mtts_can.hdf5"
     fs = sampling_rate
-
-    dXsub, video_duration = preprocess_raw_video(sample_data_path, dim=36)
-    print("dXsub shape", dXsub.shape)
+    # print("1111")
+    print(video_path)
+    dXsub, video_duration = preprocess_raw_video(video_path, dim=36)
+    # print("dXsub shape", dXsub.shape)
 
     dXsub_len = (dXsub.shape[0] // frame_depth) * frame_depth
     dXsub = dXsub[:dXsub_len, :, :, :]
