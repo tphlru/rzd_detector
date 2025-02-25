@@ -1,19 +1,24 @@
 import cv2
 import numpy as np
-
-cv2.imshow("Video Stream", np.zeros((480, 640, 3), np.uint8))
+img = np.zeros((480, 640, 3), np.uint8)
+cv2.imshow("Video Stream", img)
 cv2.waitKey(1)
 cv2.destroyAllWindows()
 
-import urllib.parse  # noqa: E402
-import asyncio  # noqa: E402
-import aiohttp  # noqa: E402
-import json  # noqa: E402
-import ssl  # noqa: E402
-from aiortc import RTCPeerConnection, RTCSessionDescription  # noqa: E402
-from av import VideoFrame  # noqa: E402
-import logging  # noqa: E402
 
+import urllib.parse  
+import asyncio  
+import aiohttp  
+import json  
+import ssl  
+from av import VideoFrame 
+import logging 
+import subprocess
+
+
+from aiortc import RTCPeerConnection, RTCSessionDescription  # noqa: E402
+
+HSD_IP = "192.168.43.96"
 
 logger = logging.getLogger(__name__)
 
@@ -170,7 +175,7 @@ class WHEPClient:
                 await self.pc.close()
             return False
 
-    async def display_stream(self):
+    async def display_stream(self, client):
         """Отображение видеопотока через OpenCV"""
         cv2.namedWindow("Video Stream", cv2.WINDOW_NORMAL)
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
@@ -195,15 +200,36 @@ class WHEPClient:
 
         cv2.destroyAllWindows()
 
+    async def stream_stream(self, client):
+        """Отображение видеопотока через OpenCV"""
+        # cv2.namedWindow("Video Stream", cv2.WINDOW_NORMAL)
+        ffmpeg_process = open_ffmpeg_stream_process()
+        while True:
+            if self.track_video:
+                try:
+                    frame = await self.track_video.recv()
+                    if isinstance(frame, VideoFrame):
+                        img = frame.to_ndarray(format="bgr24")
+                        ffmpeg_process.stdin.write(frame.astype(np.uint8).tobytes())
+                        cv2.imshow("Video Stream", img)
+
+                        if cv2.waitKey(1) & 0xFF == ord("q"):
+                            break
+                except Exception as e:
+                    print(f"Frame processing error: {str(e)}")
+                    break
+            else:
+                await asyncio.sleep(0.1)
+        ffmpeg_process.stdin.close()
+        ffmpeg_process.wait()
+        cv2.destroyAllWindows()
+
     async def get_raw_frame(self):
         if self.track_video:
             try:
                 frame = await self.track_video.recv()
                 if isinstance(frame, VideoFrame):
-                    # Конвертация кадра в формат OpenCV
-                    img = frame.to_ndarray(format="bgr24")
-                    return img
-
+                    return frame.to_ndarray(format="bgr24")
             except Exception as e:
                 print(f"Frame processing error: {str(e)}")
         else:
@@ -223,8 +249,16 @@ def get_hsd_camera_url(rpi_ip, stream_path="cam"):
 
 
 async def main():
-    async with WHEPClient(get_hsd_camera_url("192.168.43.101")) as client:
-        await client.display_stream()
+    async with WHEPClient(get_hsd_camera_url(HSD_IP)) as client:
+        await client.stream_stream(client=client)
+
+def open_ffmpeg_stream_process(self):
+    args = (
+        "ffmpeg -re -stream_loop -1 -f rawvideo -pix_fmt "
+        "rgb24 -s 1920x1080 -i pipe:0 -pix_fmt yuv420p "
+        "-f rtsp rtsp://rtsp_server:8554/stream"
+    ).split()
+    return subprocess.Popen(args, stdin=subprocess.PIPE)
 
 
 if __name__ == "__main__":
