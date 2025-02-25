@@ -94,6 +94,7 @@ class DepthEstimator:
         # possible cmaps: 'viridis', 'plasma', 'inferno', 'magma', 'cividis', 'gray'
         plt.axis("off")
         plt.show()
+        plt.close()
 
     def infer(self, image_input, save_path=None, fix_shape=True):
         """Генерация карты глубин из изображения.

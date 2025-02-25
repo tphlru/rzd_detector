@@ -224,7 +224,7 @@ def process_pulse_info(
     if show_plot:
         plt.show(block=False)
         # plt.pause(20)
-
+    plt.close()
     return base_mean, trend, high_med, mids, tvals
 
 

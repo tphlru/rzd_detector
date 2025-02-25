@@ -28,7 +28,8 @@ def get_resp(video_path, iter_for_maxs: int, maxs_treshold: int) -> tuple:
     plt.plot(xs, predicted_resp)
     plt.plot(xs[peaks2], ii[peaks2], "go") 
     print(len(peaks2))
-    plt.savefig("lol.png")
+    plt.savefig("respiration.png")
+    plt.close()
     # print("ids_tops", ids_tops)
     # if len(ids_tops) < maxs_treshold:
     #     #экстрополируем

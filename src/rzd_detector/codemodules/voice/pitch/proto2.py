@@ -41,6 +41,7 @@ def get_trend(x):
     plt.scatter(tnums, tvals, marker="o", color="g", zorder=2)
     plt.grid(True)
     plt.show()
+    plt.close()
 
 
 # Load audio file

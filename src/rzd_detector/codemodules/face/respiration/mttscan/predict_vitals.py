@@ -61,6 +61,7 @@ def predict_vitals(video_path, sampling_rate=30, batch_size=100, show_plot=False
         plt.plot(resp_pred)
         plt.title("Resp Prediction")
         plt.show()
+        plt.close()
     
     return pulse_pred, resp_pred, video_duration
 
