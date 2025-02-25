@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="utf-8">
+            <meta content="width=device-width, initial-scale=1.0" name="viewport">
+                <title>
+                    Выберите устройство - Детектор состояния человека | LaboRad
+                </title>
+                <script src="{{ url_for('static', filename='packages/tailwindcss.js') }}">
+                </script>
+                <script src="{{ url_for('static', filename='packages/chart.umd.min.js') }}">
+                </script>
+                <script src="{{ url_for('static', filename='packages/socket.io.js') }}">
+                </script>
+                <!-- <style>
+                	* {
+                		font-family: "sans-serif";
+                	}
+                </style>
+ -->        </meta>
+        </meta>
+        <style>
+            .outer {
+                display: flex;
+                width: 100%;
+                height: 100%;
+            }
+
+            .inner {
+                margin: auto;
+                background: red;
+            }
+            .blocks {
+                height: 100%;
+            }
+            body,html {
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="outer">
+            <div class="inner bg-white rounded-lg shadow-md p-6" id="logindiv">
+                <h1 align="center" class="text-xl font-semibold mb-4">
+                    Войдите, используя учетную запись LaboRad
+                </h1>
+                <div class="mb-3">
+                    <input class="block w-full shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 mb-4 p-2" id="login" type="text" value style="border: 2px solid blue; border-radius: 7px;">
+                    <input class="block w-full p-2 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 mb-4" id="passwd" type="text" value style="border: 2px solid blue; border-radius: 7px;">
+                    <button class="bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg shadow-md p-4 blocks w-full mt-4" id="infobtn" onclick="auth(document.getElementById('login').value,document.getElementById('passwd').value)">
+                        Войти
+                    </button>
+                    
+                </div>
+                <!-- <button class="bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg shadow-md p-4 blocks w-full" style="margin: auto;" onclick="document.location='linear'">
+                    Линейная версия интерфейса
+                </button> -->
+                <div class="mt-9">
+                    <h2 align="center" class="text-x font-semi mb-3">
+                        или
+                    </h2>
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg shadow-md p-4 blocks w-full" id="infobtn" onclick="showRegister()">
+                        Зарегестрироваться
+                    </button>
+                </div>
+            </div>
+
+            <div class="inner bg-white rounded-lg shadow-md p-6" id="registerdiv">
+            	<h1 align="center" class="text-xl font-semibold mb-4">
+                    Зарегестрируйтесь в LaboRad
+                </h1>
+                <div class="mb-3">
+                    <input class="block w-full shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 mb-4 p-2" id="login" type="text" value style="border: 2px solid blue; border-radius: 7px;">
+                    <input class="block w-full p-2 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 mb-4" id="passwd" type="text" value style="border: 2px solid blue; border-radius: 7px;">
+                    <input class="block w-full p-2 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 mb-4" id="passwd" type="text" value style="border: 2px solid blue; border-radius: 7px;">
+                    <button class="bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg shadow-md p-4 blocks w-full mt-4" id="infobtn" onclick="auth(document.getElementById('login').value,document.getElementById('passwd').value)">
+                        Зарегестрироваться
+                    </button>
+                    
+                </div>
+                <!-- <button class="bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg shadow-md p-4 blocks w-full" style="margin: auto;" onclick="document.location='linear'">
+                    Линейная версия интерфейса
+                </button> -->
+                <div class="mt-9">
+                    <h2 align="center" class="text-x font-semi mb-3">
+                        или
+                    </h2>
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg shadow-md p-4 blocks w-full" id="infobtn" onclick="showLogin()">
+                        Войти
+                    </button>
+                </div>
+            </div>
+        </div>
+        <script>
+        	document.querySelector("#registerdiv").style.display = "none";
+
+			const socket = io();
+
+			socket.on("loginInfo", function(data) {
+				if (data=="success") alert("success");
+				else if (data=="not find") alert("Вход не удался. Пожалуйста, проверьте имя пользователя и пароль.");
+			});
+
+        	function auth(login,passwd) {
+        		let str = login + ":" + passwd;
+        		socket.emit("login",str);
+        	}
+
+        	function showLogin() {
+        		document.querySelector("#logindiv").style.display = "inline";
+        		document.querySelector("#registerdiv").style.display = "none";
+        	}
+        	function showRegister() {
+        		document.querySelector("#logindiv").style.display = "none";
+        		document.querySelector("#registerdiv").style.display = "inline";
+        	}
+        </script>
+    </body>
+</html>

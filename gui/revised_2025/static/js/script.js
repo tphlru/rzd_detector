@@ -41,17 +41,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Обработчики событий для кнопок
-    // document.getElementById('next').addEventListener('click', () => {
-    //     sendData('next', 'clicked');
-    // });
+    document.getElementById('next').addEventListener('click', () => {
+        sendData('next', 'clicked');
+    });
 
-    // document.getElementById('stop').addEventListener('click', () => {
-    //     sendData('stop', 'clicked');
-    // });
+    document.getElementById('stop').addEventListener('click', () => {
+        sendData('stop', 'clicked');
+    });
 
-    // document.getElementById('more').addEventListener('click', () => {
-    //     sendData('more', 'clicked');
-    // });
+    document.getElementById('pause').addEventListener('click', () => {
+        sendData('pause', 'clicked');
+    });
+
+    document.getElementById('start').addEventListener('click', () => {
+        sendData('start', 'clicked');
+    });
 
     document.getElementById('videoBtn').addEventListener('click', () => {
         sendData('videoBtn', 'clicked');
@@ -152,7 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on('connect', function() {
         socket.emit('start_video');
-        alert("Видеотрансляция началась!");
     });
 
     // socket.on("file", function(data) {
@@ -162,19 +165,43 @@ document.addEventListener('DOMContentLoaded', () => {
     //         alert("Файл успешно загружен!");
     //     }
     // })
-
-    socket.on('video_frame', function(data) {
-        console.log("get video frame");
-        img.src = "data:image/jpeg;base64," + btoa(String.fromCharCode.apply(null, new Uint8Array(data.frame)));
-        
-    });
-    document.getElementById("changeType").addEventListener("change",(e)=>{
-        alert(e);
-    });
+    // работает, ожидание обнаружена 
 });
 
 const socket = io();
-                
+
+socket.on('video_frame', function(data) {
+    console.log("get video frame");
+    img.src = "data:image/jpeg;base64," + btoa(String.fromCharCode.apply(null, new Uint8Array(data.frame)));
+});
+
+
+const statusText = document.getElementById("statusText");
+socket.on("status", (data)=> {
+    if (data=="detected") statusText.innerHTML = "Статус:&nbsp<font color='red'>плохо себя ведет!</font>";
+    if (data=="error") statusText.innerHTML = "Статус:&nbsp<font color='red'>ошибка</font>";
+    if (data=="working") statusText.innerHTML = "Статус:&nbsp<font color='green'>в работе</font>";
+    if (data=="wait") statusText.innerHTML = "Статус:&nbsp<font color='blue'>ожидание</font>";
+    alert(data)
+});
+
+socket.on("warning", function(data) {
+    alert(data);
+    console.log(data);
+});
+document.querySelector("#selectVideo").style.display = "none";
+
+const changer = document.querySelector("#changeType");
+changer.addEventListener("change",(data)=>{
+        // socket.emit("videoType",changer.value);
+    if (changer.value=="Обработка внешнего видео") {
+        document.getElementById("selectVideo").style.display = "inline";
+    } else if (changer.value=="Обработка в реальном времени") {
+         document.getElementById("selectVideo").style.display = "none";
+    }
+});
+
+
 function updateScoreColors() {
     document.querySelectorAll('.score-indicator').forEach(indicator => {
         const score = parseInt(indicator.dataset.score);

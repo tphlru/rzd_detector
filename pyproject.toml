@@ -17,46 +17,8 @@ classifiers = [
 ]
 keywords = ["detector", "competition", "team", "human"]
 [tool.poetry.dependencies]
-python = ">=3.9.0,<3.11"
-cython = "*"
-lmfit = "*"
-numpy = "1.24.0" # 1.23.*
-mediapipe = "*"
-plotly = "*"
-tqdm = "*"
-statsmodels = ">=0.13.1"
-biosppy = "*"
-autorank = "*"
-tensorrt = "*"
-protobuf = ">=4.25.3"
-pytest = "*"
 flask = "*"
-gunicorn = "*"
-imutils = "*"
 flask-cors = "*"
-aiortc = "*"
-tensorflow = ">=2.15.0"  # Более старые версии не поддерживают cuDNN 8.9
-scikit-learn = "*"
-scikit-image = "*"
-scikit-posthocs = "*"
-torch = "*"  # Или  ==2.3.0
-torchaudio = "*"
-torchvision = "*"
-opencv-python = "*"
-onnxruntime = "*"
-nvidia-cudnn-cu12 = "8.9.*"
-# PyAudio = "*"  # Раскомментировать, если нужно
-jupyterplot = "*"
-webrtcvad = "*"
-sounddevice = "*"
-transformers = "*"
-accelerate = "*"
-dicttoxml = "*"
-xmltodict = "*"
-poethepoet = "*"
-gitpython = "^3.1.43"
-gdown = "^5.2.0"
-facenet-pytorch = "*"
 
 [build-system]
 requires = ["poetry-core", "cython", "Cython", "torch"]
