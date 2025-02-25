@@ -1,12 +1,10 @@
 import cv2
 
 import contextlib, os, logging
-from flask import Flask, render_template, request, jsonify, Response
+from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO
 import numpy as np
-import asyncio
 
-# from run_moduls import run as run_moduls
 import eventlet
 import eventlet.wsgi
 
