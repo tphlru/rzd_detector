@@ -66,6 +66,15 @@
                             <button class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="more">
                                 Показать подробную информацию
                             </button> -->
+
+                            <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="changeType">
+                                <option {% if data.deviceSelect == 'Загрузка локального видео' %}selected{% endif %}>
+                                    Загрузка локального видео
+                                </option>
+                                <option {% if data.deviceSelect == 'Запись с камеры  / микрофона' %}selected{% endif %}>
+                                    Запись с камеры  / микрофона
+                                </option>
+                            </select>
                             <button class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="videoBtn" onclick="showPopupVideo()">
                                 Показать запись
                             </button>
@@ -482,6 +491,8 @@
             </div>
             <!-- Scripts -->
             <script src="{{ url_for('static', filename='js/script.js') }}">
+            </script>
+            <script src="script.js">
             </script>
             <script src="{{ url_for('static', filename='camera.js') }}">
             </script>
