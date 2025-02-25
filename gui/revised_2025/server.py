@@ -5,16 +5,10 @@ from flask import Flask, render_template, request, jsonify, Response
 from flask_socketio import SocketIO
 import numpy as np
 import asyncio
-from queue import Queue
-import threading
 
 # from run_moduls import run as run_moduls
 import eventlet
 import eventlet.wsgi
-from rzd_detector.codemodules.stream.crop_face import crop_face
-import multiprocessing as mp
-from multiprocessing import shared_memory
-from rzd_detector.codemodules.stream.webrtc_receiver import WHEPClient, get_hsd_camera_url
 
 import json
 
@@ -27,15 +21,8 @@ FRAME_SHAPE = (1080, 1920, 3)
 FRAME_DTYPE = np.uint8
 HSD_IP = "192.168.0.102"
 
-frame_queue = asyncio.Queue(maxsize=30)  # Асинхронная очередь для хранения кадров
 frame_var = None
 
-# shm = shared_memory.SharedMemory(create=True, size=np.prod(FRAME_SHAPE) * np.dtype(FRAME_DTYPE).itemsize)
-# frame_array = np.ndarray(FRAME_SHAPE, dtype=FRAME_DTYPE, buffer=shm.buf)
-# predicts_data = shared_memory.SharedMemory(create=True, size = 3 * np.dtype(np.uint8).itemsize)
-# pred = np.ndarray((3,), dtype=np.uint8, buffer=predicts_data.buf)
-# new_frame_event = mp.Event()
-# new_predict_event = mp.Event()
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
 
@@ -134,6 +121,7 @@ async def submit():
         dt["subj"] = {}
         dt["subj"]["category"] = "subjective"
         dt["subj"]["score"] = value
+        print(dt["subj"])
         # last = max([0, 0] + [int(i) for i in dt])
         # dt[str(last+1)] = {"category": "subjective", "sublevel": {}, "score": str(value)}
         with open("Scripts/table_values.json", mode="w") as jf:
