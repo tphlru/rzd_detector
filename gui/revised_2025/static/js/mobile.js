@@ -41,17 +41,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Обработчики событий для кнопок
-    document.getElementById('next').addEventListener('click', () => {
-        sendData('next', 'clicked');
-    });
+    // document.getElementById('next').addEventListener('click', () => {
+    //     sendData('next', 'clicked');
+    // });
 
-    document.getElementById('stop').addEventListener('click', () => {
-        sendData('stop', 'clicked');
-    });
+    // document.getElementById('stop').addEventListener('click', () => {
+    //     sendData('stop', 'clicked');
+    // });
 
-    document.getElementById('more').addEventListener('click', () => {
-        sendData('more', 'clicked');
-    });
+    // document.getElementById('more').addEventListener('click', () => {
+    //     sendData('more', 'clicked');
+    // });
 
     document.getElementById('videoBtn').addEventListener('click', () => {
         sendData('videoBtn', 'clicked');

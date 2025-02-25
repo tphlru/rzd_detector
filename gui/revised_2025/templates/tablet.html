@@ -6,18 +6,17 @@
                 <title>
                     LaboRad - Детектор состояния человека
                 </title>
-                <script src="https://cdn.jsdelivr.net/npm/tailwindcss/lib/index.min.js">
+                <script src="{{ url_for('static', filename='packages/tailwindcss.js') }}">
                 </script>
-                <script src="https://cdn.tailwindcss.com">
-                </script>
-                <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js">
+                <script src="{{ url_for('static', filename='packages/chart.umd.min.js') }}">
                 </script>
                 
                 <link href="{{ url_for('static', filename='css/tablet.css') }}" rel="stylesheet">
                     <link href="{{ url_for('static', filename='resources/icon.png') }}" rel="shortcut icon" type="image/png">
                     </link>
                 </link>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+                <script src="{{ url_for('static', filename='packages/socket.io.js') }}">
+                </script>
             </meta>
         </meta>
     </head>
@@ -29,7 +28,7 @@
                         <h1 class="text-2xl font-bold text-center text-gray-800">
                             Панель управления
                         </h1>
-                        <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="next">
+                        <!-- <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="next">
                             Следующий
                         </button>
                         <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="restart">
@@ -37,7 +36,7 @@
                         </button>
                         <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="stop">
                             Остановить
-                        </button>
+                        </button> -->
                         <button class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="more">
                             Показать подробную информацию
                         </button>
@@ -49,14 +48,17 @@
                                 Устройство
                             </label>
                             <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="deviceSelect">
-                                <option {% if data.deviceSelect == 'Устройство 1' %}selected{% endif %}>
-                                    Устройство 1
+                                <option {% if data.deviceSelect == 'zero1' %}selected{% endif %}>
+                                    zero1
                                 </option>
-                                <option {% if data.deviceSelect == 'Устройство 2' %}selected{% endif %}>
-                                    Устройство 2
+                                <option {% if data.deviceSelect == 'zero2' %}selected{% endif %}>
+                                    zero2
                                 </option>
-                                <option {% if data.deviceSelect == 'Неизвестное устройство' %}selected{% endif %}>
-                                    Неизвестное устройство
+                                <option {% if data.deviceSelect == 'zero3' %}selected{% endif %}>
+                                    zero3
+                                </option>
+                                <option {% if data.deviceSelect == 'Any Android device' %}selected{% endif %}>
+                                    Any Android device
                                 </option>
                             </select>
                         </div>
@@ -117,11 +119,6 @@
                             <input class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 mt-1 rounded w-full sm:w-auto" type="submit" value="Загрузить">
                         </form>
                         
-                        <form action="info.html" target="_blank">
-                            <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="infobtn">
-                                О нас
-                            </button>
-                        </form>
                         <footer class="text-center text-sm text-gray-600">
                             <p>
                                 Создано в рамках конкурса "Инженеры транспорта" командой LaboRad
@@ -133,7 +130,7 @@
                                 </a>
                             </p>
                             <p>
-                                Версия приложения - 2025.02.16a
+                                Версия приложения - 2025.02.23a
                             </p>
                         </footer>
                     </div>
@@ -142,15 +139,14 @@
                             Видео
                         </h2>
                         <div class="aspect-w-16 aspect-h-9">
-                            <video class="rounded-lg w-full" controls="">
-                                <source id="video" src="{{ url_for('static', filename='resources/video2.mp4') }}" type="video/mp4">
-                                    Возникла ошибка при загрузке видео, попробуйте перезагрузить страницу и убедитесь что Ваше устройство поддерживает видео. Если вам нужна помощь, напишите нам >
-                                    <a class="text-blue-500 hover:text-blue-600" href="https://vk.com/laborad" target="_blank">
-                                        https://vk.com/laborad
-                                    </a>
-                                    .
-                                </source>
-                            </video>
+                            <img id="video_feed" width="640" height="480" alt="Видеопоток" class="rounded-lg w-full">
+                            <label class="block text-sm font-medium text-gray-700 mt-3">
+                                Выберите видео
+                            </label>
+                            <form enctype="multipart/form-data">
+                                <input class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 mt-1 rounded w-full sm:w-auto" type="file" name="files" multiple id="myfile">
+                                <input class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 mt-1 rounded w-full sm:w-auto" type="submit" value="Загрузить" id="outFile">
+                            </form>
                         </div>
                     </div>
                 </td>

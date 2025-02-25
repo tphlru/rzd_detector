@@ -6,11 +6,9 @@
                 <title>
                     LaboRad - Детектор состояния человека
                 </title>
-                <script src="https://cdn.jsdelivr.net/npm/tailwindcss/lib/index.min.js">
+                <script src="{{ url_for('static', filename='packages/tailwindcss.js') }}">
                 </script>
-                <script src="https://cdn.tailwindcss.com">
-                </script>
-                <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js">
+                <script src="{{ url_for('static', filename='packages/chart.umd.min.js') }}">
                 </script>
             </meta>
         </meta>
@@ -53,9 +51,9 @@
                         Планшет
                     </button>
                 </div>
-                <button class="bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg shadow-md p-4 blocks w-full" style="margin: auto;" onclick="document.location='linear'">
+                <!-- <button class="bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg shadow-md p-4 blocks w-full" style="margin: auto;" onclick="document.location='linear'">
                     Линейная версия интерфейса
-                </button>
+                </button> -->
                 <div class="mt-9">
                     <h2 align="center" class="text-x font-semi mb-3">
                         Или посмотрите
@@ -68,7 +66,7 @@
                     </button>
                 </div>
                 <h2 align="center" class="text-x font-semi mt-3">
-                    Версия - 2025.02.16a
+                    Версия - 2025.02.23a
                 </h2>
             </div>
         </div>

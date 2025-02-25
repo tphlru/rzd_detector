@@ -5,11 +5,11 @@ cv2.imshow("frame", np.zeros((480, 640, 3), np.uint8))
 cv2.waitKey(1)
 cv2.destroyAllWindows()
 
-from webrtc_receiver import WHEPClient, get_hsd_camera_url
+from .webrtc_receiver import WHEPClient, get_hsd_camera_url
 import torch
 from facenet_pytorch import MTCNN, InceptionResnetV1
 import numpy as np
-import time
+import timeit
 import asyncio
 import json
 
@@ -59,14 +59,34 @@ class Buffer:
             else:
                 self.frames = self.frames[1 : self.max_count + 1]
 
+async def create_filter(settings):
+    obj = Filter()
+    await obj._init()
+    return obj
+
 
 class Filter:
-    def __init__(self):
-        self.buffer = Buffer(60, 0, "Scripts/test_files/common/buffer_out_files")
-        self.frame = None
+    async def __init__(self):
+        self.frame = Frame(
+                    np.zeros((1920, 1080, 3), np.uint8),
+                    human_id=None,
+                    frame_id=0,
+                    human_availability=None,
+                )
         self.fps = 30
+        self.past_img = np.zeros((1920, 1080, 3), np.uint8)
         self.counter = 0
+        self.frame_id = -1
+        self.human_id = 0
 
+    def create(self, ip):
+        return asyncio.to_thread(self.connect(ip=ip))
+
+    async def connect(self, ip):
+        client = WHEPClient(get_hsd_camera_url(ip))
+        await client.connect()
+        return client
+    
     def _get_embedding_and_face(self, image):
         faces, probs = mtcnn(image, return_prob=True)
         if faces is None or len(faces) == 0:
@@ -95,57 +115,35 @@ class Filter:
             return True
 
     async def _get_frame(self, client: WHEPClient):
-        human_id = 0
-        frame_id = 0
-        img = await client.get_raw_frame()
-        past_img = img
-        if self._get_embedding_and_face(img) == (None, None):
-            self.frame = Frame(
-                img,
-                human_id=human_id,
-                frame_id=frame_id,
-                human_availability=False,
-            )
-        elif self._is_the_same(img, past_img, 0.7):
-            self.frame = Frame(
-                img,
-                human_id=human_id,
-                frame_id=frame_id,
-                human_availability=True,
-            )
-        elif not self._is_the_same(img, past_img, 0.7):
-            self.frame = None
-            human_id += 1
-        # self.buffer.add(self.frame)
-        frame_id += 1
-        past_img = img
-
-    async def get_frame(self, client: WHEPClient):
         self.counter += 1
         if self.counter % 3 == 0:
-            await self._get_frame(client)
-        yield self.frame
+            img = await client.get_raw_frame()
+            if self._get_embedding_and_face(img) == (None, None):
+                frame = Frame(
+                    img,
+                    human_id=self.human_id,
+                    frame_id=self.frame_id,
+                    human_availability=False,
+                )
+            elif self._is_the_same(img, self.past_img, 0.7):
+                frame = Frame(
+                    img,
+                    human_id=self.human_id,
+                    frame_id=self.frame_id,
+                    human_availability=True,
+                )
+            else:
+                frame = None
+                self.human_id += 1
+            # self.buffer.add(self.frame)
+            self.past_img = img
+        self.frame_id += 1
+        print("get", self.frame_id)
+        return frame
+
+    def get_frame(self, client):
+        x = asyncio.run(self._get_frame(client=client))
+        return self.frame
 
     def get_fps(self):
         return self.fps
-
-
-async def main():
-    f = Filter()
-    client = WHEPClient(get_hsd_camera_url("192.168.1.49"))
-    await client.connect()
-    while True:
-        try:
-            i = await f.get_frame(client).__anext__()
-            cv2.imshow("frame", i.image)
-            if cv2.waitKey(1) & 0xFF == ord("q"):
-                await client.close()
-                cv2.destroyAllWindows()
-        except StopIteration:
-            print("stop iteration")
-            await client.close()
-            break
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
