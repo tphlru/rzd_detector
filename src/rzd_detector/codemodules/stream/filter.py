@@ -5,18 +5,18 @@ cv2.imshow("frame", np.zeros((480, 640, 3), np.uint8))
 cv2.waitKey(1)
 cv2.destroyAllWindows()
 
-from webrtc_receiver import WHEPClient, get_hsd_camera_url
+from .webrtc_receiver import WHEPClient, get_hsd_camera_url
 import torch
-# from facenet_pytorch import MTCNN, InceptionResnetV1
+from facenet_pytorch import MTCNN, InceptionResnetV1
 import numpy as np
 import timeit
 import asyncio
 import json
 
 # Initialize the MTCNN module for face detection and the InceptionResnetV1 module for face embedding.
-# mtcnn = MTCNN(image_size=160, keep_all=True)
-# resnet = InceptionResnetV1(pretrained="vggface2").eval()
-#TODO
+mtcnn = MTCNN(image_size=160, keep_all=True)
+resnet = InceptionResnetV1(pretrained="vggface2").eval()
+
 
 class Frame:
     def __init__(self, image, human_id: int, frame_id: int, human_availability: bool):
@@ -88,7 +88,6 @@ class Filter:
         return client
     
     def _get_embedding_and_face(self, image):
-        return 1, 1
         faces, probs = mtcnn(image, return_prob=True)
         if faces is None or len(faces) == 0:
             return None, None
@@ -97,7 +96,6 @@ class Filter:
         return embedding, faces[0]
 
     def _is_the_same(self, image, candidate_image, treshold: float):
-        return True #TODO: remove
         print(image.shape, candidate_image.shape)
         target_emb, target_face = self._get_embedding_and_face(image)
         if target_emb is None:

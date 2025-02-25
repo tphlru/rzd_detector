@@ -221,7 +221,7 @@ def get_hsd_camera_url(rpi_ip, stream_path="cam"):
 
 
 async def main():
-    async with WHEPClient(get_hsd_camera_url("192.168.43.97")) as client:
+    async with WHEPClient(get_hsd_camera_url("192.168.43.101")) as client:
         await client.display_stream()
 
 
