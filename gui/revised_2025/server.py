@@ -1,63 +1,22 @@
 import cv2
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
 import contextlib, os, logging
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 from flask_socketio import SocketIO
 import numpy as np
-from flask_login import login_user, LoginManager, UserMixin, current_user, login_required
-from hashlib import sha256
 import json
-import time
 from tqdm import tqdm
-import timeit
+
+import subprocess
+
 stop, start, pause = 0, 0, 0
 
-class User(UserMixin):
-    def __init__(self, user_id, name, org):
-        self.id = user_id
-        self.org = org
-        self.name = name
-        self.is_authenticated = True
-        self.is_active = True
-        self.is_anonymous = False
-    def get_id(self,user_id):
-        return self.id, self.org, self.name
-
-# @LoginManager.user_loader
-# def load_user(login,name,org):
-#     return User.get(login)
-import eventlet
-import eventlet.wsgi
+# import eventlet
+# import eventlet.wsgi
 
 
-from rzd_detector.codemodules.stream.webrtc_receiver import WHEPClient, get_hsd_camera_url
-from multiprocessing import Process
-import asyncio
-
-
-mode = "dev"  # "dev" or "prod"
-client = None
 app = Flask(__name__)
-# app.secret_key = 'abvgd'  
-# login_manager = LoginManager()
-# login_manager.init_app(app)
-socketio = SocketIO(app, async_mode="eventlet")
-
-FRAME_SHAPE = (1080, 1920, 3)
-FRAME_DTYPE = np.uint8
-HSD_IP = "192.168.43.96"
-
-# predict = Process(target=run_neiro, args=(True, "output.mp4", client))
-frame_var = None
-# with open(r"C:\Users\kvant_08\Documents\GitHub\rzd_detector\gui\revised_2025\users.json","r+",encoding="utf-8") as file:
-#     users = dict(json.load(file))
-
-# @login_manager.user_loader
-# def load_user(user_id):
-#     user = User(users[user_id], users[user_id][name], users[user_id][org])
-#     print(user_id)
-#     return users[user_id]
+socketio = SocketIO(app)
+# socketio.init_app(app)
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
@@ -82,7 +41,7 @@ criteria_data = {
         "name": "Физическое состояние",
         "enabled": True,
         "score": 0,
-        "max_score": 10,
+        "max_score": 100,
         "sublevels": {
             "pulse": {"score": 0, "max_score": 4},
             "breathing": {"score": 0, "max_score": 3},
@@ -159,18 +118,9 @@ def report():
 # def auth():
 #     return render_template("auth.html", data="")
 
-# @socketio.on("login")
-# def login(data):
-#     print(data)
-
-# @socketio.on("register")
-# def register(data):
-#     print(data)
-# warning example
-
-# @socketio.event
-# def connect():
-#     socketio.emit("warning","warning text")
+@socketio.event
+def connect():
+    pass
 
 def set_val(param, val):
     with open("Scripts/table_values.json", mode="r") as jf:
@@ -241,13 +191,17 @@ async def submit():
 
 @app.route("/upload", methods=["POST"])
 def upload_file():
+    # print(request.files)
     if "files" not in request.files:
         return "Файлы не были выбраны", 400
 
     files = request.files.getlist("files")
     for file in files:
         if file.filename:
-            file.save(os.path.join(app.config["UPLOAD_FOLDER"], file.filename))
+            pth = os.path.join(app.config["UPLOAD_FOLDER"], "10.mp4")
+            print(pth)
+            file.save(pth)
+            subprocess.Popen(["python", "gui/revised_2025/run_moduls.py"])
     return "Файлы успешно загружены"
 
 @socketio.on("update_criteria")
@@ -270,20 +224,7 @@ def handle_criteria_update(update_data):  # sourcery skip: merge-repeated-ifs
                 sub["score"] for sub in criteria_data[category]["sublevels"].values()
             )
         socketio.emit("criteria_updated", criteria_data)
-        eventlet.sleep(0.01)
-
-# @app.route('/auth', methods=['GET', 'POST'])
-# def auth():
-#     if request.method == 'POST':
-#         if request.form["passwd1"]==request.form["passwd2"]:
-#             passCache = sha256(request.form["passwd1"].encode('utf-8')).hexdigest()
-#             user = User(str(request.form["login"]), str(request.form["name"]), str(request.form["org"])) 
-#             users[str(request.form["login"])] = {"pass":str(passCache),"org":request.form["org"],"name":request.form["name"],}
-#             login_user(user)
-#             with open(r"C:\Users\kvant_08\Documents\GitHub\rzd_detector\gui\revised_2025\users.json","w+",encoding="utf-8") as file:
-#                 file.write(json.dumps(users, indent=4))
-#             return redirect(url_for('desktop'))
-#     return render_template("auth.html")
+        # eventlet.sleep(0.01)
 
 # def translate_score():
 #     while true:
@@ -307,84 +248,12 @@ def handle_criteria_update(update_data):  # sourcery skip: merge-repeated-ifs
 #         pred[3] = 3
 #         new_predict_event.set()
 
-def generate_frames():
-    global client
-    print("Generation is started")
-    while True:
-        frame = asyncio.run(client.get_frame())
-        _, buffer = cv2.imencode('.jpg', frame)
-        frame_bytes = buffer.tobytes()
-        print(frame.shape)
-        yield (b'--frame\r\n'
-                b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
-
-async def connect_client(ip):
-    global client
-    client = WHEPClient(get_hsd_camera_url(ip))
-    await client.connect()
-    print("Connection done")
-    return client
 
 @socketio.on('start_video')
 def start_video():
-    # print("Video is started, run background task - generate_stream function ")
-    # print(type(client))
-    socketio.start_background_task(generate_frames)
-
-# class FileChangeHandler(FileSystemEventHandler):
-#     def on_modified(self, event):
-#         global stop, start, pause
-#         if event.src_path == "/home/LaboRad/rzd_detector/Scripts/table_values.json":
-#             with open("Scripts/table_values.json", mode="r") as jf:
-#                 dt = dict(json.load(jf))
-#                 start = dt["start"]
-#                 stop = dt["stop"]
-#                 pause = dt["pause"]
-
-
-# async def w(path:str, client: WHEPClient):
-#     obs_stop = Observer()
-#     event_handler = FileChangeHandler()
-#     obs_stop.schedule(event_handler, "/home/LaboRad/rzd_detector/Scripts/table_values.json", recursive=False)
-#     obs_stop.start()
-#     global stop, start, pause
-#     set_val("start", False)
-#     print("Запись")
-#     client = await connect_client(HSD_IP)
-#     await client.connect()
-#     prev_time = 0
-#     frame_count = 0
-#     fps = 0
-#     for _ in range(60):
-#         await client.get_raw_frame()
-#         now = time.time()
-#         fps = 1 / (now - prev_time)
-#         prev_time = now
-#         frame_count += 1
-#     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-#     video_obj = cv2.VideoWriter(path, fourcc, fps, (1920, 1080))
-#     while True:
-#         if stop:
-#             set_val("stop", False)
-#             break
-#         if pause:
-#             continue
-#         frame = await client.get_raw_frame()
-#         video_obj.write(frame)
-#     video_obj.release()
-#     print("Операция завершена")
-#     await client.close()
-#     return video_obj, fps
+    pass
 
 def main():
-    asyncio.run(connect_client(HSD_IP))
-    # observer = Observer()
-    t2 = timeit.default_timer()
-    # event_handler = FileChangeHandler()
-    # observer.schedule(event_handler, "/home/LaboRad/rzd_detector/Scripts/table_values.json", recursive=False)
-    # observer.start()
-    socketio.run(app, host="0.0.0.0", port=5000, allow_unsafe_werkzeug=True, debug=True)
-    print("took", timeit.default_timer() - t2)
-    # print(type(client)
+    socketio.run(app, host="0.0.0.0", port=5000, debug=True)
 
 main()
