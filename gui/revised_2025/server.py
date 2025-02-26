@@ -1,5 +1,6 @@
 import cv2
-
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 import contextlib, os, logging
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 from flask_socketio import SocketIO
@@ -7,6 +8,10 @@ import numpy as np
 from flask_login import login_user, LoginManager, UserMixin, current_user, login_required
 from hashlib import sha256
 import json
+import time
+from tqdm import tqdm
+import timeit
+stop, start, pause = 0, 0, 0
 
 class User(UserMixin):
     def __init__(self, user_id, name, org):
@@ -17,7 +22,7 @@ class User(UserMixin):
         self.is_active = True
         self.is_anonymous = False
     def get_id(self,user_id):
-        return self.id, sesf.org, self.name
+        return self.id, self.org, self.name
 
 # @LoginManager.user_loader
 # def load_user(login,name,org):
@@ -28,9 +33,8 @@ import eventlet.wsgi
 
 from rzd_detector.codemodules.stream.webrtc_receiver import WHEPClient, get_hsd_camera_url
 from multiprocessing import Process
-from run_moduls import run as run_neiro
 import asyncio
-from events import start, stop, pause
+
 
 mode = "dev"  # "dev" or "prod"
 client = None
@@ -44,7 +48,7 @@ FRAME_SHAPE = (1080, 1920, 3)
 FRAME_DTYPE = np.uint8
 HSD_IP = "192.168.43.96"
 
-predict = Process(target=run_neiro, args=(True, "output.mp4", client))
+# predict = Process(target=run_neiro, args=(True, "output.mp4", client))
 frame_var = None
 # with open(r"C:\Users\kvant_08\Documents\GitHub\rzd_detector\gui\revised_2025\users.json","r+",encoding="utf-8") as file:
 #     users = dict(json.load(file))
@@ -168,6 +172,12 @@ def report():
 # def connect():
 #     socketio.emit("warning","warning text")
 
+def set_val(param, val):
+    with open("Scripts/table_values.json", mode="r") as jf:
+        dt = dict(json.load(jf))
+    dt[param] = val
+    with open("Scripts/table_values.json", mode="w") as jf:
+        json.dump(dt, jf)
 
 @app.route("/submit", methods=["POST"])
 async def submit():
@@ -188,12 +198,11 @@ async def submit():
         with open("Scripts/table_values.json", mode="w") as jf:
             json.dump(dt, jf)
     elif element == "start":
-        start.set()
+        set_val("start", True)
     elif element == "stop":
-        stop.set()
+        set_val("stop", True)
     elif element == "pause":
-        pause.set()
-
+        set_val("pause", True)
 
     if element in ["emotional", "physical", "seasonal", "subjective", "statistical", "result"]:
         enabled = bool(value)
@@ -298,35 +307,84 @@ def handle_criteria_update(update_data):  # sourcery skip: merge-repeated-ifs
 #         pred[3] = 3
 #         new_predict_event.set()
 
-def generate_frames(client):
+def generate_frames():
+    global client
     print("Generation is started")
     while True:
-        if not pause.is_set():
-            frame = asyncio.run(client.get_frame())
-            _, buffer = cv2.imencode('.jpg', frame)
-            frame_bytes = buffer.tobytes()
-            print(frame.shape)
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+        frame = asyncio.run(client.get_frame())
+        _, buffer = cv2.imencode('.jpg', frame)
+        frame_bytes = buffer.tobytes()
+        print(frame.shape)
+        yield (b'--frame\r\n'
+                b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
 
 async def connect_client(ip):
-    print("Connection done")
+    global client
     client = WHEPClient(get_hsd_camera_url(ip))
     await client.connect()
+    print("Connection done")
     return client
 
 @socketio.on('start_video')
 def start_video():
-    global client
-    print("Video is started, run background task - generate_stream function ")
-    print(type(client))
-    socketio.start_background_task(generate_frames, client)
+    # print("Video is started, run background task - generate_stream function ")
+    # print(type(client))
+    socketio.start_background_task(generate_frames)
+
+# class FileChangeHandler(FileSystemEventHandler):
+#     def on_modified(self, event):
+#         global stop, start, pause
+#         if event.src_path == "/home/LaboRad/rzd_detector/Scripts/table_values.json":
+#             with open("Scripts/table_values.json", mode="r") as jf:
+#                 dt = dict(json.load(jf))
+#                 start = dt["start"]
+#                 stop = dt["stop"]
+#                 pause = dt["pause"]
+
+
+# async def w(path:str, client: WHEPClient):
+#     obs_stop = Observer()
+#     event_handler = FileChangeHandler()
+#     obs_stop.schedule(event_handler, "/home/LaboRad/rzd_detector/Scripts/table_values.json", recursive=False)
+#     obs_stop.start()
+#     global stop, start, pause
+#     set_val("start", False)
+#     print("Запись")
+#     client = await connect_client(HSD_IP)
+#     await client.connect()
+#     prev_time = 0
+#     frame_count = 0
+#     fps = 0
+#     for _ in range(60):
+#         await client.get_raw_frame()
+#         now = time.time()
+#         fps = 1 / (now - prev_time)
+#         prev_time = now
+#         frame_count += 1
+#     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+#     video_obj = cv2.VideoWriter(path, fourcc, fps, (1920, 1080))
+#     while True:
+#         if stop:
+#             set_val("stop", False)
+#             break
+#         if pause:
+#             continue
+#         frame = await client.get_raw_frame()
+#         video_obj.write(frame)
+#     video_obj.release()
+#     print("Операция завершена")
+#     await client.close()
+#     return video_obj, fps
 
 def main():
-    global client
-    client = asyncio.run(connect_client(HSD_IP))
-    # print(type(client))
-    predict.start()
+    asyncio.run(connect_client(HSD_IP))
+    # observer = Observer()
+    t2 = timeit.default_timer()
+    # event_handler = FileChangeHandler()
+    # observer.schedule(event_handler, "/home/LaboRad/rzd_detector/Scripts/table_values.json", recursive=False)
+    # observer.start()
     socketio.run(app, host="0.0.0.0", port=5000, allow_unsafe_werkzeug=True, debug=True)
+    print("took", timeit.default_timer() - t2)
+    # print(type(client)
 
 main()

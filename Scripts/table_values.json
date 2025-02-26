@@ -1,1 +1,1 @@
-{"pulse": {"category": "physical", "sublevel": "pulse", "score": -2}, "resp": {"category": "physical", "sublevel": "breathing", "score": -1}, "blink": {"category": "physical", "sublevel": "blinking", "score": 0}}
+{"pulse": {"category": "physical", "sublevel": "pulse", "score": -2}, "resp": {"category": "physical", "sublevel": "breathing", "score": -1}, "blink": {"category": "physical", "sublevel": "blinking", "score": 0}, "start": true, "stop": false, "pause": false}
