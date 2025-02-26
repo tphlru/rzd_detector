@@ -1,18 +1,37 @@
 import cv2
 
 import contextlib, os, logging
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 from flask_socketio import SocketIO
 import numpy as np
+from flask_login import login_user, LoginManager, UserMixin, current_user, login_required
+from hashlib import sha256
+import json
 
+class User(UserMixin):
+    def __init__(self, user_id, name, org):
+        self.id = user_id
+        self.org = org
+        self.name = name
+        self.is_authenticated = True
+        self.is_active = True
+        self.is_anonymous = False
+    def get_id(self,user_id):
+        return self.id, sesf.org, self.name
+
+# @LoginManager.user_loader
+# def load_user(login,name,org):
+#     return User.get(login)
 import eventlet
 import eventlet.wsgi
 
-import json
 
 mode = "dev"  # "dev" or "prod"
 
 app = Flask(__name__)
+# app.secret_key = 'abvgd'  
+# login_manager = LoginManager()
+# login_manager.init_app(app)
 socketio = SocketIO(app, async_mode="eventlet")
 
 FRAME_SHAPE = (1080, 1920, 3)
@@ -20,6 +39,14 @@ FRAME_DTYPE = np.uint8
 HSD_IP = "192.168.0.102"
 
 frame_var = None
+# with open(r"C:\Users\kvant_08\Documents\GitHub\rzd_detector\gui\revised_2025\users.json","r+",encoding="utf-8") as file:
+#     users = dict(json.load(file))
+
+# @login_manager.user_loader
+# def load_user(user_id):
+#     user = User(users[user_id], users[user_id][name], users[user_id][org])
+#     print(user_id)
+#     return users[user_id]
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
@@ -97,8 +124,6 @@ data = {
     "voice_emotions": {"Спокойствие": 60, "Стресс": 40},
 }
 
-users = {}
-
 @app.route("/")
 def index():
     return render_template("index.html", data="")
@@ -112,20 +137,17 @@ def mobile():
 @app.route("/tablet")
 def tablet():
     return render_template("tablet.html", data=data)
-@app.route("/auth")
-def auth():
-    return render_template("auth.html", data="")
+# @app.route("/auth")
+# def auth():
+#     return render_template("auth.html", data="")
 
-plogin = ""
-passw = ""
+# @socketio.on("login")
+# def login(data):
+#     print(data)
 
-@socketio.on("login")
-def login(data):
-    print(data)
-
-@socketio.on("register")
-def register(data):
-    print(data)
+# @socketio.on("register")
+# def register(data):
+#     print(data)
 # warning example
 
 # @socketio.event
@@ -223,8 +245,21 @@ def handle_criteria_update(update_data):  # sourcery skip: merge-repeated-ifs
         socketio.emit("criteria_updated", criteria_data)
         eventlet.sleep(0.01)
 
+# @app.route('/auth', methods=['GET', 'POST'])
+# def auth():
+#     if request.method == 'POST':
+#         if request.form["passwd1"]==request.form["passwd2"]:
+#             passCache = sha256(request.form["passwd1"].encode('utf-8')).hexdigest()
+#             user = User(str(request.form["login"]), str(request.form["name"]), str(request.form["org"])) 
+#             users[str(request.form["login"])] = {"pass":str(passCache),"org":request.form["org"],"name":request.form["name"],}
+#             login_user(user)
+#             with open(r"C:\Users\kvant_08\Documents\GitHub\rzd_detector\gui\revised_2025\users.json","w+",encoding="utf-8") as file:
+#                 file.write(json.dumps(users, indent=4))
+#             return redirect(url_for('desktop'))
+#     return render_template("auth.html")
+
 # def translate_score():
-#     while True:
+#     while true:
 #         new_predict_event.wait()
 #         new_predict_event.clear()
 #         predict = pred
@@ -268,6 +303,6 @@ def main():
     # generate.start()
     # predict = mp.Process(target=get_pedict)
     # predict.start()
-    socketio.run(app, host="0.0.0.0", port=5000, allow_unsafe_werkzeug=True)
+    socketio.run(app, host="0.0.0.0", port=5000, allow_unsafe_werkzeug=True, debug=True)
 
 main()

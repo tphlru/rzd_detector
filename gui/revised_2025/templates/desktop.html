@@ -26,9 +26,17 @@
         <div class="container mx-auto p-4">
             <!-- Header -->
             <header class="mb-8 text-center">
-                <h1 class="text-3xl font-bold text-gray-800">
-                    LaboRad "Детектор состояния человека"
-                </h1>
+
+                <div class="ml-10 mr-5" style="display: inline-block;">
+                    <img style="display: inline-block;" src="{{ url_for('static', filename='resources/logo1.png') }}" alt="Инженеры транспорта" width="150px">
+
+                    <img style="display: inline-block; margin-left: 20px;" src="{{ url_for('static', filename='resources/logo2.png') }}" alt="Инженеры транспорта" width="150px">
+                </div>
+                <div style="display: inline-block;">
+                    <h1 class="text-3xl font-bold text-gray-800">
+                        |&nbspLaboRad HSD
+                    </h1>
+                </div>
             </header>
             <!-- Main Content -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -63,30 +71,37 @@
                     <div class="space-y-4">
                         <!-- Action Buttons -->
                         <div class="flex flex-wrap gap-2 sm:gap-4">
-                            <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="start">
-                                Старт
-                            </button>
-                            <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="stop">
-                                Стоп
-                            </button>
-                            <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="pause">
-                                Пауза
-                            </button>
-                            <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="next">
-                                Дальше
-                            </button>
+                            <div style="width: 100%;">
+                                <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded" id="start" width>
+                                    Старт
+                                </button>
+                                <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded" id="stop">
+                                    Стоп
+                                </button>
+                                <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded" id="pause">
+                                    Пауза
+                                </button>
+                                <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded" id="next">
+                                    Дальше
+                                </button>
+                                <button class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="videoBtn" onclick="showPopupVideo()">
+                                    Показать запись
+                                </button>
+                            </div>
 
-                            <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="changeType">
-                                <option>
-                                    Обработка в реальном времени
-                                </option>
-                                <option>
-                                    Обработка внешнего видео
-                                </option>
-                            </select>
-                            <button class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" id="videoBtn" onclick="showPopupVideo()">
-                                Показать запись
-                            </button>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">
+                                    Тип обработки
+                                </label>
+                                <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="processingType">
+                                    <option {% if data.processingType == 'Обработка с видеокамер' %}selected{% endif %}>
+                                        Обработка с видеокамер
+                                    </option>
+                                    <option {% if data.processingType == 'Обработка загруженного видео' %}selected{% endif %}>
+                                        Обработка загруженного видео
+                                    </option>
+                                </select>
+                            </div>
                         </div>
                         <!-- Device Selection -->
                         <div>
@@ -432,20 +447,29 @@
                     </div>
                 </div>
             </div>
-            <footer class="mt-8 text-center text-sm text-gray-600">
-                <p>
-                    Создано в рамках конкурса "Инженеры транспорта" командой LaboRad
-                </p>
-                <p>
-                    Наш ВК -
-                    <a class="text-blue-500 hover:text-blue-600" href="https://vk.com/laborad" target="_blank">
-                        https://vk.com/laborad
-                    </a>
-                </p>
-                <p>
-                    Версия приложения - 2025.02.23a
-                </p>
-            </footer>
+            <div class="mt-8" align="center">
+                <div class="ml-5 mr-5" style="display: inline-block; vertical-align: middle;">
+                    <footer class="text-center text-sm text-gray-600">
+                        <p>
+                            Создано в рамках конкурса "Инженеры транспорта" командой LaboRad
+                        </p>
+                        <p>
+                            Наш ВК -
+                            <a class="text-blue-500 hover:text-blue-600" href="https://vk.com/laborad" target="_blank">
+                                https://vk.com/laborad
+                            </a>
+                        </p>
+                        <p>
+                            Версия приложения - 2025.02.23a
+                        </p>
+                    </footer>
+                </div>
+                <div class="ml-10 mr-5" style="display: inline-block;">
+                    <img style="display: inline-block;" src="{{ url_for('static', filename='resources/logo1.png') }}" alt="Инженеры транспорта" width="150px">
+
+                    <img style="display: inline-block; margin-left: 20px;" src="{{ url_for('static', filename='resources/logo2.png') }}" alt="Инженеры транспорта" width="150px">
+                </div>
+            </div>
             <!-- Report Popup -->
             <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" id="popup-overlay">
                 <div class="bg-white rounded-lg shadow-lg p-6" id="popup">
