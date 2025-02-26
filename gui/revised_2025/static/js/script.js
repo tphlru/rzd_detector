@@ -41,17 +41,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Обработчики событий для кнопок
-    // document.getElementById('next').addEventListener('click', () => {
-    //     sendData('next', 'clicked');
-    // });
+    document.getElementById('next').addEventListener('click', () => {
+        sendData('next', 'clicked');
+    });
 
-    // document.getElementById('stop').addEventListener('click', () => {
-    //     sendData('stop', 'clicked');
-    // });
+    document.getElementById('stop').addEventListener('click', () => {
+        sendData('stop', 'clicked');
+    });
 
-    // document.getElementById('more').addEventListener('click', () => {
-    //     sendData('more', 'clicked');
-    // });
+    document.getElementById('pause').addEventListener('click', () => {
+        sendData('pause', 'clicked');
+    });
+
+    document.getElementById('start').addEventListener('click', () => {
+        sendData('start', 'clicked');
+    });
 
     document.getElementById('videoBtn').addEventListener('click', () => {
         sendData('videoBtn', 'clicked');
@@ -125,6 +129,25 @@ document.addEventListener('DOMContentLoaded', () => {
             sendData('subjective_rating', event.target.value);
         });
     });
+    // alert(document.querySelector("[data-quest1]").dataset.question1)
+
+    document.getElementById("processingType").addEventListener('change', (event) => {
+        sendData('processingType', event.target.value);
+    });
+
+
+    const quest1text = document.querySelector('[data-quest1]');
+ 
+// чтение значения атрибута data-product-id
+    const text = quest1text.dataset.quest1;
+    document.getElementById("ids").innerHTML = text;
+    // alert(document.getElementById("ids"))
+
+    const quest2text = document.querySelector('[data-quest2]');
+     
+    // чтение значения атрибута data-product-id
+    const text2 = quest2text.dataset.quest2;
+    document.querySelector('[data-quest2]').innerHTML = text2;
 
     // Обработчики событий для чекбоксов вопросов
     document.querySelectorAll('input[name="question2"]').forEach((checkbox) => {
@@ -152,7 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on('connect', function() {
         socket.emit('start_video');
-        alert("Видеотрансляция началась!");
     });
 
     // socket.on("file", function(data) {
@@ -162,19 +184,43 @@ document.addEventListener('DOMContentLoaded', () => {
     //         alert("Файл успешно загружен!");
     //     }
     // })
-
-    socket.on('video_frame', function(data) {
-        console.log("get video frame");
-        img.src = "data:image/jpeg;base64," + btoa(String.fromCharCode.apply(null, new Uint8Array(data.frame)));
-        
-    });
-    document.getElementById("changeType").addEventListener("change",(e)=>{
-        alert(e);
-    });
+    // работает, ожидание обнаружена 
 });
 
 const socket = io();
-                
+
+socket.on('video_frame', function(data) {
+    console.log("get video frame");
+    img.src = "data:image/jpeg;base64," + btoa(String.fromCharCode.apply(null, new Uint8Array(data.frame)));
+});
+
+
+const statusText = document.getElementById("statusText");
+socket.on("status", (data)=> {
+    if (data=="detected") statusText.innerHTML = "Статус:&nbsp<font color='red'>плохо себя ведет!</font>";
+    if (data=="error") statusText.innerHTML = "Статус:&nbsp<font color='red'>ошибка</font>";
+    if (data=="working") statusText.innerHTML = "Статус:&nbsp<font color='green'>в работе</font>";
+    if (data=="wait") statusText.innerHTML = "Статус:&nbsp<font color='blue'>ожидание</font>";
+    else console.log("status code is incorrect!");
+});
+
+socket.on("warning", function(data) {
+    alert(data);
+    console.log("[server WARN]: "+data);
+});
+document.querySelector("#selectVideo").style.display = "none";
+
+const changer = document.querySelector("#processingType");
+changer.addEventListener("change",(data)=>{
+        // socket.emit("videoType",changer.value);
+    if (changer.value=="Обработка загруженного видео") {
+        document.getElementById("selectVideo").style.display = "inline";
+    } else if (changer.value=="Обработка с видеокамер") {
+         document.getElementById("selectVideo").style.display = "none";
+    }
+});
+
+
 function updateScoreColors() {
     document.querySelectorAll('.score-indicator').forEach(indicator => {
         const score = parseInt(indicator.dataset.score);

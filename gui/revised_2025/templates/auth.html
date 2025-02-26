@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="utf-8">
+            <meta content="width=device-width, initial-scale=1.0" name="viewport">
+                <title>
+                    Войдите, используя учетную запись LaboRad
+                </title>
+                <script src="{{ url_for('static', filename='packages/tailwindcss.js') }}">
+                </script>
+                <script src="{{ url_for('static', filename='packages/chart.umd.min.js') }}">
+                </script>
+                <script src="{{ url_for('static', filename='packages/socket.io.js') }}">
+                </script>
+                <!-- <style>
+                	* {
+                		font-family: "sans-serif";
+                	}
+                </style>
+ -->        </meta>
+        </meta>
+        <style>
+            .outer {
+                display: flex;
+                width: 100%;
+                height: 100%;
+            }
+
+            .inner {
+                margin: auto;
+                background: red;
+            }
+            .blocks {
+                height: 100%;
+            }
+            body,html {
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="outer">
+            <div class="inner bg-white rounded-lg shadow-md p-6" id="logindiv">
+                <h1 align="center" class="text-xl font-semibold mb-4">
+                    Войдите, используя учетную запись LaboRad
+                </h1>
+                <div class="mb-3">
+                	<form method="post">
+	                    <input class="block w-full shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 mb-4 p-2" placeholder="Введите логин" id="login" type="text" value style="border: 2px solid blue; border-radius: 7px;">
+	                    <input class="block w-full p-2 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 mb-4" placeholder="Введите пароль" id="passwd" type="password" value style="border: 2px solid blue; border-radius: 7px;">
+	                    <input type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg shadow-md p-4 blocks w-full mt-4" id="infobtn" value="Войти">
+	                    </button>
+                    </form>
+                </div>
+                <!-- <button class="bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg shadow-md p-4 blocks w-full" style="margin: auto;" onclick="document.location='linear'">
+                    Линейная версия интерфейса
+                </button> -->
+                <div class="mt-9">
+                    <h2 align="center" class="text-x font-semi mb-3">
+                        или
+                    </h2>
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg shadow-md p-4 blocks w-full" id="infobtn" onclick="showRegister()">
+                        Зарегестрироваться
+                    </button>
+                </div>
+            </div>
+
+            <div class="inner bg-white rounded-lg shadow-md p-6" id="registerdiv">
+            	<h1 align="center" class="text-xl font-semibold mb-4">
+                    Зарегестрируйтесь в системе аккаунтов LaboRad
+                </h1>
+                <div class="mb-3">
+                	<form method="post">
+            			<!-- <input type="text" name="login">
+            			<input type="text" name="org">
+            			<input type="text" name="name">
+           				<input type="submit" value="Войти"> -->
+	                    <input name="login" class="block w-full shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 mb-4 p-2" placeholder="Введите логин" id="login1" type="text" style="border: 2px solid blue; border-radius: 7px;">
+	                    <input name="passwd1" class="block w-full p-2 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 mb-4" placeholder="Введите пароль" id="passwd1" type="password" value style="border: 2px solid blue; border-radius: 7px;">
+	                    <input name="passwd2" class="block w-full p-2 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 mb-4" placeholder="Повторите пароль" id="passwd2" type="password" value style="border: 2px solid blue; border-radius: 7px;">
+	                    <input name="name" class="block w-full shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 mb-4 p-2" placeholder="Фамилия, имя, отчество (через пробелы)" id="name" type="text" value style="border: 2px solid blue; border-radius: 7px;">
+	                    <input name="org" class="block w-full shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 mb-4 p-2" placeholder="Подразделение" id="org" type="text" value style="border: 2px solid blue; border-radius: 7px;">
+	                    <input type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg shadow-md p-4 blocks w-full mt-4" id="infobtn" value="Зарегестрироваться">
+	                    </input>
+                    </form>
+                </div>
+                <!-- <button class="bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg shadow-md p-4 blocks w-full" style="margin: auto;" onclick="document.location='linear'">
+                    Линейная версия интерфейса
+                </button> -->
+                <div class="mt-9">
+                    <h2 align="center" class="text-x font-semi mb-3">
+                        или
+                    </h2>
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg shadow-md p-4 blocks w-full" id="infobtn" onclick="showLogin()">
+                        Войти
+                    </button>
+                </div>
+            </div>
+        </div>
+        <script>
+        	document.querySelector("#registerdiv").style.display = "none";
+
+			const socket = io();
+
+			socket.on("loginInfo", function(data) {
+				if (data=="success") alert("success");
+				else if (data=="not find") alert("Вход не удался. Пожалуйста, проверьте имя пользователя и пароль.");
+			});
+
+        	// function login(login,passwd) {
+        	// 	let str = login + ":" + passwd;
+        	// 	socket.emit("login",str);
+        	// }
+         //    function register(login,passwd1,passwd2,fio,org) {
+         //        if (passwd1==passwd2) {
+         //            let str = login + ":" + passwd1 + ";" + fio + ";" + org;
+         //            socket.emit("register",str)
+         //        } else {
+         //            alert("passwords don't")
+         //        }
+         //    }
+
+        	function showLogin() {
+        		document.querySelector("#logindiv").style.display = "inline";
+        		document.querySelector("#registerdiv").style.display = "none";
+        	}
+        	function showRegister() {
+        		document.querySelector("#logindiv").style.display = "none";
+        		document.querySelector("#registerdiv").style.display = "inline";
+        	}
+        </script>
+    </body>
+</html>
