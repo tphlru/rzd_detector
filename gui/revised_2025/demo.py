@@ -17,12 +17,16 @@ class FileChangeHandler(FileSystemEventHandler):
         if event.src_path == "/home/LaboRad/rzd_detector/Scripts/table_values.json":
             with open("/home/LaboRad/rzd_detector/Scripts/table_values.json", "r") as data:
                 update_data = json.load(data)
-            for x in update_data.values():
-                sio.emit("update_criteria", x)
+            for x in update_data.keys():
+                if x == "status":
+                    sio.emit("status", update_data[x])
+                    print("status", update_data[x])
+                else:
+                    sio.emit("update_criteria", update_data[x])
 
 FRAME_SHAPE = (1080, 1920, 3)
 FRAME_DTYPE = np.uint8
-HSD_IP = "192.168.0.102"
+HSD_IP = "192.168.43.96"
 frame_var = None
 
 

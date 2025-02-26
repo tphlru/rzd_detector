@@ -202,6 +202,7 @@ socket.on("status", (data)=> {
     if (data=="working") statusText.innerHTML = "Статус:&nbsp<font color='green'>в работе</font>";
     if (data=="wait") statusText.innerHTML = "Статус:&nbsp<font color='blue'>ожидание</font>";
     else console.log("status code is incorrect!");
+    console.log(data);
 });
 
 socket.on("warning", function(data) {

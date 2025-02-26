@@ -1,5 +1,6 @@
 import base64
 from groq import Groq
+import json
 
 def encode_image_to_base64(image_path):
     """Encodes an image from the given path to base64."""
@@ -40,8 +41,49 @@ def analyze_face_emotions(image_path, api_key):
     
     return completion.choices[0].message.content
 
+
+def analyze_face_emotions2(image_path, api_key, previous_message=""):
+    """Encodes the image and sends it for analysis to the Groq API, incorporating the previous message."""    
+    client = Groq(api_key=api_key)
+    completion = client.chat.completions.create(
+        model="llama-3.2-11b-vision-preview",
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "Extract the intensity of each detected emotion, list all emotions present, "
+                    "and determine the predominant emotion. Additionally, assess the behavior "
+                    "as 'good', 'normal', or 'suspicious (criminal)'. Format the output in JSON "
+                    "with fields: 'emotions', 'intensities', 'dominant_emotion', 'behavior_assessment'."
+                )
+            },
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": previous_message},
+                ]
+            },
+        ],
+        temperature=0.35,
+        max_completion_tokens=1024,
+        top_p=1,
+        stream=False,
+        stop=None,
+    )
+    
+    response_text = completion.choices[0].message.content
+    # try:
+    #     response_json = json.loads(response_text)
+    # except json.JSONDecodeError:
+    #     response_json = {"error": "Invalid JSON response", "raw_response": response_text}
+    
+    return response_text
+
 # Example usage
-image_path = "/home/LaboRad/Downloads/2.jpg"
+image_path = "/home/LaboRad/Downloads/3.jpg"
 api_key = "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"
 response = analyze_face_emotions(image_path, api_key)
+response = analyze_face_emotions2(image_path, api_key, response)
+
+
 print(response)

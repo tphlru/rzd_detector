@@ -18,7 +18,7 @@ import subprocess
 
 from aiortc import RTCPeerConnection, RTCSessionDescription  # noqa: E402
 
-HSD_IP = "192.168.0.105"
+HSD_IP = "192.168.43.96"
 
 logger = logging.getLogger(__name__)
 

@@ -9,76 +9,55 @@ from rzd_detector.codemodules.face.blinking.rating import get_score
 from rzd_detector.codemodules.face.emotions.main_em import get_emotion
 import timeit
 import json
-from write_video import w as write
-import asyncio
-from multiprocessing import Process, Event
-from events import start, stop, pause
-from threading import Thread, Lock
-import cv2
-results = {}
-lock = Lock()
 
-
+weights_score = {
+    "pulse": 1,
+    "resp": 1,
+    "blink": 1,
+    "emotion": 1
+}
+def set_param(param, value):
+    with open("Scripts/table_values.json", mode="r") as jf:
+        dt = dict(json.load(jf))
+    dt[param] = value
+    with open("Scripts/table_values.json", mode="w") as jf:
+        json.dump(dt, jf)
 def write_table(a, b, c):
     return {"category": a, "sublevel": b, "score": c}
 
-def pulse(cuda, video_path):
-    bvp, times, bpm = get_bpm_with_pbv(cuda=cuda, videoFileName=video_path)
-    base_mean, trend, high_med, mids, tvals = process_pulse_info(bpm, show_plot=False, plot_path="pulse.png")
-    pulse_score = evaluate_pulse_results(base_mean=base_mean, trend=trend, high_med=high_med, midpoints=mids, tops_values=tvals)
-    with lock:
-        results["pulse"] = pulse_score
-
-def respiration(video_path, itrfmxs, mxtrshld):
-    resp_rate, resp_score = get_resp(video_path=video_path, iter_for_maxs=itrfmxs, maxs_treshold=mxtrshld)
-    with lock:
-        results["resp"] = resp_score
-
-def blinking(video_path, itrfmxs):
-    blink_rate, blink_scores = get_score(video_path=video_path, iter_for_maxs=itrfmxs)
-    with lock:
-        results["blink"] = blink_scores
-
-def run(cuda: bool, video_path, client):
-    print("Предупреждение: Компания Meta признана экстримисткой организацией и запрещена в РФ. Используются только открытые, некоммерческие технологии.")
-    start.wait()
-    start.clear()
+def run(cuda: bool, video_path):
+    set_param("status", "working")
+    print("start")
     t = timeit.default_timer()
-    video, fps = asyncio.run(write(video_path, 10, True, None, None, client))
-    for i in range(100):
-        video = asyncio.run(write(video_path, 10, False, fps, video, client))
-    video.release()
-    frame_count = video.get(cv2.CAP_PROP_FRAME_COUNT)
-    video.set(cv2.CAP_PROP_POS_FRAMES, int(frame_count*0.3))
-    frame1 = video.read()
-    video.set(cv2.CAP_PROP_POS_FRAMES, int(frame_count * 0.6))
-    frame2 = video.read()
-    video.set(cv2.CAP_PROP_POS_FRAMES, int(frame_count * 0.9))
-    frame3 = video.read()
-    video.set(cv2.CAP_PROP_POS_FRAMES, 1)
-    print("Запись завершена")
-    thread_pulse = Thread(target=pulse, args=(cuda, video_path))
-    thread_pulse.start()
-    thread_pulse.append(thread_pulse)
+    try:
+        bvp, times, bpm = get_bpm_with_pbv(cuda=cuda, videoFileName=video_path)
+        base_mean, trend, high_med, mids, tvals = process_pulse_info(bpm, show_plot=False, plot_path = "pulse.png")
+        pulse_score = evaluate_pulse_results(base_mean=base_mean, trend=trend, high_med=high_med, midpoints=mids, tops_values=tvals)
+    except:
+        set_param("status", "error")
+    try:
+        resp_rate, resp_score = get_resp(video_path=video_path, iter_for_maxs=8, maxs_treshold=3)
+    except:
+        set_param("status", "error")
+    try:
+        blink_rate, blink_scores = get_score(video_path=video_path, iter_for_maxs=5)
+    except:
+        set_param("status", "error")
 
-    thread_resp = Thread(target=respiration, args=(video_path, 8, 3))
-    thread_resp.start()
-    thread_resp.append(thread_resp)
-
-    thread_resp = Thread(target=blinking, args=(video_path, 8))
-    thread_resp.start()
-    thread_resp.append(thread_resp)
-
-    emotions = get_emotion(video_path)
-    print("Завершено, время предсказания значений:", timeit.default_timer() - t)
+    try:
+        emotions = get_emotion(video_path)
+        # emotion_score = 
+    except:
+        set_param("status", "error")
+    print("finished", timeit.default_timer() - t)
     with open("/home/LaboRad/rzd_detector/Scripts/table_values.json", "w") as f:
         d = {
-            "pulse":write_table("physical", "pulse", results["pulse"]),
-            "resp":write_table("physical", "breathing", results["resp"]),
-            "blink":write_table("physical", "blinking", results["blink"])
+            "pulse":write_table("physical", "pulse", int(pulse_score)),
+            "resp":write_table("physical", "breathing", int(resp_score) + 2),
+            "blink":write_table("physical", "blinking", blink_scores)
         }
         json.dump(d, f)
-    return emotions
+    return pulse_score, resp_score, blink_rate, emotions
     # return blink_rate
 if __name__ == "__main__":
-    print(run(True, "Scripts/test_files/pulse/high.mp4"))
+    print(run(True, "Scripts/test_files/common/example1.mp4"))
