@@ -143,7 +143,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("ids").innerHTML = text;
     // alert(document.getElementById("ids"))
 
-
+    const quest2text = document.querySelector('[data-quest2]');
+     
+    // чтение значения атрибута data-product-id
+    const text2 = quest2text.dataset.quest2;
+    document.querySelector('[data-quest2]').innerHTML = text2;
 
     // Обработчики событий для чекбоксов вопросов
     document.querySelectorAll('input[name="question2"]').forEach((checkbox) => {

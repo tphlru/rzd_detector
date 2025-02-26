@@ -114,7 +114,9 @@ data = {
     "departure": "Москва",
     "arrival": "Санкт-Петербург",
     "subjective_rating": 0,
-    "question1": "Как вы себя чувствуете?",
+    "question1text": "Как вы себя чувствуете?",
+    "question1": "",
+    "question2text": "Вопрос №2",
     "question2": ["1", "3"],  # Пример
     "criteria": criteria_data,
     "pulse_status": "Нормально",
@@ -137,6 +139,9 @@ def mobile():
 @app.route("/tablet")
 def tablet():
     return render_template("tablet.html", data=data)
+@app.route("/report")
+def report():
+    return render_template("report.html")
 # @app.route("/auth")
 # def auth():
 #     return render_template("auth.html", data="")

@@ -60,7 +60,6 @@
                     </div>
 
                     <label class="block text-sm font-medium text-gray-700" id="statusText">
-                        
                     </label>
                 </div>
                 <!-- Management Console -->
@@ -262,14 +261,14 @@
                                 </div>
                                 <!-- First Question -->
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700" id="ids" data-quest1="{{ data.question1 }}">question
+                                    <label class="block text-sm font-medium text-gray-700" id="ids" data-quest1="{{ data.question1text }}">question
                                     </label>
                                     <input class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="question1" type="text" >
                                     </input>
                                 </div>
                                 <!-- Second Question -->
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700">
+                                    <label class="block text-sm font-medium text-gray-700" data-quest2="{{ data.question2text }}">
                                         Второй вопрос
                                     </label>
                                     <div class="mt-2 flex items-center space-x-4">
@@ -302,6 +301,30 @@
                                             </input>
                                         </label>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <h3 class="text-lg font-semibold mb-4">
+                                Данные о учетной записи
+                            </h3>
+                            <div class="space-y-4">
+                                <!-- Subjective Rating -->
+                                <div>
+                                    <label class="block text-sm font-medium">
+                                        Вход выполнен в:
+                                    </label>
+                                    <label class="block text-sm font-medium text-gray-800">
+                                        &nbsp&nbsp email@domain.ru
+                                    </label>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium">
+                                        Фамилия, имя, отчество проверяющего:
+                                    </label>
+                                    <label class="block text-sm font-medium text-gray-800">
+                                        &nbsp&nbsp Смирнов Николай Федорович
+                                    </label>
                                 </div>
                             </div>
                         </div>
