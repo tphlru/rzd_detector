@@ -72,6 +72,13 @@ criteria_data = {
         "max_score": 5,
         "sublevels": {},
     },
+    "result": {
+        "name": "Результат",
+        "enabled": True,
+        "score": 0,
+        "max_score": 100,
+        "sublevels": {},
+    }
 }
 
 data = {
@@ -90,6 +97,8 @@ data = {
     "voice_emotions": {"Спокойствие": 60, "Стресс": 40},
 }
 
+users = {}
+
 @app.route("/")
 def index():
     return render_template("index.html", data="")
@@ -103,6 +112,25 @@ def mobile():
 @app.route("/tablet")
 def tablet():
     return render_template("tablet.html", data=data)
+@app.route("/auth")
+def auth():
+    return render_template("auth.html", data="")
+
+plogin = ""
+passw = ""
+
+@socketio.on("login")
+def login(data):
+    print(data)
+
+@socketio.on("register")
+def register(data):
+    print(data)
+# warning example
+
+# @socketio.event
+# def connect():
+#     socketio.emit("warning","warning text")
 
 
 @app.route("/submit", methods=["POST"])
@@ -126,7 +154,7 @@ async def submit():
             json.dump(dt, jf)
 
 
-    if element in ["emotional", "physical", "seasonal", "subjective", "statistical"]:
+    if element in ["emotional", "physical", "seasonal", "subjective", "statistical", "result"]:
         enabled = bool(value)
         data[element] = enabled
         if element in criteria_data:

@@ -129,6 +129,18 @@ document.addEventListener('DOMContentLoaded', () => {
             sendData('subjective_rating', event.target.value);
         });
     });
+    // alert(document.querySelector("[data-quest1]").dataset.question1)
+
+
+    const quest1text = document.querySelector('[data-quest1]');
+ 
+// чтение значения атрибута data-product-id
+    const text = quest1text.dataset.quest1;
+    document.getElementById("ids").innerHTML = text;
+    alert(text);
+    // alert(document.getElementById("ids"))
+
+
 
     // Обработчики событий для чекбоксов вопросов
     document.querySelectorAll('input[name="question2"]').forEach((checkbox) => {
@@ -182,12 +194,12 @@ socket.on("status", (data)=> {
     if (data=="error") statusText.innerHTML = "Статус:&nbsp<font color='red'>ошибка</font>";
     if (data=="working") statusText.innerHTML = "Статус:&nbsp<font color='green'>в работе</font>";
     if (data=="wait") statusText.innerHTML = "Статус:&nbsp<font color='blue'>ожидание</font>";
-    alert(data)
+    else console.log("status code is incorrect!");
 });
 
 socket.on("warning", function(data) {
     alert(data);
-    console.log(data);
+    console.log("[server WARN]: "+data);
 });
 document.querySelector("#selectVideo").style.display = "none";
 

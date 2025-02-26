@@ -247,10 +247,9 @@
                                 </div>
                                 <!-- First Question -->
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700">
-                                        Первый вопрос
+                                    <label class="block text-sm font-medium text-gray-700" id="ids" data-quest1="{{ data.question1 }}">question
                                     </label>
-                                    <input class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="question1" type="text" value="{{ data.question1 }}">
+                                    <input class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" id="question1" type="text" >
                                     </input>
                                 </div>
                                 <!-- Second Question -->
@@ -501,10 +500,10 @@
             <!-- Scripts -->
             <script src="{{ url_for('static', filename='js/script.js') }}">
             </script>
-            <script src="{{ url_for('static', filename='camera.js') }}">
+            <!-- <script src="{{ url_for('static', filename='camera.js') }}">
             </script>
             <script src="{{ url_for('static', filename='js/video_viewer.js') }}">
-            </script>
+            </script> -->
         </div>
     </body>
 </html>
