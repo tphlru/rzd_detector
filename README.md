@@ -69,6 +69,11 @@ Error while loading conda entry point: conda-libmamba-solver (/home/timur/.conda
 conda install --solver=classic conda-forge::conda-libmamba-solver conda-forge::libmamba conda-forge::libmambapy conda-forge::libarchive
 conda install -c conda-forge libstdcxx-ng
 
+Unrecognized option 'preset'.
+Error splitting the argument list: Option not found
+
+conda install -c conda-forge ffmpeg
+
 TEMP:
 ```
 sudo dnf -y install cuda-toolkit-12-5
