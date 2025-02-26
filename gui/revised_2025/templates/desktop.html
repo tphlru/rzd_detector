@@ -12,6 +12,12 @@
                 <!-- Chart.js -->
                 <script src="{{ url_for('static', filename='packages/chart.umd.min.js') }}">
                 </script>
+                <!-- Tailwind CSS -->
+                <script src="../static/packages/tailwindcss.js">
+                </script>
+                <!-- Chart.js -->
+                <script src="../static/packages/chart.umd.min.js">
+                </script>
                 <!-- Styles and Favicon -->
                 <link href="{{ url_for('static', filename='css/desktop.css') }}" rel="stylesheet">
                     <link href="{{ url_for('static', filename='resources/icon.png') }}" rel="shortcut icon" type="image/png">
@@ -59,7 +65,7 @@
                         </div>
                     </div>
 
-                    <label class="block text-sm font-medium text-gray-700" id="statusText">
+                    <label class="block text-sm font-medium text-gray-700" id="statusText">ad
                     </label>
                 </div>
                 <!-- Management Console -->
@@ -547,6 +553,8 @@
             <!-- Scripts -->
             <script src="{{ url_for('static', filename='js/script.js') }}">
             </script>
+            <!-- <script src="../static/js/script.js">
+            </script> -->
             <!-- <script src="{{ url_for('static', filename='camera.js') }}">
             </script>
             <script src="{{ url_for('static', filename='js/video_viewer.js') }}">

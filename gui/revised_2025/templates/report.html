@@ -6,9 +6,13 @@
                 <title>
                     Выберите устройство - Детектор состояния человека | LaboRad
                 </title>
-                <script src="{{ url_for('static', filename='packages/tailwindcss.js') }}">
+                <!-- <script src="{{ url_for('static', filename='packages/tailwindcss.js') }}">
                 </script>
                 <script src="{{ url_for('static', filename='packages/chart.umd.min.js') }}">
+                </script> -->
+                <script src="../static/packages/tailwindcss.js">
+                </script>
+                <script src="../static/packages/chart.umd.min.js">
                 </script>
             </meta>
         </meta>
@@ -26,19 +30,172 @@
             .blocks {
                 height: 100%;
             }
-            body,html {
+            body,html,table {
                 height: 100%;
+                width: 100%;
+                background-color: grey;
             }
         </style>
     </head>
     <body>
-        <div class="outer">
-            <div class="inner bg-white rounded-lg shadow-md p-6">
-                
-            </div>
-        </div>
+
+        <h1 class="text-3xl font-bold text-gray-800 mb-2 mt-3" align="center">
+            LaboRad report maker
+        </h1>
+        <table>
+        	<tr>
+        		<td class="p-5">
+        			<!-- <textarea class="block w-full shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 mb-4 p-2 w-full h-full" style="border: 2px solid blue; border-radius: 7px;" width="100%" height="100%"></textarea> -->
+        			<div class="rounded bg-white w-full h-full shadow-md p-5">
+	                    <h2 class="text-xl font-semibold mb-3">
+	                        Форматирование текста
+	                    </h2>
+                    	<div class="bg-white rounded-lg shadow-md p-6">
+	                        <h3 class="text-lg font-semibold ml-3">
+	                            Стиль шрифта
+	                        </h3>
+	                        <select class="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" style="display: inline-block;">
+		                        <option>
+		                            Стандартный шрифт
+		                        </option>
+		                        <option>
+		                            Noto Sans
+		                        </option>
+		                        <option>
+		                            SegoeUI
+		                        </option>
+		                        <option>
+		                            Arial
+		                        </option>
+		                        <option>
+		                            Calibri
+		                        </option>
+	                        </select>
+
+	                        <select class="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" style="display: inline-block;">
+		                        <option>
+		                            Стандартный цвет
+		                        </option>
+		                        <option>
+		                            Желтый
+		                        </option>
+		                        <option>
+		                            Красный
+		                        </option>
+		                        <option>
+		                            Синий
+		                        </option>
+		                        <option>
+		                            Зеленый
+		                        </option>
+	                        </select>
+
+	        				<button class="bg-blue-500 hover:bg-blue-600 text-white p-1 rounded w-full sm:w-auto">
+	                            <b>ж</b>
+	                        </button>
+	                        <button class="bg-blue-500 hover:bg-blue-600 text-white p-1 rounded w-full sm:w-auto">
+	                            <i>к</i>
+	                        </button>
+	                        <button class="bg-blue-500 hover:bg-blue-600 text-white p-1 rounded w-full sm:w-auto">
+	                            <ins>ч</ins>
+	                        </button>
+	        				<button class="bg-red-500 hover:bg-red-600 text-white font-bold p-1 ml-2 rounded w-full sm:w-auto">
+	                            Сброс стилей
+	                        </button>
+	                    </div>
+
+                        <div class="dropdown mt-2">
+                            <label class="block text-sm ml-3 mb-1 font-medium text-gray-700">
+                                Добавить в отчет следующие графики:
+                            </label>
+                            <ul class=" space-y-2">
+                                <li>
+                                    <input type="checkbox" id="emotional" {% if data.emotional %}checked{% endif %}>
+                                        <label class="ml-2 text-gray-700" for="emotional">
+                                            Пульс
+                                        </label>
+                                    </input>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="physical" {% if data.physical %}checked{% endif %}>
+                                        <label class="ml-2 text-gray-700" for="physical">
+                                            Частота дыхания
+                                        </label>
+                                    </input>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="seasonal" {% if data.seasonal %}checked{% endif %}>
+                                        <label class="ml-2 text-gray-700" for="seasonal">
+                                            Частота моргания
+                                        </label>
+                                    </input>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="subjective" {% if data.subjective %}checked{% endif %}>
+                                        <label class="ml-2 text-gray-700" for="subjective">
+                                            Субъективная оценка
+                                        </label>
+                                    </input>
+                                </li>
+                                <li>
+                                    <input type="checkbox" id="statistical" {% if data.statistical %}checked{% endif %}>
+                                        <label class="ml-2 text-gray-700" for="statistical">
+                                            Эмоции
+                                        </label>
+                                    </input>
+                                </li>
+                            </ul>
+                        </div>
+                        <label class="block text-sm ml-3 mt-2 font-medium text-gray-700">
+                            Использовать следующий шаблон:
+                        </label>
+                        <select class="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" style="display: inline-block;">
+	                        <option>
+	                            Стандартный шаблон
+	                        </option>
+	                        <option>
+	                            Модерн
+	                        </option>
+	                        <option>
+	                            Максимально официально
+	                        </option>
+                        </select>
+
+
+                        <label class="block text-sm ml-3 mb-1 font-medium text-gray-700">
+                            :
+                        </label>
+
+                        <select class="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" style="display: inline-block;">
+	                        <option>
+	                            Стандартный цвет
+	                        </option>
+	                        <option>
+	                            Желтый
+	                        </option>
+	                        <option>
+	                            Красный
+	                        </option>
+	                        <option>
+	                            Синий
+	                        </option>
+	                        <option>
+	                            Зеленый
+	                        </option>
+                        </select>
+
+        			</div>
+        		</td>
+        		<td class="p-5">
+        			<!-- <textarea class="block w-full shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 mb-4 p-2 w-full h-full" style="border: 2px solid blue; border-radius: 7px;" width="100%" height="100%"></textarea> -->
+        			<div class="rounded bg-white w-full h-full shadow-md p-5">
+        				<embed src="имя-файла-PDF.pdf" type="application/pdf" width="100%" height="100%">
+        			</div>
+        		</td>
+        	</tr>
+        </table>
         <script>
-        	
+
         </script>
     </body>
 </html>
