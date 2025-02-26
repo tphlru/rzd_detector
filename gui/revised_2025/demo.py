@@ -41,7 +41,10 @@ class FileChangeHandler(FileSystemEventHandler):
                 except json.decoder.JSONDecodeError:
                     print("Incorrect format")
             # print(maindict)
-            sio.emit("update_criteria", maindict["pulse"])
+            # sio.emit("update_criteria", maindict["pulse"])# TODO: нужно отправлять всеразделы файла json а н только pulse
+            dict_values = list(x for x in maindict.values() if type(x) == dict)
+            for i in dict_values:
+                sio.emit("update_criteria", i)
 
 @sio.event
 def connect():

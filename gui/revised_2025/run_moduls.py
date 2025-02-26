@@ -17,7 +17,7 @@ def run():
     subprocess.Popen(['python', 'gui/revised_2025/run_resp.py'])
     subprocess.Popen(['python', 'gui/revised_2025/run_blinking.py'])
     subprocess.Popen(['python', 'gui/revised_2025/run_emotions.py'])
-    print("Завершено, время предсказания значений:", timeit.default_timer() - t)
+    logger.info("Завершено, время предсказания значений:", timeit.default_timer() - t)
 if __name__ == "__main__":
     try:
         run()

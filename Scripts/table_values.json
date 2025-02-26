@@ -1,18 +1,1 @@
-{
-    "pulse": {
-      "category": "physical",
-      "sublevel": "pulse",
-      "score": 38,
-      "max_score": 100
-    },
-    "resp": {
-      "category": "physical",
-      "sublevel": "breathing",
-      "score": 1
-    },
-    "blink": {
-      "category": "physical",
-      "sublevel": "blinking",
-      "score": 10
-    }
-  }
+{"pulse": {"category": "physical", "sublevel": "pulse", "score": 38, "max_score": 100}, "resp": {"category": "physical", "sublevel": "breathing", "score": 1}, "blink": {"category": "physical", "sublevel": "blinking", "score": 10}, "happy_emo": {"category": "emotional", "sublevel": "happiness", "score": 1}, "stress_emo": {"category": "emotional", "sublevel": "stress", "score": 1}, "anxiety_emo": {"category": "emotional", "sublevel": "anxiety", "score": 1}}
