@@ -4,3 +4,4 @@ async def count_statistical(subj_rating, out_town, gender, age):
     if gender == "Мужской":
         score -= 1
     if age
+    
