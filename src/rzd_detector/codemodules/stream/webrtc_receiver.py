@@ -18,7 +18,7 @@ import subprocess
 
 from aiortc import RTCPeerConnection, RTCSessionDescription  # noqa: E402
 
-HSD_IP = "192.168.43.96"
+HSD_IP = "192.168.0.105"
 
 logger = logging.getLogger(__name__)
 
@@ -178,8 +178,6 @@ class WHEPClient:
     async def display_stream(self, client):
         """Отображение видеопотока через OpenCV"""
         cv2.namedWindow("Video Stream", cv2.WINDOW_NORMAL)
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-        out = cv2.VideoWriter("output.mp4", fourcc, 30, (1080, 1920))
         while True:
             if self.track_video:
                 try:
@@ -187,7 +185,7 @@ class WHEPClient:
                     if isinstance(frame, VideoFrame):
                         # Конвертация кадра в формат OpenCV
                         img = frame.to_ndarray(format="bgr24")
-                        frame = client.get_raw_frame()
+                        frame = await client.get_raw_frame()
                         cv2.imshow("Video Stream", img)
 
                         if cv2.waitKey(1) & 0xFF == ord("q"):
@@ -203,7 +201,7 @@ class WHEPClient:
     async def stream_stream(self, client):
         """Отображение видеопотока через OpenCV"""
         # cv2.namedWindow("Video Stream", cv2.WINDOW_NORMAL)
-        ffmpeg_process = open_ffmpeg_stream_process()
+        ffmpeg_process = open_ffmpeg_stream_process(self)
         while True:
             if self.track_video:
                 try:
@@ -250,7 +248,7 @@ def get_hsd_camera_url(rpi_ip, stream_path="cam"):
 
 async def main():
     async with WHEPClient(get_hsd_camera_url(HSD_IP)) as client:
-        await client.stream_stream(client=client)
+        await client.display_stream(client=client)
 
 def open_ffmpeg_stream_process(self):
     args = (
