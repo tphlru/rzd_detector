@@ -26,8 +26,14 @@ import eventlet
 import eventlet.wsgi
 
 
-mode = "dev"  # "dev" or "prod"
+from rzd_detector.codemodules.stream.webrtc_receiver import WHEPClient, get_hsd_camera_url
+from multiprocessing import Process
+from run_moduls import run as run_neiro
+import asyncio
+from events import start, stop, pause
 
+mode = "dev"  # "dev" or "prod"
+client = None
 app = Flask(__name__)
 # app.secret_key = 'abvgd'  
 # login_manager = LoginManager()
@@ -36,8 +42,9 @@ socketio = SocketIO(app, async_mode="eventlet")
 
 FRAME_SHAPE = (1080, 1920, 3)
 FRAME_DTYPE = np.uint8
-HSD_IP = "192.168.0.102"
+HSD_IP = "192.168.43.96"
 
+predict = Process(target=run_neiro, args=(True, "output.mp4", client))
 frame_var = None
 # with open(r"C:\Users\kvant_08\Documents\GitHub\rzd_detector\gui\revised_2025\users.json","r+",encoding="utf-8") as file:
 #     users = dict(json.load(file))
@@ -126,6 +133,8 @@ data = {
     "voice_emotions": {"Спокойствие": 60, "Стресс": 40},
 }
 
+users = {}
+
 @app.route("/")
 def index():
     return render_template("index.html", data="")
@@ -174,11 +183,16 @@ async def submit():
         dt["subj"] = {}
         dt["subj"]["category"] = "subjective"
         dt["subj"]["score"] = value
-        print(dt["subj"])
         # last = max([0, 0] + [int(i) for i in dt])
         # dt[str(last+1)] = {"category": "subjective", "sublevel": {}, "score": str(value)}
         with open("Scripts/table_values.json", mode="w") as jf:
             json.dump(dt, jf)
+    elif element == "start":
+        start.set()
+    elif element == "stop":
+        stop.set()
+    elif element == "pause":
+        pause.set()
 
 
     if element in ["emotional", "physical", "seasonal", "subjective", "statistical", "result"]:
@@ -246,7 +260,6 @@ def handle_criteria_update(update_data):  # sourcery skip: merge-repeated-ifs
             criteria_data[category]["score"] = sum(
                 sub["score"] for sub in criteria_data[category]["sublevels"].values()
             )
-
         socketio.emit("criteria_updated", criteria_data)
         eventlet.sleep(0.01)
 
@@ -285,29 +298,35 @@ def handle_criteria_update(update_data):  # sourcery skip: merge-repeated-ifs
 #         pred[3] = 3
 #         new_predict_event.set()
 
-# async def generate_stream():
-#     """Асинхронная функция для генерации потока видео"""
-#     client = WHEPClient(get_hsd_camera_url(HSD_IP))
-#     await client.connect()
-#     while True:
-#         frame = await client.get_raw_frame()
-#         frame = crop_face(frame)
-#         global frame_array
-#         frame_array[:] = np.array( dtype=FRAME_DTYPE)
-#         new_frame_event.set()
-#         await asyncio.sleep(0.03)  # Небольшая задержка для уменьшения нагрузки
+def generate_frames(client):
+    print("Generation is started")
+    while True:
+        if not pause.is_set():
+            frame = asyncio.run(client.get_frame())
+            _, buffer = cv2.imencode('.jpg', frame)
+            frame_bytes = buffer.tobytes()
+            print(frame.shape)
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
 
+async def connect_client(ip):
+    print("Connection done")
+    client = WHEPClient(get_hsd_camera_url(ip))
+    await client.connect()
+    return client
 
-# @socketio.on('start_video')
-# def start_video():
-#     print("aa")
-#     socketio.start_background_task(generate_stream)
+@socketio.on('start_video')
+def start_video():
+    global client
+    print("Video is started, run background task - generate_stream function ")
+    print(type(client))
+    socketio.start_background_task(generate_frames, client)
 
 def main():
-    # generate = mp.Process(target=asyncio.run(generate_stream()))
-    # generate.start()
-    # predict = mp.Process(target=get_pedict)
-    # predict.start()
+    global client
+    client = asyncio.run(connect_client(HSD_IP))
+    # print(type(client))
+    predict.start()
     socketio.run(app, host="0.0.0.0", port=5000, allow_unsafe_werkzeug=True, debug=True)
 
 main()

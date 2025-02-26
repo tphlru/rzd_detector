@@ -203,7 +203,7 @@ class WHEPClient:
     async def stream_stream(self, client):
         """Отображение видеопотока через OpenCV"""
         # cv2.namedWindow("Video Stream", cv2.WINDOW_NORMAL)
-        ffmpeg_process = open_ffmpeg_stream_process()
+        ffmpeg_process = open_ffmpeg_stream_process(self)
         while True:
             if self.track_video:
                 try:
@@ -250,7 +250,7 @@ def get_hsd_camera_url(rpi_ip, stream_path="cam"):
 
 async def main():
     async with WHEPClient(get_hsd_camera_url(HSD_IP)) as client:
-        await client.stream_stream(client=client)
+        await client.display_stream(client=client)
 
 def open_ffmpeg_stream_process(self):
     args = (
