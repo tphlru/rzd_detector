@@ -1,6 +1,6 @@
 import cv2
 import contextlib, os, logging
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO
 import numpy as np
 import json
@@ -24,6 +24,13 @@ logging.basicConfig(level=logging.INFO)
 UPLOAD_FOLDER = "upload"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+def set_param(param, value):
+    with open("Scripts/table_values.json", mode="r") as jf:
+        dt = dict(json.load(jf))
+    dt[param] = value
+    with open("Scripts/table_values.json", mode="w") as jf:
+        json.dump(dt, jf)
 
 criteria_data = {
     "emotional": {
@@ -73,13 +80,6 @@ criteria_data = {
         "max_score": 5,
         "sublevels": {},
     },
-    "result": {
-        "name": "Результат",
-        "enabled": True,
-        "score": 0,
-        "max_score": 100,
-        "sublevels": {},
-    }
 }
 
 data = {
@@ -88,9 +88,7 @@ data = {
     "departure": "Москва",
     "arrival": "Санкт-Петербург",
     "subjective_rating": 0,
-    "question1text": "Как вы себя чувствуете?",
-    "question1": "",
-    "question2text": "Вопрос №2",
+    "question1": "Как вы себя чувствуете?",
     "question2": ["1", "3"],  # Пример
     "criteria": criteria_data,
     "pulse_status": "Нормально",
@@ -99,8 +97,6 @@ data = {
     "emotions": {"Счастье": 50, "Грусть": 20, "Гнев": 10, "Удивление": 20},
     "voice_emotions": {"Спокойствие": 60, "Стресс": 40},
 }
-
-users = {}
 
 @app.route("/")
 def index():
@@ -115,12 +111,6 @@ def mobile():
 @app.route("/tablet")
 def tablet():
     return render_template("tablet.html", data=data)
-@app.route("/report")
-def report():
-    return render_template("report.html")
-# @app.route("/auth")
-# def auth():
-#     return render_template("auth.html", data="")
 
 @socketio.event
 def connect():
@@ -147,18 +137,14 @@ async def submit():
         dt["subj"] = {}
         dt["subj"]["category"] = "subjective"
         dt["subj"]["score"] = value
+        print(dt["subj"])
         # last = max([0, 0] + [int(i) for i in dt])
         # dt[str(last+1)] = {"category": "subjective", "sublevel": {}, "score": str(value)}
         with open("Scripts/table_values.json", mode="w") as jf:
             json.dump(dt, jf)
-    elif element == "start":
-        set_val("start", True)
-    elif element == "stop":
-        set_val("stop", True)
-    elif element == "pause":
-        set_val("pause", True)
 
-    if element in ["emotional", "physical", "seasonal", "subjective", "statistical", "result"]:
+
+    if element in ["emotional", "physical", "seasonal", "subjective", "statistical"]:
         enabled = bool(value)
         data[element] = enabled
         if element in criteria_data:
@@ -227,11 +213,12 @@ def handle_criteria_update(update_data):  # sourcery skip: merge-repeated-ifs
             criteria_data[category]["score"] = sum(
                 sub["score"] for sub in criteria_data[category]["sublevels"].values()
             )
+
         socketio.emit("criteria_updated", criteria_data)
         # eventlet.sleep(0.01)
 
 # def translate_score():
-#     while true:
+#     while True:
 #         new_predict_event.wait()
 #         new_predict_event.clear()
 #         predict = pred
