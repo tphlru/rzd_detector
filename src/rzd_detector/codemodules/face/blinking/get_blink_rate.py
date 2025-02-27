@@ -23,7 +23,7 @@ options = FaceLandmarkerOptions(
 blink_scores_left = []
 blink_scores_right = []
 
-def get_blinking_count(video_path: str, iter_for_maxs: int, plot=False) -> float:
+def get_blinking_count(video_path: str, plot=False) -> float:
     '''Вычиляет частоту моргания раз/минуту.
     Args:
         video_path (str): Путь к видео, по которому будет вычисляться частота.

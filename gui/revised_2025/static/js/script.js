@@ -171,28 +171,28 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('reportButton').addEventListener('click', () => {
         sendData('reportButton', 'clicked');
     });
-    var img = document.getElementById("video_feed");
+    // var img = document.getElementById("video_feed");
 
     socket.on('connect', function() {
-        socket.emit('start_video');
+        // socket.emit('start_video');
     });
 
-    // socket.on("file", function(data) {
-    //     if (data=="not uploaded") {
-    //         alert("Не удалось загрузить файлы на сервер, пожалуйста, попробуйте снова");
-    //     } if (data=="success") {
-    //         alert("Файл успешно загружен!");
-    //     }
-    // })
+    socket.on("file", function(data) {
+        if (data=="not uploaded") {
+            alert("Не удалось загрузить файлы на сервер, пожалуйста, попробуйте снова");
+        } if (data=="success") {
+            alert("Файл успешно загружен!");
+        }
+    })
     // работает, ожидание обнаружена 
 });
 
-const socket = io();
+const socket = io("http://localhost:5000");
 
-socket.on('video_frame', function(data) {
-    console.log("get video frame");
-    img.src = "data:image/jpeg;base64," + btoa(String.fromCharCode.apply(null, new Uint8Array(data.frame)));
-});
+// socket.on('video_frame', function(data) {
+//     console.log("get video frame");
+//     img.src = "data:image/jpeg;base64," + btoa(String.fromCharCode.apply(null, new Uint8Array(data.frame)));
+// });
 
 
 const statusText = document.getElementById("statusText");
@@ -240,6 +240,7 @@ function updateScoreColors() {
 }
         
 socket.on('criteria_updated', function(criteriaData) {
+    console.log("CALLL+!")
     for (const [category, info] of Object.entries(criteriaData)) {
         // Update main category score
         const categoryRow = document.querySelector(`tr[data-category="${category}"]`);

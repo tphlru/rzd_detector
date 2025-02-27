@@ -11,37 +11,47 @@ import json
 logging.basicConfig(level=logging.INFO)
 sio = socketio.Client()
 
+maindict = dict()#{
+#     "category1": {
+#         "score": 10,
+#         "max_score": 20,
+#         "sublevels": {
+#             "sub1": {
+#                 "score": 5,
+#                 "max_score": 10
+#             },
+#             "sub2": {
+#                 "score": 7,
+#                 "max_score": 15
+#             }
+#         }
+#     },
+#     "category2": {
+#         "score": 15,
+#         "max_score": 30
+#     }
+# }
 
 class FileChangeHandler(FileSystemEventHandler):
     def on_modified(self, event):
-        if event.src_path == "/home/LaboRad/rzd_detector/Scripts/table_values.json":
-            with open("/home/LaboRad/rzd_detector/Scripts/table_values.json", "r") as data:
-                update_data = json.load(data)
-            for x in update_data.keys():
-                if x == "status":
-                    sio.emit("status", update_data[x])
-                    print("status", update_data[x])
-                else:
-                    sio.emit("update_criteria", update_data[x])
-
-FRAME_SHAPE = (1080, 1920, 3)
-FRAME_DTYPE = np.uint8
-HSD_IP = "192.168.43.96"
-frame_var = None
-
-
-update_data = {}
+        if event.src_path == "Scripts/table_values.json":
+            with open("Scripts/table_values.json", "r") as data:
+                try:
+                    maindict = json.load(data)
+                except json.decoder.JSONDecodeError:
+                    print("Incorrect format")
+            # print(maindict)
+            # sio.emit("update_criteria", maindict["pulse"])# TODO: нужно отправлять всеразделы файла json а н только pulse
+            dict_values = list(x for x in maindict.values() if type(x) == dict)
+            for i in dict_values:
+                sio.emit("update_criteria", i)
 
 @sio.event
 def connect():
     logging.info("Connected to server")
-    with open("/home/LaboRad/rzd_detector/Scripts/table_values.json", "r") as data:
-        update_data = dict(json.load(data))
-    for x in update_data.values():
-        sio.emit("update_criteria", x)
     observer = Observer()
     event_handler = FileChangeHandler()
-    observer.schedule(event_handler, "/home/LaboRad/rzd_detector/Scripts/table_values.json", recursive=False)
+    observer.schedule(event_handler, "Scripts/table_values.json", recursive=False)
     observer.start()
 
 

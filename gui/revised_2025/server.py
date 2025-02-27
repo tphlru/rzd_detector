@@ -1,25 +1,22 @@
 import cv2
-
 import contextlib, os, logging
 from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO
 import numpy as np
-
-import eventlet
-import eventlet.wsgi
-
 import json
+from tqdm import tqdm
 
-mode = "dev"  # "dev" or "prod"
+import subprocess
+
+stop, start, pause = 0, 0, 0
+
+# import eventlet
+# import eventlet.wsgi
+
 
 app = Flask(__name__)
-socketio = SocketIO(app, async_mode="eventlet")
-
-FRAME_SHAPE = (1080, 1920, 3)
-FRAME_DTYPE = np.uint8
-HSD_IP = "192.168.43.96"
-
-frame_var = None
+socketio = SocketIO(app)
+# socketio.init_app(app)
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
@@ -51,7 +48,7 @@ criteria_data = {
         "name": "Физическое состояние",
         "enabled": True,
         "score": 0,
-        "max_score": 10,
+        "max_score": 100,
         "sublevels": {
             "pulse": {"score": 0, "max_score": 4},
             "breathing": {"score": 0, "max_score": 3},
@@ -111,6 +108,16 @@ def mobile():
 def tablet():
     return render_template("tablet.html", data=data)
 
+@socketio.event
+def connect():
+    pass
+
+def set_val(param, val):
+    with open("Scripts/table_values.json", mode="r") as jf:
+        dt = dict(json.load(jf))
+    dt[param] = val
+    with open("Scripts/table_values.json", mode="w") as jf:
+        json.dump(dt, jf)
 
 @app.route("/submit", methods=["POST"])
 async def submit():
@@ -170,13 +177,17 @@ async def submit():
 
 @app.route("/upload", methods=["POST"])
 def upload_file():
+    # print(request.files)
     if "files" not in request.files:
         return "Файлы не были выбраны", 400
 
     files = request.files.getlist("files")
     for file in files:
         if file.filename:
-            file.save(os.path.join(app.config["UPLOAD_FOLDER"], file.filename))
+            pth = os.path.join(app.config["UPLOAD_FOLDER"], "10.mp4")
+            print(pth)
+            file.save(pth)
+            subprocess.Popen(["python", "gui/revised_2025/run_moduls.py"])
     return "Файлы успешно загружены"
 
 @socketio.on("update_criteria")
@@ -200,8 +211,7 @@ def handle_criteria_update(update_data):  # sourcery skip: merge-repeated-ifs
             )
 
         socketio.emit("criteria_updated", criteria_data)
-        eventlet.sleep(0.01)
-        socketio.emit("status", "working")
+        # eventlet.sleep(0.01)
 
 # def translate_score():
 #     while True:
@@ -225,30 +235,12 @@ def handle_criteria_update(update_data):  # sourcery skip: merge-repeated-ifs
 #         pred[3] = 3
 #         new_predict_event.set()
 
-# async def generate_stream():
-#     """Асинхронная функция для генерации потока видео"""
-#     client = WHEPClient(get_hsd_camera_url(HSD_IP))
-#     await client.connect()
-#     while True:
-#         frame = await client.get_raw_frame()
-#         frame = crop_face(frame)
-#         global frame_array
-#         frame_array[:] = np.array( dtype=FRAME_DTYPE)
-#         new_frame_event.set()
-#         await asyncio.sleep(0.03)  # Небольшая задержка для уменьшения нагрузки
 
-
-# @socketio.on('start_video')
-# def start_video():
-#     print("aa")
-#     socketio.start_background_task(generate_stream)
+@socketio.on('start_video')
+def start_video():
+    pass
 
 def main():
-    # generate = mp.Process(target=asyncio.run(generate_stream()))
-    # generate.start()
-    # predict = mp.Process(target=get_pedict)
-    # predict.start()
-    set_param("status", "wait")
-    socketio.run(app, host="0.0.0.0", port=5000, allow_unsafe_werkzeug=True, debug=True)
+    socketio.run(app, host="0.0.0.0", port=5000, debug=True)
 
 main()

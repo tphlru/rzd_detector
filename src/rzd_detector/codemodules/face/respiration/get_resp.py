@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
 
-def get_resp(video_path, iter_for_maxs: int, maxs_treshold: int) -> tuple:
+def get_resp(video_path) -> tuple:
     '''Объеденяет весь модуль.
     Args:
         iter_for_maxs (int): Число итераций, при поиске верхушек графика дыхания (вздохов).

@@ -58,7 +58,7 @@
                             <label class="block text-sm font-medium text-gray-700 mt-3">
                                 Выберите видео
                             </label>
-                            <form enctype="multipart/form-data">
+                            <form enctype="multipart/form-data" action = "/upload" method = "post">
                                 <input class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 mt-1 rounded sm:w-auto" type="file" name="files" multiple id="myfile">
                                 <input class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 mt-1 rounded sm:w-auto" type="submit" value="Загрузить" id="outFile">
                             </form>
