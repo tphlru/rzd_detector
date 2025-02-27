@@ -45,6 +45,7 @@ class FileChangeHandler(FileSystemEventHandler):
             dict_values = list(x for x in maindict.values() if type(x) == dict)
             for i in dict_values:
                 sio.emit("update_criteria", i)
+                print("update_criteria", i)
 
 @sio.event
 def connect():

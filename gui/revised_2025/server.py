@@ -32,9 +32,13 @@ criteria_data = {
         "score": 0,
         "max_score": 10,
         "sublevels": {
-            "happiness": {"score": 0, "max_score": 2},
-            "stress": {"score": 0, "max_score": 3},
-            "anxiety": {"score": 0, "max_score": 5},
+            "angry": {"score": 0, "max_score": 2},
+            "disgust": {"score": 0, "max_score": 3},
+            "fear": {"score": 0, "max_score": 5},
+            "happy": {"score": 0, "max_score": 2},
+            "sad": {"score": 0, "max_score": 3},
+            "surprise": {"score": 0, "max_score": 5},
+            "neutral": {"score": 0, "max_score": 5}
         },
     },
     "physical": {
