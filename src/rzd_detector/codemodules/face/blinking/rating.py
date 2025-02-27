@@ -7,4 +7,4 @@ def get_score(video_path: str):
         points += 1
     elif blink_rate < 7 or blink_rate > 27:
         points -= 1
-    return blink_rate, points
+    return blink_rate, points + 1

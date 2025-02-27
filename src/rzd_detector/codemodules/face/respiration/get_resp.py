@@ -44,4 +44,4 @@ def get_resp(video_path) -> tuple:
     if max(predicted_resp) / np.mean(predicted_resp) > 1.5:
         points -= 1
     
-    return resp_rate, points
+    return resp_rate, points + 2

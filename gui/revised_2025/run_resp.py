@@ -4,6 +4,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 def resp(video_path):
+    print("Resp----------")
     try:
         resp_rate, resp_score = get_resp(video_path=video_path)
         with open("Scripts/table_values.json", mode="r") as jf:

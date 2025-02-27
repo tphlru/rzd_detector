@@ -54,6 +54,7 @@ function updateRowState(row, enabled) {
 
 // Update existing WebSocket handler
 socket.on('criteria_updated', function(criteriaData) {
+    console.log("CRITERIA UPDATE")
     for (const [category, info] of Object.entries(criteriaData)) {
         const rows = document.querySelectorAll(`tr[data-category="${category}"]`);
         const checkbox = document.getElementById(category);

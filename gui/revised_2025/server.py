@@ -1,6 +1,6 @@
 import cv2
 import contextlib, os, logging
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 from flask_socketio import SocketIO
 import numpy as np
 import json
@@ -37,34 +37,33 @@ criteria_data = {
         "name": "Эмоциональное состояние",
         "enabled": True,
         "score": 0,
-        "max_score": 10,
+        "max_score": 100,
         "sublevels": {
-            "angry": {"score": 0, "max_score": 2},
-            "disgust": {"score": 0, "max_score": 3},
-            "fear": {"score": 0, "max_score": 5},
-            "happy": {"score": 0, "max_score": 2},
-            "sad": {"score": 0, "max_score": 3},
-            "surprise": {"score": 0, "max_score": 5},
-            "neutral": {"score": 0, "max_score": 5}
+            "angry": {"score": 0, "max_score": 100},
+            "disgust": {"score": 0, "max_score": 100},
+            "fear": {"score": 0, "max_score": 100},
+            "happy": {"score": 0, "max_score": 100},
+            "sad": {"score": 0, "max_score": 100},
+            "surprise": {"score": 0, "max_score": 100},
+            "neutral": {"score": 0, "max_score": 100}
         },
     },
     "physical": {
         "name": "Физическое состояние",
         "enabled": True,
         "score": 0,
-        "max_score": 100,
+        "max_score": 10,
         "sublevels": {
-            "pulse": {"score": 0, "max_score": 4},
+            "pulse": {"score": 0, "max_score": 5},
             "breathing": {"score": 0, "max_score": 3},
-            "blinking": {"score": 0, "max_score": 3},
+            "blinking": {"score": 0, "max_score": 2},
         },
     },
-    "seasonal": {
-        "name": "Сезонность одежды",
+    "state": {
+        "name": "Текущий статус системы",
         "enabled": True,
-        "score": 0,
-        "max_score": 5,
-        "sublevels": {},
+        "score": "Ожидание",
+        "max_score": "",
     },
     "subjective": {
         "name": "Субъективная оценка",
@@ -97,6 +96,9 @@ data = {
     "emotions": {"Счастье": 50, "Грусть": 20, "Гнев": 10, "Удивление": 20},
     "voice_emotions": {"Спокойствие": 60, "Стресс": 40},
 }
+
+def start_button():
+    pass 
 
 @app.route("/")
 def index():
@@ -143,6 +145,8 @@ async def submit():
         with open("Scripts/table_values.json", mode="w") as jf:
             json.dump(dt, jf)
 
+    if element == 'start':
+        start_button()
 
     if element in ["emotional", "physical", "seasonal", "subjective", "statistical"]:
         enabled = bool(value)
@@ -188,11 +192,17 @@ def upload_file():
     files = request.files.getlist("files")
     for file in files:
         if file.filename:
-            pth = os.path.join(app.config["UPLOAD_FOLDER"], "10.mp4")
+            
+            if "mov" in file.filename:
+                pth = os.path.join(app.config["UPLOAD_FOLDER"], file.filename)
+                os.system(f"ffmpeg -y -i {pth} -q:v 0 10.mp4")
+            else:
+                pth = os.path.join(app.config["UPLOAD_FOLDER"], "10.mp4")
+
             print(pth)
             file.save(pth)
             subprocess.Popen(["python", "gui/revised_2025/run_moduls.py"])
-    return "Файлы успешно загружены"
+    return redirect(url_for("desktop"))
 
 @socketio.on("update_criteria")
 def handle_criteria_update(update_data):  # sourcery skip: merge-repeated-ifs
@@ -244,6 +254,10 @@ def handle_criteria_update(update_data):  # sourcery skip: merge-repeated-ifs
 def start_video():
     pass
 
+@socketio.on('start')
+def updatee():
+    socketio.emit("text1","texxxxxxxt")
+    socketio.emit("criteria_updated",criteria_data)
 def main():
     socketio.run(app, host="0.0.0.0", port=5000, debug=True)
 

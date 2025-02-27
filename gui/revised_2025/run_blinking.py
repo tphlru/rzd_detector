@@ -4,6 +4,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 def blink(video_path):
+    print("Blink----------")
     try:
         blink_rate, blink_scores = get_score(video_path=video_path)
         with open("Scripts/table_values.json", mode="r") as jf:

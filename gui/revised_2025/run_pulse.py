@@ -4,6 +4,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 def pulse(cuda, video_path):
+    print("Pulse----------")
     try:
         bvp, times, bpm = get_bpm_with_pbv(cuda=cuda, videoFileName=video_path)
         base_mean, trend, high_med, mids, tvals = process_pulse_info(bpm, show_plot=False, plot_path="pulse.png")
@@ -19,4 +20,4 @@ def pulse(cuda, video_path):
     except Exception as e:
         logger.error(e)
 
-pulse(False, "upload/10.mp4")
+pulse(True, "upload/10.mp4")

@@ -1,3 +1,14 @@
+
+const changer = document.querySelector("#processingType");
+        // socket.emit("videoType",changer.value);
+if (changer.value=="Обработка загруженного видео") {
+    document.getElementById("selectVideo").style.display = "inline";
+} else if (changer.value=="Обработка с видеокамер") {
+    document.getElementById("selectVideo").style.display = "none";
+}
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
     // Функции для открытия и закрытия всплывающих окон
     window.showPopup = function() {
@@ -173,9 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     // var img = document.getElementById("video_feed");
 
-    socket.on('connect', function() {
-        // socket.emit('start_video');
-    });
 
     socket.on("file", function(data) {
         if (data=="not uploaded") {
@@ -187,7 +195,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // работает, ожидание обнаружена 
 });
 
-const socket = io("http://localhost:5000");
+const socket = io();
+socket.on('connect', function() {
+    socket.emit('start');
+    console.log("start")
+});
+socket.on('text1', function(data) {
+    document.getElementById("text1").innerHTML = data;
+});
 
 // socket.on('video_frame', function(data) {
 //     console.log("get video frame");
@@ -211,7 +226,7 @@ socket.on("warning", function(data) {
 });
 document.querySelector("#selectVideo").style.display = "none";
 
-const changer = document.querySelector("#processingType");
+// const changer = document.querySelector("#processingType");
 changer.addEventListener("change",(data)=>{
         // socket.emit("videoType",changer.value);
     if (changer.value=="Обработка загруженного видео") {
@@ -244,23 +259,29 @@ socket.on('criteria_updated', function(criteriaData) {
     for (const [category, info] of Object.entries(criteriaData)) {
         // Update main category score
         const categoryRow = document.querySelector(`tr[data-category="${category}"]`);
-        if (categoryRow) {
+        if (category=="state") {
             const scoreDiv = categoryRow.querySelector('.score-indicator');
-            scoreDiv.textContent = `${info.score}/${info.max_score}`;
+            scoreDiv.textContent = `${info.score}`;
             scoreDiv.dataset.score = info.score;
-        }
+        }else {
+            if (categoryRow) {
+                const scoreDiv = categoryRow.querySelector('.score-indicator');
+                scoreDiv.textContent = `${info.score}/${info.max_score}`;
+                scoreDiv.dataset.score = info.score;
+            }
 
-        if (info.sublevels) {
-            for (const [sublevel, subInfo] of Object.entries(info.sublevels)) {
-                const sublevelRow = document.querySelector(`tr[data-category="${category}"][data-sublevel="${sublevel}"]`);
-                if (sublevelRow) {
-                    const scoreDiv = sublevelRow.querySelector('.score-indicator');
-                    scoreDiv.textContent = `${subInfo.score}/${subInfo.max_score}`;
-                    scoreDiv.dataset.score = subInfo.score;
+            if (info.sublevels) {
+                for (const [sublevel, subInfo] of Object.entries(info.sublevels)) {
+                    const sublevelRow = document.querySelector(`tr[data-category="${category}"][data-sublevel="${sublevel}"]`);
+                    if (sublevelRow) {
+                        const scoreDiv = sublevelRow.querySelector('.score-indicator');
+                        scoreDiv.textContent = `${subInfo.score}/${subInfo.max_score}`;
+                        scoreDiv.dataset.score = subInfo.score;
+                    }
                 }
             }
         }
-        }
+    }
     updateScoreColors();
 });
 

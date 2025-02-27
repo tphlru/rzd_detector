@@ -273,4 +273,4 @@ def evaluate_pulse_results(
     else:
         logger.info("--- Тренд изменений отсутствует. Эта метрика не учитывается. ---")
 
-    return points
+    return points + 4

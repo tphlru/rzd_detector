@@ -34,25 +34,38 @@ maindict = dict()#{
 
 class FileChangeHandler(FileSystemEventHandler):
     def on_modified(self, event):
-        if event.src_path == "Scripts/table_values.json":
-            with open("Scripts/table_values.json", "r") as data:
+        print("AHHHSHJUIDSGhfjdvhfbgdsbvgfhdvs")
+        global maindict
+        if event.src_path == "/home/LaboRad/rzd_detector/Scripts/table_values.json":
+            with open("/home/LaboRad/rzd_detector/Scripts/table_values.json", "r") as data:
                 try:
                     maindict = json.load(data)
                 except json.decoder.JSONDecodeError:
                     print("Incorrect format")
             # print(maindict)
-            # sio.emit("update_criteria", maindict["pulse"])# TODO: нужно отправлять всеразделы файла json а н только pulse
-            dict_values = list(x for x in maindict.values() if type(x) == dict)
-            for i in dict_values:
-                sio.emit("update_criteria", i)
-                print("update_criteria", i)
+            sio.emit("update_criteria", maindict["pulse"])
+            sio.emit("update_criteria", maindict["resp"])# TODO: нужно отправлять всеразделы файла json а н только pulse blink
+            sio.emit("update_criteria", maindict["blink"])
+
+            sio.emit("update_criteria", maindict["angry_emo"])
+            sio.emit("update_criteria", maindict["disgust_emo"])
+            sio.emit("update_criteria", maindict["fear_emo"])
+            sio.emit("update_criteria", maindict["happy_emo"])
+            sio.emit("update_criteria", maindict["sad_emo"])
+            sio.emit("update_criteria", maindict["surprise_emo"])
+            sio.emit("update_criteria", maindict["neutral_emo"])
+            print("update_criteria", maindict["neutral_emo"])
+            # dict_values = list(x for x in maindict.values() if type(x) == dict)
+            # for i in dict_values:
+            #     sio.emit("update_criteria", i)
+            #     print("update_criteria", i)
 
 @sio.event
 def connect():
     logging.info("Connected to server")
     observer = Observer()
     event_handler = FileChangeHandler()
-    observer.schedule(event_handler, "Scripts/table_values.json", recursive=False)
+    observer.schedule(event_handler, "/home/LaboRad/rzd_detector/Scripts/table_values.json", recursive=False)
     observer.start()
 
 
