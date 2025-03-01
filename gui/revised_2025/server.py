@@ -59,12 +59,12 @@ criteria_data = {
             "blinking": {"score": 0, "max_score": 2},
         },
     },
-    "state": {
-        "name": "Текущий статус системы",
-        "enabled": True,
-        "score": "Ожидание",
-        "max_score": "",
-    },
+    # "state": {
+    #     "name": "Текущий статус системы",
+    #     "enabled": True,
+    #     "score": "Ожидание",
+    #     "max_score": "",
+    # },
     "subjective": {
         "name": "Субъективная оценка",
         "enabled": True,
@@ -249,14 +249,27 @@ def handle_criteria_update(update_data):  # sourcery skip: merge-repeated-ifs
 #         pred[3] = 3
 #         new_predict_event.set()
 
+# async def generate_stream():
+#     """Асинхронная функция для генерации потока видео"""
+#     client = WHEPClient(get_hsd_camera_url(HSD_IP))
+#     await client.connect()
+#     while True:
+#         frame = await client.get_raw_frame()
+#         frame = crop_face(frame)
+#         global frame_array
+#         frame_array[:] = np.array( dtype=FRAME_DTYPE)
+#         new_frame_event.set()
+#         await asyncio.sleep(0.03)  # Небольшая задержка для уменьшения нагрузки
 
-@socketio.on('start_video')
-def start_video():
-    pass
+
+# @socketio.on('start_video')
+# def start_video():
+#     socketio.start_background_task(generate_stream)
 
 @socketio.on('start')
-def updatee():
-    socketio.emit("text1","texxxxxxxt")
+def onstart():
+    socketio.emit("status","wait")
+    socketio.emit("text1","Ожидание начала работы программы")
     socketio.emit("criteria_updated",criteria_data)
 def main():
     socketio.run(app, host="0.0.0.0", port=5000, debug=True)
