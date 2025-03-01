@@ -212,7 +212,7 @@ socket.on('text1', function(data) {
 
 const statusText = document.getElementById("statusText");
 socket.on("status", (data)=> {
-    if (data=="detected") statusText.innerHTML = "Статус:&nbsp<font color='red'>плохо себя ведет!</font>";
+    if (data=="detected") statusText.innerHTML = "Статус:&nbsp<font color='red'>субъект не прошел проверку</font>";
     if (data=="error") statusText.innerHTML = "Статус:&nbsp<font color='red'>ошибка</font>";
     if (data=="working") statusText.innerHTML = "Статус:&nbsp<font color='green'>в работе</font>";
     if (data=="wait") statusText.innerHTML = "Статус:&nbsp<font color='blue'>ожидание</font>";

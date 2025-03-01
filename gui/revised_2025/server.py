@@ -1,12 +1,12 @@
-import cv2
-import contextlib, os, logging
+import cv2, colorama, json, contextlib, os, logging
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 from flask_socketio import SocketIO
 import numpy as np
-import json
 from tqdm import tqdm
 
 import subprocess
+
+colorama.init(autoreset=True)
 
 stop, start, pause = 0, 0, 0
 
@@ -227,6 +227,10 @@ def handle_criteria_update(update_data):  # sourcery skip: merge-repeated-ifs
         socketio.emit("criteria_updated", criteria_data)
         # eventlet.sleep(0.01)
 
+def setStatus(status):
+    socketio.emit("status", status)
+    print(colorama.Fore.GREEN+"program status set as "+status+"\n")
+
 # def translate_score():
 #     while True:
 #         new_predict_event.wait()
@@ -268,7 +272,7 @@ def handle_criteria_update(update_data):  # sourcery skip: merge-repeated-ifs
 
 @socketio.on('start')
 def onstart():
-    socketio.emit("status","wait")
+    setStatus("wait")
     socketio.emit("text1","Ожидание начала работы программы")
     socketio.emit("criteria_updated",criteria_data)
 def main():

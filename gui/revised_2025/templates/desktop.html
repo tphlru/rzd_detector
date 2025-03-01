@@ -156,7 +156,7 @@
                         <label class="block text-sm font-medium text-gray-700">
                             Учитывать при подсчете следующие параметры:
                         </label>
-                        <ul class="mt-2 space-y-2">
+                        <ul class="mt-1 space-y-2">
                             <li>
                                 <input type="checkbox" id="emotional" {% if data.emotional %}checked{% endif %}>
                                 <label class="ml-2 text-gray-700" for="emotional">
@@ -605,7 +605,7 @@
                     Записи
                 </h2>
                 <video class="rounded-lg" controls="">
-                    <source src="{{ url_for('static', filename='resources/video2.mp4') }}" type="video/mp4">
+                    <source src="{{ url_for('static', filename='upload/video.mp4') }}" type="video/mp4">
                     Ваш браузер не поддерживает воспроизведение видео.
                     </source>
                 </video>
